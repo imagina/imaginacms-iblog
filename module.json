@@ -1,0 +1,17 @@
+{
+    "name": "Iblog",
+    "alias": "iblog",
+    "description": "A simple blog module with categories and tags",
+    "keywords": [],
+    "version": "0.1.0",
+    "active": 1,
+    "order": 1,
+    "providers": [
+        "Modules\\Iblog\\Providers\\IblogServiceProvider",
+        "Modules\\Iblog\\Providers\\RouteServiceProvider"
+    ],
+    "aliases":{},
+    "files": [
+        
+    ]
+}
