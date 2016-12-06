@@ -37,6 +37,16 @@ class Post extends Model
 
     }
 
+    protected function setSummaryAttribute($value){
+
+        if($value != ''){
+            $this->attributes['summary'] = $value;
+        }
+
+        $this->attributes['summary'] = substr($this->description,0,150);
+
+    }
+
 
 
     protected $casts = [

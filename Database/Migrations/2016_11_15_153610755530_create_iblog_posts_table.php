@@ -19,6 +19,7 @@ class CreateIblogPostsTable extends Migration
             $table->string('title');
             $table->string('slug');
             $table->text('description');
+            $table->text('summary');
             $table->text('options')->default('')->nullable();
             $table->integer('status')->default(0)->unsigned();
             $table->integer('user_id')->unsigned();
