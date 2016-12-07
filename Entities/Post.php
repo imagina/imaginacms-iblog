@@ -2,23 +2,20 @@
 
 namespace Modules\Iblog\Entities;
 
-use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Bcrud\Support\Traits\CrudTrait;
-use Modules\Iblog\Entities\Category;
-use Modules\Iblog\Entities\Tag;
 use Modules\Iblog\Entities\Feature;
-use Modules\Media\Entities\File;
-use Modules\Media\Support\Traits\MediaRelation;
+use Laracasts\Presenter\PresentableTrait;
+use Modules\Iblog\Presenters\PostPresenter;
 
 class Post extends Model
 {
-    use CrudTrait;
+    use CrudTrait,  PresentableTrait;
 
     protected $table = 'iblog__posts';
 
     protected $fillable = ['title','description','slug','user_id','status', 'summary','options'];
-
+    protected $presenter = PostPresenter::class;
     protected $fakeColumns = ['options'];
 
 
@@ -136,5 +133,6 @@ class Post extends Model
 
 
     }
+
 
 }

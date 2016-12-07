@@ -11,6 +11,7 @@ use Modules\Iblog\Events\PostWasUpdated;
 use Modules\Iblog\Repositories\Collection;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Laracasts\Presenter\PresentableTrait;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
@@ -112,7 +113,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
      */
     public function findBySlug($slug)
     {
-        return $this->model->where('slug', "$slug")->whereStatus(Status::PUBLISHED)->firstOrFail();
+
+        return $this->model->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
 
     public function whereCategory($id) {
