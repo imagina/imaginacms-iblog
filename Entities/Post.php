@@ -17,7 +17,7 @@ class Post extends Model
 
     protected $table = 'iblog__posts';
 
-    protected $fillable = ['title','description','slug','user_id','status','options'];
+    protected $fillable = ['title','description','slug','user_id','status', 'summary','options'];
 
     protected $fakeColumns = ['options'];
 

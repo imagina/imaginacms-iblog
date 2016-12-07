@@ -32,7 +32,7 @@ class tagController extends BcrudController
         | BASIC CRUD INFORMATION
         |--------------------------------------------------------------------------
         */
-        $this->crud->setModel('Modules\Iblog\Entities\tag');
+        $this->crud->setModel('Modules\Iblog\Entities\Tag');
         $this->crud->setRoute('backend/iblog/tag');
         $this->crud->setEntityNameStrings('tag', 'tags');
         $this->access = [];

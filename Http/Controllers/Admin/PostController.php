@@ -55,6 +55,19 @@ class PostController extends BcrudController
             'name' => 'title',
             'label' => 'Title',
         ]);
+        $this->crud->addColumn([
+            'name' => 'categories', // The db column name
+            'label' => 'Category',// Table column heading
+            'type' => 'select_multiple',
+            'attribute' => 'title',
+            'entity' => 'categories',
+            'model' => "Modules\\Iblog\\Entities\\Category", // foreign key model
+            'pivot' => true,
+        ]);
+        $this->crud->addColumn([
+            'name' => 'created_at',
+            'label' => 'Created',
+        ]);
 
         // ------ CRUD FIELDS
         $this->crud->addField([
