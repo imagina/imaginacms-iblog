@@ -134,8 +134,9 @@ class PostController extends BcrudController
             'type'        => 'radio',
             'options'     => [
                 0 => "Draft",
-                1 => "Published",
-                2 => "Program",
+                1 => "Pending",
+                2 => "Published",
+                3 => "Unpublished"
             ],
             'viewposition' => 'right',
         ]);

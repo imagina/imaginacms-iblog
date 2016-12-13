@@ -5,17 +5,15 @@ namespace Modules\Iblog\Repositories\Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Status;
-use Modules\Iblog\Events\PostWasCreated;
-use Modules\Iblog\Events\PostWasDeleted;
-use Modules\Iblog\Events\PostWasUpdated;
 use Modules\Iblog\Repositories\Collection;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Laracasts\Presenter\PresentableTrait;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
     /**
-     * @param  int    $id
+     * @param  int $id
      * @return object
      */
     public function find($id)
@@ -112,16 +110,16 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
      */
     public function findBySlug($slug)
     {
-        return $this->model->where('slug', "$slug")->whereStatus(Status::PUBLISHED)->firstOrFail();
+
+        return $this->model->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
 
-    public function whereCategory($id) {
+    public function whereCategory($id)
+    {
 
-        return $this->model->with(['categories' => function ($query) use($id) {
+        return $this->model->whereHas('categories', function ($query) use ($id) {
             $query->where('category_id', $id);
-        }])->orderBy('created_at', 'DESC')->paginate(1);
+        })->orderBy('created_at', 'DESC')->paginate(12);
 
     }
-
-
 }

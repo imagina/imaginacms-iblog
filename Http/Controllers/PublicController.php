@@ -50,14 +50,14 @@ class PublicController extends BasePublicController
 
     public function show($slug)
     {
+
         $tpl = 'iblog.show';
-
         $post = $this->post->findBySlug($slug);
-
+        $category = $post->categories()->first();
         //Get Custom Template.
         $ctpl = "iblog.category.{$post->category_id}.show";
         if(view()->exists($ctpl)) $tpl = $ctpl;
 
-        return view($tpl, compact('post'));
+        return view($tpl, compact('post','category'));
     }
 }
