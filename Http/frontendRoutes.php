@@ -7,6 +7,7 @@ use Modules\Iblog\Entities\Category as Category;
 if (! App::runningInConsole()) {
     foreach (Category::query()->where('parent_id', 0)->get() as $category) {
 
+
         /** @var Router $router */
         $router->group(['prefix' => $category->slug], function (Router $router) use ($category) {
             $locale = LaravelLocalization::setLocale() ?: App::getLocale();

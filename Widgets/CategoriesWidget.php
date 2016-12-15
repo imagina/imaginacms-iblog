@@ -32,7 +32,7 @@ class CategoriesWidget extends BaseWidget
      */
     protected function view()
     {
-        return 'blog::admin.widgets.categories';
+        return 'iblog::admin.widgets.categories';
     }
 
     /**

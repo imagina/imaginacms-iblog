@@ -32,7 +32,7 @@ class PostsWidget extends BaseWidget
      */
     protected function view()
     {
-        return 'blog::admin.widgets.posts';
+        return 'iblog::admin.widgets.posts';
     }
 
     /**

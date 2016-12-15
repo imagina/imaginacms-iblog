@@ -46,11 +46,13 @@ class Category extends Model
     }
     protected function setSlugAttribute($value){
 
-        if($value != ''){
+        if(!empty($value)){
             $this->attributes['slug'] = str_slug($value,'-');
+        } else {
+            $this->attributes['slug'] = str_slug($this->title,'-');
         }
 
-        $this->attributes['slug'] = str_slug($this->title,'-');
+
 
     }
 

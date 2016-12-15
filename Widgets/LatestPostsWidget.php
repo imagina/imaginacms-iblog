@@ -57,7 +57,7 @@ class LatestPostsWidget extends BaseWidget
      */
     protected function data()
     {
-        $limit = $this->setting->get('blog::widget-posts-amount', locale(), 5);
+        $limit = $this->setting->get('iblog::widget-posts-amount', locale(), 5);
 
         return ['posts' => $this->post->latest($limit)];
     }
