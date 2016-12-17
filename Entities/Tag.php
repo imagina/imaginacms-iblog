@@ -30,7 +30,7 @@ class Tag extends Model
 
         if(!empty($value)){
             $this->attributes['slug'] = str_slug($value,'-');
-        } else {
+        }else{
             $this->attributes['slug'] = str_slug($this->title,'-');
         }
 

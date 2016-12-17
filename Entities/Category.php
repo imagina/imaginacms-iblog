@@ -48,9 +48,7 @@ class Category extends Model
 
         if(!empty($value)){
             $this->attributes['slug'] = str_slug($value,'-');
-        } else {
-            $this->attributes['slug'] = str_slug($this->title,'-');
-        }
+        }else{$this->attributes['slug'] = str_slug($this->title,'-');}
 
 
 

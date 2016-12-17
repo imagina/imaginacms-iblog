@@ -14,11 +14,16 @@ return [
         'create post' => 'Create a post',
     ],
     'table' => [
+        'title' => 'Title'
     ],
     'form' => [
     ],
     'messages' => [
     ],
     'validation' => [
+    ],
+    'latest posts'=>'latest posts',
+    'widget' => [
+        'postcount' => 'Nº Post',
     ],
 ];

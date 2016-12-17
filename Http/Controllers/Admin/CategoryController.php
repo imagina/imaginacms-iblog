@@ -78,12 +78,16 @@ class CategoryController extends BcrudController
         $this->crud->addField([
             'name' => 'title',
             'label' => 'Title',
+            'viewposition' => 'left'
+
         ]);
 
         $this->crud->addField([
             'name' => 'slug',
             'label' => 'Slug',
             'type' => 'text',
+            'viewposition' => 'left'
+
         ]);
 
         $this->crud->addField([
@@ -93,6 +97,7 @@ class CategoryController extends BcrudController
             'entity' => 'parent',
             'attribute' => 'title',
             'model' => 'Modules\Iblog\Entities\Category',
+            'viewposition' => 'right'
         ]);
 
 
@@ -100,6 +105,8 @@ class CategoryController extends BcrudController
             'name' => 'description',
             'label' => 'Description',
             'type' => 'wysiwyg',
+            'viewposition' => 'left'
+
         ]);
 
 
@@ -108,7 +115,8 @@ class CategoryController extends BcrudController
             'label' => 'Admin Notes',
             'type' => 'wysiwyg',
             'fake' => true,
-            'store_in' => 'options'
+            'store_in' => 'options',
+            'viewposition' => 'right'
         ]);
 
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Blog\Widgets;
+namespace Modules\Iblog\Widgets;
 
-use Modules\Blog\Repositories\CategoryRepository;
+use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Dashboard\Foundation\Widgets\BaseWidget;
 
 class CategoriesWidget extends BaseWidget

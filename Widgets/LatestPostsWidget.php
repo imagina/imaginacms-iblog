@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Blog\Widgets;
+namespace Modules\Iblog\Widgets;
 
-use Modules\Blog\Repositories\PostRepository;
+use Modules\Iblog\Repositories\PostRepository;
 use Modules\Dashboard\Foundation\Widgets\BaseWidget;
 use Modules\Setting\Contracts\Setting;
 
@@ -48,7 +48,7 @@ class LatestPostsWidget extends BaseWidget
      */
     protected function view()
     {
-        return 'blog::admin.widgets.latest-posts';
+        return 'iblog::admin.widgets.latest-posts';
     }
 
     /**

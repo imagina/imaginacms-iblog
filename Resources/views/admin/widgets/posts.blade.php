@@ -2,7 +2,7 @@
     <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
     <div class="info-box-content">
     <span class="info-box-text">
-        PostCount
+        {{ trans('iblog::post.widget.postcount') }}
     </span>
         <span class="info-box-number">{{ $postCount }}</span>
     </div>

@@ -21,4 +21,7 @@ return [
     ],
     'validation' => [
     ],
+    'widget' => [
+        'categories' => 'Categorias',
+    ],
 ];

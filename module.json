@@ -10,6 +10,11 @@
         "Modules\\Iblog\\Providers\\IblogServiceProvider",
         "Modules\\Iblog\\Providers\\RouteServiceProvider"
     ],
+    "widgets": [
+        "Modules\\Iblog\\Widgets\\PostsWidget",
+        "Modules\\Iblog\\Widgets\\CategoriesWidget",
+        "Modules\\Iblog\\Widgets\\LatestPostsWidget"
+    ],
     "aliases":{},
     "files": [
 

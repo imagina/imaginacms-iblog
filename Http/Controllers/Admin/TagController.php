@@ -79,31 +79,6 @@ class tagController extends BcrudController
 
     }
 
-    public function edit($id) {
-
-        parent::edit($id);
-
-        // $this->data['thumbnail']= $this->file->findFileByZoneForEntity('thumbnail', $this->data['entry']);
-
-        return view('iblog::admin.edit', $this->data);
-
-    }
-
-    public function create() {
-
-        parent::create();
-
-        return view('iblog::admin.create', $this->data);
-
-    }
-    public function show($id=null) {
-
-        parent::show($id=null);
-
-        return view('iblog::admin.show', $this->data);
-
-    }
-
     public function setup()
     {
         parent::setup();
