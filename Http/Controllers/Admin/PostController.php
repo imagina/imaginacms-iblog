@@ -109,7 +109,7 @@ class PostController extends BcrudController
 
         $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
             'label' => 'Tags',
-            'type' => 'tags',
+            'type' => 'select2_multiple',
             'name' => 'tags', // the method that defines the relationship in your Model
             'entity' => 'tags', // the method that defines the relationship in your Model
             'attribute' => 'title', // foreign key attribute that is shown to user

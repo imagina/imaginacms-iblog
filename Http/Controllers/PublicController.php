@@ -5,6 +5,7 @@ namespace Modules\Iblog\Http\Controllers;
 use Mockery\CountValidator\Exception;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\PostRepository;
+use Modules\Iblog\Repositories\TagRepository;
 use Modules\Core\Http\Controllers\BasePublicController;
 use Route;
 use Request;
@@ -17,12 +18,14 @@ class PublicController extends BasePublicController
      */
     private $post;
     private $category;
+    private $tag;
 
-    public function __construct(PostRepository $post,CategoryRepository $category)
+    public function __construct(PostRepository $post,CategoryRepository $category, TagRepository $tag)
     {
         parent::__construct();
         $this->post = $post;
         $this->category = $category;
+        $this->tag = $tag;
     }
 
     public function index()
@@ -54,10 +57,11 @@ class PublicController extends BasePublicController
         $tpl = 'iblog.show';
         $post = $this->post->findBySlug($slug);
         $category = $post->categories()->first();
+        $tag = $post->tags()->get();
         //Get Custom Template.
         $ctpl = "iblog.category.{$category->id}.show";
         if(view()->exists($ctpl)) $tpl = $ctpl;
 
-        return view($tpl, compact('post','category'));
+        return view($tpl, compact('post','category','tag'));
     }
 }

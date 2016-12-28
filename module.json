@@ -17,6 +17,6 @@
     ],
     "aliases":{},
     "files": [
-
+        "helpers.php"
     ]
 }

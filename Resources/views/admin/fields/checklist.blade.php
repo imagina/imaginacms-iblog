@@ -3,10 +3,9 @@
     <label>{!! $field['label'] !!}</label>
     <?php $entity_model = $crud->getModel(); ?>
 
-    <div class="row icheckbox-inline">
+    <div class="row checkbox-inline">
         @foreach ($field['model']::all() as $connected_entity_entry)
-            <div class="col-sm-4">
-                <div class="checkbox checkbox-inline checkbox-primary">
+                <div class="checkbox checkbox-inline checkbox-primary col-xs-12">
                   <label>
                     <input type="checkbox" class="styled"
                       name="{{ $field['name'] }}[]"
@@ -16,7 +15,6 @@
                              checked = "checked"
                       @endif > {!! $connected_entity_entry->{$field['attribute']} !!}
                   </label>
-                </div>
             </div>
         @endforeach
     </div>
