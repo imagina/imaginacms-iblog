@@ -24,6 +24,6 @@ return [
     ],
     'latest posts'=>'latest posts',
     'widget' => [
-        'postcount' => 'Nº Post',
-    ],
+    'postcount' => 'Count Post',
+],
 ];

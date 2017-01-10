@@ -22,10 +22,10 @@ return [
     'validation' => [
     ],
     'status' => [
-        'draft' => 'Draft',
-        'pending' => 'Pending review',
-        'published' => 'Published',
-        'unpublished' => 'Unpublished',
+        'draft' => 'Borrador',
+        'pending' => 'Pendiente de Revisión',
+        'published' => 'Publicado',
+        'unpublished' => 'En espera',
     ]
 
 ];

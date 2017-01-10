@@ -25,7 +25,7 @@
     @endif
 </div>
 @push('crud_fields_styles')
-        <!-- include select2 css
-<link href="{{ asset('modules/iblog/vendor/checkbox-inline/checkbox-inline.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('modules/iblog/vendor/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}" rel="stylesheet" type="text/css" />-->
+
+<link href="{{ asset('modules/iblog/vendor/checkbox-inline/build.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('modules/iblog/vendor/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}" rel="stylesheet" type="text/css" />
 @endpush

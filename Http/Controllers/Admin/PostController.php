@@ -84,17 +84,19 @@ class PostController extends BcrudController
         ]);
 
         $this->crud->addField([
-            'name' => 'description',
-            'label' => 'Description',
-            'type' => 'wysiwyg',
-            'viewposition' => 'left',
-        ]);
-        $this->crud->addField([
             'name' => 'summary',
             'label' => 'Summary',
             'type' => 'wysiwyg',
             'viewposition' => 'left',
         ]);
+
+        $this->crud->addField([
+            'name' => 'description',
+            'label' => 'Content',
+            'type' => 'wysiwyg',
+            'viewposition' => 'left',
+        ]);
+
 
         $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
             'label' => 'Categories',
