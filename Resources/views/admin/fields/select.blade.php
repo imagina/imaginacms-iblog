@@ -1,5 +1,4 @@
 <!-- select -->
-
 <div @include('bcrud::inc.field_wrapper_attributes') >
 
     <label>{!! $field['label'] !!}</label>

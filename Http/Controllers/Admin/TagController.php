@@ -104,12 +104,9 @@ class tagController extends BcrudController
         return parent::storeCrud();
     }
 
-
-
     public function update(IblogRequest $request)
     {
         return parent::updateCrud($request);
     }
-
 
 }

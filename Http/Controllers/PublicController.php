@@ -34,7 +34,11 @@ class PublicController extends BasePublicController
         $uri = Route::current()->uri();
 
         //Default Template
-        $tpl = 'iblog.index';
+        $tpl = 'iblog::frontend.index';
+        $ttpl='iblog.index';
+
+        if(view()->exists($ttpl)) $tpl = $ttpl;
+
         if(empty($uri)) {
             //Root
         } else {
@@ -53,15 +57,22 @@ class PublicController extends BasePublicController
 
     public function show($slug)
     {
+        $tpl='iblog::frontend.show';
+        $ttpl = 'iblog.show';
 
-        $tpl = 'iblog.show';
+        if(view()->exists($ttpl)) $tpl = $ttpl;
+
         $post = $this->post->findBySlug($slug);
         $category = $post->categories()->first();
-        $tag = $post->tags()->get();
+        //$tag = $post->tags()->get();
+
         //Get Custom Template.
         $ctpl = "iblog.category.{$category->id}.show";
+
+
         if(view()->exists($ctpl)) $tpl = $ctpl;
 
-        return view($tpl, compact('post','category','tag'));
+
+        return view($tpl, compact('post','category'));
     }
 }

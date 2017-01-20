@@ -46,7 +46,10 @@
                 $('.select2').each(function (i, obj) {
                     if (!$(obj).data("select2"))
                     {
-                        $(obj).select2();
+                        $(obj).select2({
+                            tags : true,
+                            allowClear: true
+                        });
                     }
                 });
             });

@@ -5,6 +5,7 @@ namespace Modules\Iblog\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Iblog\Entities\Post;
+use Modules\Iblog\Entities\Tag;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Media\Repositories\FileRepository;
 
@@ -39,6 +40,8 @@ class PostController extends BcrudController
         $this->crud->setRoute('backend/iblog/post');
         $this->crud->setEntityNameStrings('post', 'posts');
         $this->access = [];
+        //$this->crud->enableAjaxTable();
+
 
         /*
         |--------------------------------------------------------------------------
@@ -54,6 +57,7 @@ class PostController extends BcrudController
         $this->crud->addColumn([
             'name' => 'title',
             'label' => 'Title',
+
         ]);
         $this->crud->addColumn([
             'name' => 'categories', // The db column name
@@ -212,17 +216,81 @@ class PostController extends BcrudController
         $this->crud->access = $allowpermissions;
     }
 
-    public function store(IblogRequest $request)
-    {
-                return parent::storeCrud();
+    public function store(IblogRequest $request) {
+        //se modifica el valor de tags para agregar los nuevos registros
+        $request['tags'] = $this->addTags($request['tags']);
+
+        return parent::storeCrud($request);
+    }
+
+    public function update(IblogRequest $request) {
+        //return public_path();
+        //se modifica el valorde tags para agregar los nuevos registros
+        //return $request->file('galery')->store(public_path() . '/assets/iblog/post/category');
+        //return dd($request);
+        $request['tags'] = $this->addTags($request['tags']);
+
+        return parent::updateCrud($request);
+    }
+
+    public function uploadGalleryimage(IblogRequest $request){
+
+        $idpost                 = $request->input('idedit');
+        $extension              = $request->file('file')->extension();
+        $extensionpermissions   = array('JPG','JPEG','PNG','GIF');
+
+        if(!in_array(strtoupper($extension), $extensionpermissions)) {
+            return 0;
+        }
+
+        $nameimag           = encrypt(rand()) . '.' . $extension;
+        $destination_path   = 'assets/iblog/post/gallery/' . $idpost . '/'. $nameimag;
+
+        $request->file('file')->storeAs('assets/iblog/post/gallery/' . $idpost , '/'. $nameimag, 'publicmedia');
+
+        return array('direccion'=> $destination_path);
+    }
+
+    public function deleteGalleryimage(IblogRequest $request) {
+        $disk       = "publicmedia";
+        $dirdata    = $request->input('dirdata');
+        \Storage::disk($disk)->delete($dirdata);
+        return array('success' => true);
     }
 
 
-
-    public function update(IblogRequest $request)
-    {
-              return parent::updateCrud($request);
+    /**
+     * Devuelve un arreglo con los viejos tags y los tags nuevos
+     * para ser insertados o actualizados en el registro post
+     */
+    function addTags($tags){
+        $tags       = $tags;
+        $newtags    = Array();
+        $lasttagsid = Array();
+        $newtagsid  = Array();
+        //se verifica si se evvio tags desde el form
+        if(!empty($tags)){
+            //se recorren todos lostags en busca de alguno nuevo
+            foreach ($tags as $tag) {
+                //si el tag no existe se agrega al array de de nuevos tags
+                if(count(Tag::find($tag)) <= 0){
+                    array_push($newtags,$tag);
+                }else{
+                //si el tag existe se agrega en un array de viejos tags
+                    array_push($lasttagsid,$tag);
+                }
+            }
+        }
+        //se crean todos los tags que no existian
+        foreach ($newtags as $newtag) {
+            $modeltag = new Tag;
+            $modeltag->title = $newtag;
+            $modeltag->slug = str_slug($newtag,'-');
+            $modeltag->save();
+            array_push($newtagsid,$modeltag->id);
+        }
+        //se modifica el valor tags enviado desde el form uniendolos visjos tags y los tags nuevos
+        return array_merge($lasttagsid,$newtagsid);
     }
-
 
 }

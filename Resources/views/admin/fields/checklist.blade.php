@@ -3,11 +3,11 @@
     <label>{!! $field['label'] !!}</label>
     <?php $entity_model = $crud->getModel(); ?>
 
-    <div class="row checkbox-inline">
+    <div class="row checkbox">
         @foreach ($field['model']::all() as $connected_entity_entry)
                 <div class="checkbox checkbox-inline checkbox-primary col-xs-12">
                   <label>
-                    <input type="checkbox" class="styled"
+                    <input type="checkbox" class="flat-blue jsInherit"
                       name="{{ $field['name'] }}[]"
                       value="{{ $connected_entity_entry->id }}"
 
@@ -25,7 +25,18 @@
     @endif
 </div>
 @push('crud_fields_styles')
-
+{{--
 <link href="{{ asset('modules/iblog/vendor/checkbox-inline/build.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('modules/iblog/vendor/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('modules/iblog/vendor/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}" rel="stylesheet" type="text/css" />--}}
+@endpush
+
+@push('crud_fields_scripts')
+<script>
+    jQuery(document).ready(function($) {
+        $('input[type="checkbox"].flat-blue, input[type="radio"]').iCheck({
+            checkboxClass: 'icheckbox_flat-blue',
+            radioClass: 'iradio_flat-blue'
+        });
+    });
+</script>
 @endpush

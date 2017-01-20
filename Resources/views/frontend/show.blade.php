@@ -55,6 +55,9 @@
                         <div class="content">
                             {!! $post->description !!}
                         </div>
+
+                        @include('iblog::frontend.gallery.viewline')
+
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
@@ -77,6 +80,11 @@
                                             </li>
                                             <li class="linkedin_share">
                                                 <a onclick="window.open('http://www.linkedin.com/shareArticle?mini=true&amp;url={{ URL::route($currentLocale . '.iblog.'.$category->slug.'.slug', [$post->slug]) }}','Linkedin','width=863,height=500,left='+(screen.availWidth/2-431)+',top='+(screen.availHeight/2-250)+'')"><div class="share-item-icon"><i class="fa fa-linkedin " title="Linkedin"></i></div></a>
+                                            </li>
+                                            <li class="whatsapp_share">
+                                                <!-- WhatsApp Share Button-->
+                                                <a href="whatsapp://send?text={{ URL::route($currentLocale . '.iblog.'.$category->slug.'.slug', [$post->slug]) }}" data-action="share/whatsapp/share"><div class="share-item-icon"><span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-whatsapp fa-stack-1x"></i></span></div></a>
+                                                <!-- /WhatsApp Share Button  -->
                                             </li>
                                         </ul>
                                     </div>

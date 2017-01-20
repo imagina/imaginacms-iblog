@@ -14,11 +14,7 @@
   @endif
 
   {{-- Show the inputs --}}
-
-
   @foreach ($fields as $field)
-
-
   @if(!empty($field['viewposition']) && $field['viewposition']=='right')
 
   @push('right_fields')

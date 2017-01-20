@@ -43,10 +43,7 @@ class Post extends Model
             $this->attributes['summary'] = substr($this->description,0,150);
         }
 
-
-
     }
-
 
 
     protected $casts = [
@@ -57,6 +54,8 @@ class Post extends Model
     {
         return $this->belongsToMany(Category::class, 'iblog__post__category');
     }
+
+    
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'iblog__post__tag');
@@ -75,8 +74,25 @@ class Post extends Model
         //var_dump($value); die();
         if(!empty($options->mainimage)) $options->mainimage = $this->saveImage($options->mainimage,"assets/iblog/post/".$this->id.".jpg");
 
+        //$this->saveImage($options->galery,"assets/prueba/".$this->id.".jpg");
+        //$this->saveImage($options->galery,"assets/iblog/post/category/".$this->id.".jpg");
+        //\Storage::disk('publicmedia')->put('assets/iblog/post/category/' . $this->id, $request->file('galery'));
+
         $this->attributes['options'] = json_encode(json_encode($options));
 
+
+    }
+
+    public function setGalleryAttribute($value){
+        //$this->saveImage($value,"assets/iblog/post/category/".$this->id.".jpg");
+        //\Storage::disk('publicmedia')->put('assets/prueba/',$value);
+        /*$attribute_name = "galery";
+        $disk = "publicmedia";
+        $destination_path = "assets/prueba2";
+
+        $this->uploadFileToDisk($value, $attribute_name, $disk, $destination_path);*/
+
+        $this->saveImageGallery($value,"assets/iblog/post/gallery/". $this->data['id'] ."/". rand() .".jpg");
 
     }
 
@@ -134,6 +150,19 @@ class Post extends Model
             return null;
         }
 
+
+    }
+
+    public function saveImageGallery($value,$destination_path){
+
+        $disk = "publicmedia";
+
+        // 0. Make the image
+        $image = \Image::make($value);
+        // 2. Store the image on disk.
+        \Storage::disk($disk)->put($destination_path, $image->stream());
+
+        return $destination_path;
 
     }
 
