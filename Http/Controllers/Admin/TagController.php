@@ -34,8 +34,12 @@ class tagController extends BcrudController
         */
         $this->crud->setModel('Modules\Iblog\Entities\Tag');
         $this->crud->setRoute('backend/iblog/tag');
-        $this->crud->setEntityNameStrings('tag', 'tags');
+        $this->crud->setEntityNameStrings(trans('iblog::tag.single'), trans('iblog::tag.plural'));
         $this->access = [];
+
+        $this->crud->enableAjaxTable();
+        $this->crud->orderBy('created_at', 'DESC');
+        $this->crud->limit(100);
 
         /*
         |--------------------------------------------------------------------------
@@ -51,7 +55,7 @@ class tagController extends BcrudController
 
         $this->crud->addColumn([
             'name' => 'title',
-            'label' => 'Title',
+            'label' => trans('iblog::common.title'),
         ]);
 
 
@@ -59,7 +63,7 @@ class tagController extends BcrudController
         // ------ CRUD FIELDS
         $this->crud->addField([
             'name' => 'title',
-            'label' => 'Title',
+            'label' => trans('iblog::common.title'),
         ]);
 
         $this->crud->addField([
@@ -71,7 +75,7 @@ class tagController extends BcrudController
 
         $this->crud->addField([
             'name' => 'description',
-            'label' => 'Description',
+            'label' => trans('iblog::common.description'),
             'type' => 'textarea',
         ]);
 

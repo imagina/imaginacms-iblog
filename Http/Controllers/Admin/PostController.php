@@ -46,9 +46,6 @@ class PostController extends BcrudController
         $this->crud->limit(100);
 
 
-
-
-
         /*
         |--------------------------------------------------------------------------
         | COLUMNS AND FIELDS
@@ -81,7 +78,7 @@ class PostController extends BcrudController
         // ------ CRUD FIELDS
         $this->crud->addField([
             'name' => 'title',
-            'label' => 'Title',
+            'label' => trans('iblog::common.title'),
             'viewposition' => 'left',
 
         ]);
@@ -94,7 +91,7 @@ class PostController extends BcrudController
 
         $this->crud->addField([
             'name' => 'summary',
-            'label' => 'Summary',
+            'label' => trans('iblog::common.summary'),
             'type' => 'textarea',
             'attributes' => ['rows'=>'6'],
             'viewposition' => 'left',
@@ -102,13 +99,13 @@ class PostController extends BcrudController
 
         $this->crud->addField([
             'name' => 'description',
-            'label' => 'Content',
+            'label' => trans('iblog::common.content'),
             'type' => 'wysiwyg',
             'viewposition' => 'left',
         ]);
 
         $this->crud->addField([  // Select
-            'label' => "Default Category",
+            'label' => trans('iblog::common.default_category'),
             'type' => 'select',
             'name' => 'category_id', // the db column for the foreign key
             'entity' => 'categories', // the method that defines the relationship in your Model
@@ -120,7 +117,7 @@ class PostController extends BcrudController
 
 
         $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
-            'label' => 'Categories',
+            'label' => trans('iblog::category.plural'),
             'type' => 'categories_checklist',
             'name' => 'categories', // the method that defines the relationship in your Model
             'entity' => 'categories', // the method that defines the relationship in your Model
@@ -131,7 +128,7 @@ class PostController extends BcrudController
         ]);
 
         $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
-            'label' => 'Tags',
+            'label' => trans('iblog::tag.plural'),
             'type' => 'select2_multiple',
             'name' => 'tags', // the method that defines the relationship in your Model
             'entity' => 'tags', // the method that defines the relationship in your Model
@@ -145,7 +142,7 @@ class PostController extends BcrudController
 
 
         $this->crud->addField([  // Select
-            'label' => "Author",
+            'label' => trans('iblog::common.author'),
             'type' => 'select',
             'name' => 'user_id', // the db column for the foreign key
             'entity' => 'user', // the method that defines the relationship in your Model
@@ -158,7 +155,7 @@ class PostController extends BcrudController
 
         $this->crud->addField([
             'name'        => 'status',
-            'label'       => 'Status',
+            'label'       => trans('iblog::common.status_text'),
             'type'        => 'radio',
             'options'     => [
                 0 => trans('iblog::common.status.draft'),
@@ -169,7 +166,7 @@ class PostController extends BcrudController
             'viewposition' => 'right',
         ]);
         $this->crud->addField([ // image
-            'label' => "Imagen",
+            'label' => trans('iblog::common.image'),
             'name' => "mainimage",
             'type' => 'image',
             'upload' => true,

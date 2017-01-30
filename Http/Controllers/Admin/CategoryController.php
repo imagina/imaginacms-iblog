@@ -37,7 +37,7 @@ class CategoryController extends BcrudController
         $this->crud->setRoute('backend/iblog/category');
         $this->crud->setEntityNameStrings(trans('iblog::category.single'), trans('iblog::category.plural'));
         $this->access = [];
-
+        $this->crud->enableAjaxTable();
 
         $this->crud->allowAccess('reorder');
         $this->crud->enableReorder('title', 2);
@@ -60,9 +60,9 @@ class CategoryController extends BcrudController
         ]);
 
         $this->crud->addColumn([
+            'name' => 'parent_id',
             'label' => trans('iblog::common.parent'),
             'type' => 'select',
-            'name' => 'parent_id',
             'entity' => 'parent',
             'attribute' => 'title',
             'model' => 'Modules\Iblog\Entities\Category',
@@ -92,9 +92,9 @@ class CategoryController extends BcrudController
         ]);
 
         $this->crud->addField([
+            'name' => 'parent_id',
             'label' => trans('iblog::common.parent'),
             'type' => 'select',
-            'name' => 'parent_id',
             'entity' => 'parent',
             'attribute' => 'title',
             'model' => 'Modules\Iblog\Entities\Category',

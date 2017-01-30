@@ -1,6 +1,10 @@
 <?php
 
 return [
+
+    'single' => 'Etiqueta',
+    'plural' => 'Etiquetas',
+
     'list' => 'Etiquetas',
     'create' => 'Crear etiquetas',
     'edit' => 'Editar etiquetas',
