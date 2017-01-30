@@ -64,7 +64,7 @@ class PublicController extends BasePublicController
 
         $post = $this->post->findBySlug($slug);
         $category = $post->categories()->first();
-        //$tag = $post->tags()->get();
+        $tags = $post->tags()->get();
 
         //Get Custom Template.
         $ctpl = "iblog.category.{$category->id}.show";
@@ -73,6 +73,6 @@ class PublicController extends BasePublicController
         if(view()->exists($ctpl)) $tpl = $ctpl;
 
 
-        return view($tpl, compact('post','category'));
+        return view($tpl, compact('post','category','tags'));
     }
 }

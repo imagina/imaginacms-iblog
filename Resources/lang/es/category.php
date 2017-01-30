@@ -1,9 +1,12 @@
 <?php
 
 return [
+    'single' => 'Categoría',
+    'plural' => 'Categorías',
+
     'list' => 'Categorias',
-    'create' => 'Crear Categorias',
-    'edit' => 'Editar Categorias',
+    'create' => 'Crear Categoria',
+    'edit' => 'Editar Categoria',
     'destroy' => 'Eliminar Categorias',
     'title' => [
         'categories' => 'Categorias',

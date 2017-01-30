@@ -23,7 +23,7 @@ class CreateIblogPostsTable extends Migration
             $table->text('options')->default('')->nullable();
             $table->integer('status')->default(0)->unsigned();
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on(config('auth.table', 'users'))->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on(config('auth.table', 'users'))->onDelete('restrict');
             // Your fields
             $table->timestamps();
         });

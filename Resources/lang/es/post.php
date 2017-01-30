@@ -1,17 +1,21 @@
 <?php
 
 return [
-    'list' => 'Posts',
-    'create' => 'Crear posts',
-    'edit' => 'Editar posts',
-    'destroy' => 'Eliminar posts',
+    'single' => 'Artículo',
+    'plural' => 'Artículos',
+
+    'list' => 'Artículos',
+    'create' => 'Crear Artículos',
+    'edit' => 'Editar Artículos',
+    'destroy' => 'Eliminar Artículos',
     'title' => [
-        'posts' => 'Posts',
-        'create post' => 'Crear post',
-        'edit post' => 'Editar post',
+        'post' => 'Artículo',
+        'posts' => 'Artículos',
+        'create post' => 'Crear Artículo',
+        'edit post' => 'Editar Artículo',
     ],
     'button' => [
-        'create post' => 'Crear post',
+        'create post' => 'Crear Artículo',
     ],
     'table' => [
         'title' => 'Titulo'
@@ -22,8 +26,8 @@ return [
     ],
     'validation' => [
     ],
-    'latest posts'=>'Ultimos post',
+    'latest posts'=>'Ultimos Artículos',
     'widget' => [
-        'postcount' => 'Nº Post',
+        'postcount' => 'Nº Artículo',
     ],
 ];

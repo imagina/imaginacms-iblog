@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'single' => 'Post',
+    'plural' => 'Posts',
+
     'list' => 'List posts',
     'create' => 'Create posts',
     'edit' => 'Edit posts',
@@ -24,6 +27,6 @@ return [
     ],
     'latest posts'=>'latest posts',
     'widget' => [
-    'postcount' => 'Count Post',
-],
+        'postcount' => 'Count Post',
+    ],
 ];

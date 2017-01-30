@@ -35,7 +35,7 @@ class CategoryController extends BcrudController
         */
         $this->crud->setModel('Modules\Iblog\Entities\Category');
         $this->crud->setRoute('backend/iblog/category');
-        $this->crud->setEntityNameStrings('category', 'categories');
+        $this->crud->setEntityNameStrings(trans('iblog::category.single'), trans('iblog::category.plural'));
         $this->access = [];
 
 
@@ -56,28 +56,29 @@ class CategoryController extends BcrudController
 
         $this->crud->addColumn([
             'name' => 'title',
-            'label' => 'Title',
+            'label' => trans('iblog::common.title'),
         ]);
 
         $this->crud->addColumn([
-            'label' => 'Parent',
+            'label' => trans('iblog::common.parent'),
             'type' => 'select',
             'name' => 'parent_id',
             'entity' => 'parent',
             'attribute' => 'title',
             'model' => 'Modules\Iblog\Entities\Category',
+            'defaultvalue' => '0'
         ]);
 
 
         $this->crud->addColumn([
             'name' => 'created_at',
-            'label' => 'Created at',
+            'label' => trans('iblog::common.created_at'),
         ]);
 
         // ------ CRUD FIELDS
         $this->crud->addField([
             'name' => 'title',
-            'label' => 'Title',
+            'label' => trans('iblog::common.title'),
             'viewposition' => 'left'
 
         ]);
@@ -91,19 +92,20 @@ class CategoryController extends BcrudController
         ]);
 
         $this->crud->addField([
-            'label' => 'Parent',
+            'label' => trans('iblog::common.parent'),
             'type' => 'select',
             'name' => 'parent_id',
             'entity' => 'parent',
             'attribute' => 'title',
             'model' => 'Modules\Iblog\Entities\Category',
-            'viewposition' => 'right'
+            'viewposition' => 'right',
+            'emptyvalue'=>0
         ]);
 
 
         $this->crud->addField([
             'name' => 'description',
-            'label' => 'Description',
+            'label' => trans('iblog::common.description'),
             'type' => 'wysiwyg',
             'viewposition' => 'left'
 
@@ -112,7 +114,7 @@ class CategoryController extends BcrudController
 
         $this->crud->addField([
             'name' => 'admin_notes',
-            'label' => 'Admin Notes',
+            'label' => trans('iblog::common.admin_notes'),
             'type' => 'wysiwyg',
             'fake' => true,
             'store_in' => 'options',

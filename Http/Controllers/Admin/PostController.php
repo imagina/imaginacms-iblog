@@ -5,6 +5,7 @@ namespace Modules\Iblog\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Iblog\Entities\Post;
+use Modules\Iblog\Entities\Status;
 use Modules\Iblog\Entities\Tag;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Media\Repositories\FileRepository;
@@ -38,9 +39,14 @@ class PostController extends BcrudController
         */
         $this->crud->setModel('Modules\Iblog\Entities\Post');
         $this->crud->setRoute('backend/iblog/post');
-        $this->crud->setEntityNameStrings('post', 'posts');
+        $this->crud->setEntityNameStrings(trans('iblog::post.single'), trans('iblog::post.plural'));
         $this->access = [];
-        //$this->crud->enableAjaxTable();
+        $this->crud->enableAjaxTable();
+        $this->crud->orderBy('created_at', 'DESC');
+        $this->crud->limit(100);
+
+
+
 
 
         /*
@@ -56,21 +62,20 @@ class PostController extends BcrudController
 
         $this->crud->addColumn([
             'name' => 'title',
-            'label' => 'Title',
+            'label' => trans('iblog::common.title'),
 
         ]);
         $this->crud->addColumn([
-            'name' => 'categories', // The db column name
-            'label' => 'Category',// Table column heading
-            'type' => 'select_multiple',
+            'name' => 'category_id', // The db column name
+            'label' => trans('iblog::category.single'),// Table column heading
+            'type' => 'select',
             'attribute' => 'title',
-            'entity' => 'categories',
+            'entity' => 'category',
             'model' => "Modules\\Iblog\\Entities\\Category", // foreign key model
-            'pivot' => true,
         ]);
         $this->crud->addColumn([
             'name' => 'created_at',
-            'label' => 'Created',
+            'label' => trans('iblog::common.created_at'),
         ]);
 
         // ------ CRUD FIELDS
@@ -90,7 +95,8 @@ class PostController extends BcrudController
         $this->crud->addField([
             'name' => 'summary',
             'label' => 'Summary',
-            'type' => 'wysiwyg',
+            'type' => 'textarea',
+            'attributes' => ['rows'=>'6'],
             'viewposition' => 'left',
         ]);
 
@@ -101,10 +107,21 @@ class PostController extends BcrudController
             'viewposition' => 'left',
         ]);
 
+        $this->crud->addField([  // Select
+            'label' => "Default Category",
+            'type' => 'select',
+            'name' => 'category_id', // the db column for the foreign key
+            'entity' => 'categories', // the method that defines the relationship in your Model
+            'attribute' => 'title', // foreign key attribute that is shown to user
+            'model' => "Modules\\Iblog\\Entities\\Category", // foreign key model
+            'viewposition' => 'right',
+            'nullable'=>false
+        ]);
+
 
         $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
             'label' => 'Categories',
-            'type' => 'checklist',
+            'type' => 'categories_checklist',
             'name' => 'categories', // the method that defines the relationship in your Model
             'entity' => 'categories', // the method that defines the relationship in your Model
             'attribute' => 'title', // foreign key attribute that is shown to user
@@ -124,6 +141,9 @@ class PostController extends BcrudController
             'viewposition' => 'right',
         ]);
 
+
+
+
         $this->crud->addField([  // Select
             'label' => "Author",
             'type' => 'select',
@@ -134,15 +154,17 @@ class PostController extends BcrudController
             'viewposition' => 'right',
         ]);
 
+
+
         $this->crud->addField([
             'name'        => 'status',
             'label'       => 'Status',
             'type'        => 'radio',
             'options'     => [
-                0 => "Draft",
-                1 => "Pending",
-                2 => "Published",
-                3 => "Unpublished"
+                0 => trans('iblog::common.status.draft'),
+                1 => trans('iblog::common.status.pending'),
+                2 => trans('iblog::common.status.published'),
+                3 => trans('iblog::common.status.unpublished')
             ],
             'viewposition' => 'right',
         ]);
@@ -167,7 +189,7 @@ class PostController extends BcrudController
 
         parent::edit($id);
 
-       // $this->data['thumbnail']= $this->file->findFileByZoneForEntity('thumbnail', $this->data['entry']);
+        // $this->data['thumbnail']= $this->file->findFileByZoneForEntity('thumbnail', $this->data['entry']);
 
         return view('iblog::admin.edit', $this->data);
 
@@ -220,14 +242,18 @@ class PostController extends BcrudController
         //se modifica el valor de tags para agregar los nuevos registros
         $request['tags'] = $this->addTags($request['tags']);
 
-        return parent::storeCrud($request);
+        return $this->storeCrud($request);
+
     }
 
     public function update(IblogRequest $request) {
-        //return public_path();
-        //se modifica el valorde tags para agregar los nuevos registros
-        //return $request->file('galery')->store(public_path() . '/assets/iblog/post/category');
-        //return dd($request);
+
+        //Let's update the image for the post.
+        if(!empty($request['mainimage']) && !empty($request['id'])) {
+            $request['mainimage'] = $this->saveImage($request['mainimage'],"assets/iblog/post/".$request['id'].".jpg");
+        }
+
+
         $request['tags'] = $this->addTags($request['tags']);
 
         return parent::updateCrud($request);
@@ -276,7 +302,7 @@ class PostController extends BcrudController
                 if(count(Tag::find($tag)) <= 0){
                     array_push($newtags,$tag);
                 }else{
-                //si el tag existe se agrega en un array de viejos tags
+                    //si el tag existe se agrega en un array de viejos tags
                     array_push($lasttagsid,$tag);
                 }
             }
@@ -291,6 +317,111 @@ class PostController extends BcrudController
         }
         //se modifica el valor tags enviado desde el form uniendolos visjos tags y los tags nuevos
         return array_merge($lasttagsid,$newtagsid);
+    }
+
+
+
+
+    public function saveImage($value,$destination_path)
+    {
+
+        $disk = "publicmedia";
+
+        //Defined return.
+        if(ends_with($value,'.jpg')) {
+            return $value;
+        }
+
+        // if a base64 was sent, store it in the db
+        if (starts_with($value, 'data:image'))
+        {
+            // 0. Make the image
+            $image = \Image::make($value);
+            // resize and prevent possible upsizing
+
+            $image->resize(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+
+            // 2. Store the image on disk.
+            \Storage::disk($disk)->put($destination_path, $image->stream('jpg','80'));
+
+
+            // Save Thumbs
+            \Storage::disk($disk)->put(
+                str_replace('.jpg','_mediumThumb.jpg',$destination_path),
+                $image->fit(config('asgard.iblog.config.mediumthumbsize.width'),config('asgard.iblog.config.mediumthumbsize.height'))->stream('jpg','80')
+            );
+
+            \Storage::disk($disk)->put(
+                str_replace('.jpg','_smallThumb.jpg',$destination_path),
+                $image->fit(config('asgard.iblog.config.smallthumbsize.width'),config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg','80')
+            );
+
+            // 3. Return the path
+            return $destination_path;
+        }
+
+        // if the image was erased
+        if ($value==null) {
+            // delete the image from disk
+            \Storage::disk($disk)->delete($destination_path);
+
+            // set null in the database column
+            return null;
+        }
+
+
+    }
+
+
+    /*
+     * We had to replace the parent::storeCrud function to save the image at the moment of creation with the id.
+     */
+
+    public function storeCrud(\Modules\Bcrud\Http\Requests\CrudRequest $request = null)
+    {
+        $this->crud->hasAccessOrFail('create');
+
+        // fallback to global request instance
+        if (is_null($request)) {
+            $request = \Request::instance();
+        }
+
+        // replace empty values with NULL, so that it will work with MySQL strict mode on
+        foreach ($request->input() as $key => $value) {
+            if (empty($value) && $value !== '0') {
+                $request->request->set($key, null);
+            }
+        }
+
+        $requestimage = $request["mainimage"];
+
+        //Put a default image while we save.
+        $request["mainimage"] = "assets/iblog/post/default.jpg";
+
+        // insert item in the db
+        $item = $this->crud->create($request->except(['redirect_after_save', '', '_token']));
+
+        //Let's save the image for the post.
+        if(!empty($requestimage && !empty($item->id))) {
+            $mainimage = $this->saveImage($requestimage,"assets/iblog/post/".$item->id.".jpg");
+
+            $item->update($this->crud->compactFakeFields(['mainimage'=>$mainimage], 'update'));
+            //TODO: i don't like the re-save. Find another way to do it.
+
+        }
+
+
+        // redirect the user where he chose to be redirected
+        switch ($request->input('redirect_after_save')) {
+            case 'current_item_edit':
+                return \Redirect::to($this->crud->route.'/'.$item->getKey().'/edit')->withSuccess(trans('bcrud::crud.update_success'));
+
+            default:
+                return \Redirect::to($request->input('redirect_after_save'))->withSuccess(trans('bcrud::crud.update_success'));
+        }
     }
 
 }

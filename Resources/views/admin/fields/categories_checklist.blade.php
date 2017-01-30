@@ -4,8 +4,12 @@
     <?php $entity_model = $crud->getModel(); ?>
 
     <div class="row checkbox">
-        @foreach ($field['model']::all() as $connected_entity_entry)
-                <div class="checkbox col-xs-12">
+
+        <ul class="checkbox col-xs-12">
+
+        @foreach ($field['model']::where('parent_id',0)->get() as $connected_entity_entry)
+                  <li>
+
                   <label>
                     <input type="checkbox" class="flat-blue jsInherit"
                       name="{{ $field['name'] }}[]"
@@ -15,8 +19,15 @@
                              checked = "checked"
                       @endif > {!! $connected_entity_entry->{$field['attribute']} !!}
                   </label>
-            </div>
+
+
+                    @if(count($connected_entity_entry->children))
+                        @include('iblog::admin.fields.categories_checklist_child',['children' => $connected_entity_entry->children])
+                    @endif
+                   </li>
+
         @endforeach
+        </ul>
     </div>
 
     {{-- HINT --}}

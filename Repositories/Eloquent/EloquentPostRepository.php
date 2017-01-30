@@ -118,7 +118,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     {
 
         return $this->model->whereHas('categories', function ($query) use ($id) {
-            $query->where('category_id', $id);
+            $query->where('category_id', $id)
+                ->whereStatus(Status::PUBLISHED);
         })->orderBy('created_at', 'DESC')->paginate(12);
 
     }
