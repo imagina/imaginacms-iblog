@@ -88,10 +88,10 @@ class tagController extends BcrudController
         parent::setup();
 
         $permissions = ['index', 'create', 'edit', 'destroy'];
-        $allowpermissions = [];
+        $allowpermissions = ['show'];
         foreach($permissions as $permission) {
 
-            if($this->auth->hasAccess("iblog.posts.$permission")) {
+            if($this->auth->hasAccess("iblog.tags.$permission")) {
                 if($permission=='index') $permission = 'list';
                 if($permission=='edit') $permission = 'update';
                 if($permission=='destroy') $permission = 'delete';

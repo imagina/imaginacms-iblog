@@ -214,16 +214,10 @@ class PostController extends BcrudController
         parent::setup();
 
         $permissions = ['index', 'create', 'edit', 'destroy'];
-        $allowpermissions = [];
+        $allowpermissions = ['show'];
         foreach($permissions as $permission) {
 
-            if($this->auth->hasAccess("iblog.categories.$permission")) {
-                if($permission=='index') $permission = 'list';
-                if($permission=='edit') $permission = 'update';
-                if($permission=='destroy') $permission = 'delete';
-                $allowpermissions[] = $permission;
-            }
-            if($this->auth->hasAccess("iblog.tags.$permission")) {
+            if($this->auth->hasAccess("iblog.posts.$permission")) {
                 if($permission=='index') $permission = 'list';
                 if($permission=='edit') $permission = 'update';
                 if($permission=='destroy') $permission = 'delete';

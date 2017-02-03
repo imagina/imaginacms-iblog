@@ -155,7 +155,7 @@ class CategoryController extends BcrudController
         parent::setup();
 
         $permissions = ['index', 'create', 'edit', 'destroy'];
-        $allowpermissions = [];
+        $allowpermissions = ['show'];
         foreach($permissions as $permission) {
 
             if($this->auth->hasAccess("iblog.categories.$permission")) {
