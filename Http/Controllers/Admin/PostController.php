@@ -367,12 +367,9 @@ class PostController extends BcrudController
     }
 
 
-    /*
-     * We had to replace the parent::storeCrud function to save the image at the moment of creation with the id.
-     */
-
     public function storeCrud(\Modules\Bcrud\Http\Requests\CrudRequest $request = null)
     {
+
         $this->crud->hasAccessOrFail('create');
 
         // fallback to global request instance
@@ -387,32 +384,41 @@ class PostController extends BcrudController
             }
         }
 
+        //Imagina- Defaults?
         $requestimage = $request["mainimage"];
 
         //Put a default image while we save.
         $request["mainimage"] = "assets/iblog/post/default.jpg";
 
+
         // insert item in the db
-        $item = $this->crud->create($request->except(['redirect_after_save', '', '_token']));
+        $item = $this->crud->create($request->except(['redirect_after_save', '_token']));
+        $this->data['entry'] = $this->crud->entry = $item;
+
+
 
         //Let's save the image for the post.
         if(!empty($requestimage && !empty($item->id))) {
             $mainimage = $this->saveImage($requestimage,"assets/iblog/post/".$item->id.".jpg");
 
-            $item->update($this->crud->compactFakeFields(['mainimage'=>$mainimage], 'update'));
+            $item->update($this->crud->compactFakeFields(['mainimage'=>$mainimage]));
             //TODO: i don't like the re-save. Find another way to do it.
-
         }
 
+        // show a success message
+        //\Alert::success(trans('bcrud::crud.insert_success'))->flash();
 
         // redirect the user where he chose to be redirected
         switch ($request->input('redirect_after_save')) {
             case 'current_item_edit':
-                return \Redirect::to($this->crud->route.'/'.$item->getKey().'/edit')->withSuccess(trans('bcrud::crud.update_success'));
+                return \Redirect::to($this->crud->route.'/'.$item->getKey().'/edit');
 
             default:
-                return \Redirect::to($request->input('redirect_after_save'))->withSuccess(trans('bcrud::crud.update_success'));
+                return \Redirect::to($request->input('redirect_after_save'));
         }
+
+
+
     }
 
 }
