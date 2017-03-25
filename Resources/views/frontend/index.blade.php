@@ -3,8 +3,7 @@
 @section('meta')
     <meta name="description" content="@if(!empty($category->description)){!!$category->description!!}@endif">
 
-    <!-- El canónico siempre debe ser la página actual -->
-    <link rel="canonical" href="{{url($category->slug)}}" />
+    {{-- Canonical moved to the Theme --}}
 
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$category->title}}">
@@ -13,8 +12,8 @@
 
     <!-- Open Graph para Facebook-->
     <meta property="og:title" content="{{$category->title}}" />
-    <meta property="og:type" content="categoria" />
-    <meta property="og:url" content="{{url($category->slug)}}" />
+    <meta property="og:type" content="category" />
+    <meta property="og:url" content="{{ canonical_url() }}" />
     <meta property="og:image" content="@if(!empty($category->options->mainimage)){{URL($category->options->mainimage) }} @endif" />
     <meta property="og:description" content="@if(!empty($category->description)){!!$category->description  !!}@endif" />
     <meta property="og:site_name" content="" />

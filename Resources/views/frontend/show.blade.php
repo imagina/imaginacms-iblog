@@ -1,10 +1,9 @@
 @extends('layouts.master')
 
 @section('meta')
-    <meta name="description" content="{!! $post->summay !!}">
+    <meta name="description" content="{!! $post->summary !!}">
 
-    <!-- El canónico siempre debe ser la página actual -->
-    <link rel="canonical" href="{{url($post->slug)}}" />
+    {{-- Canonical moved to the Theme --}}
 
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$post->name}}">
@@ -13,7 +12,7 @@
 
     <!-- Open Graph para Facebook-->
     <meta property="og:title" content="{{$post->name}}" />
-    <meta property="og:type" content="articulo" />
+    <meta property="og:type" content="article" />
     <meta property="og:url" content="{{url($post->slug)}}" />
     <meta property="og:image" content="{{URL($post->options->mainimage)}}" />
     <meta property="og:description" content="{!! $post->summary !!}" />
