@@ -5,7 +5,7 @@ use Modules\Iblog\Entities\Category as Category;
 
 /** @var Router $router */
 if (! App::runningInConsole()) {
-    foreach (Category::query()->where('parent_id', 0)->get() as $category) {
+    foreach (Category::all()  as $category) {
 
 
         /** @var Router $router */
