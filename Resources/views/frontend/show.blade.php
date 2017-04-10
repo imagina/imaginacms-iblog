@@ -45,7 +45,7 @@
 
                         <span class="date">{{format_date($post->create_at)}}</span>
                         <div class="bgimg">
-                            @if($post->options)
+                            @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
                                 <img class="image img-responsive" src="{{url($post->options->mainimage)}}"/>
                             @else
                                 <img class="image img-responsive" src="{{url('module/iblog/img/post/default.jpg')}}"/>
