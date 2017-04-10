@@ -3,18 +3,16 @@
 @section('meta')
     <meta name="description" content="@if(!empty($category->description)){!!$category->description!!}@endif">
 
-    {{-- Canonical moved to the Theme --}}
-
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$category->title}}">
     <meta itemprop="description" content="@if(! empty($category->description)){!!$category->description  !!} @endif">
-    <meta itemprop="image" content=" @if(! empty($category->options->mainimage)){{URL($category->options->mainimage) }} @endif">
+    <meta itemprop="image" content=" @if(! empty($category->options->mainimage)){{url($category->options->mainimage) }} @endif">
 
     <!-- Open Graph para Facebook-->
     <meta property="og:title" content="{{$category->title}}" />
-    <meta property="og:type" content="category" />
-    <meta property="og:url" content="{{ canonical_url() }}" />
-    <meta property="og:image" content="@if(!empty($category->options->mainimage)){{URL($category->options->mainimage) }} @endif" />
+    <meta property="og:type" content="categoria" />
+    <meta property="og:url" content="{{url($category->slug)}}" />
+    <meta property="og:image" content="@if(!empty($category->options->mainimage)){{url($category->options->mainimage) }} @endif" />
     <meta property="og:description" content="@if(!empty($category->description)){!!$category->description  !!}@endif" />
     <meta property="og:site_name" content="" />
     <meta property="og:locale" content="{{locale().'_CO'}}">
@@ -25,7 +23,7 @@
     <meta name="twitter:title" content="{{$category->title}}">
     <meta name="twitter:description" content="{@if(!empty($category->description)){!!$category->description  !!}@endif">
     <meta name="twitter:creator" content="">
-    <meta name="twitter:image:src" content="@if(!empty($category->options->mainimage)){{URL($category->options->mainimage) }} @endif">
+    <meta name="twitter:image:src" content="@if(!empty($category->options->mainimage)){{url($category->options->mainimage) }} @endif">
 
 @stop
 
@@ -64,22 +62,24 @@
                             <!-- Blog Post -->
                     <div class="col-xs-6 col-sm-3 contend post post{{$post->id}}">
                         <div class="bg-imagen">
-
+                            <a href="{{ $post->url }}">
                             @if($post->options)
-
-                                <img class="image img-responsive" src="{{URL(str_replace('.jpg','_mediumThumb.jpg',$post->options->mainimage))}}"/>
+                                <img class="image img-responsive" src="{{url(str_replace('.jpg','_mediumThumb.jpg',$post->options->mainimage))}}"/>
+                            @else
+                                <img class="image img-responsive" src="{{url('module/iblog/img/post/default.jpg')}}"/>
                             @endif
+                            </a>
                         </div>
                         <div class="content">
-                            <div class="date"><span class="glyphicon glyphicon-time"></span>{{ $post->created_at->format('d / w / Y') }}</div>
+                            <div class="date"><span class="glyphicon glyphicon-time"></span>{{format_date($post->create_at)}}</div>
                             <h4>
-                                <a href="{{ URL::route($currentLocale . '.iblog.'.$category->slug.'.slug', [$post->slug]) }}">{{ $post->title }}</a>
+                                <a href="{{ $post->url }}">{{ $post->title }}</a>
                             </h4>
 
                             <p>{!! $post->summary !!} ...</p>
 
 
-                            <a class="btn btn-primary post-link" href="{{ URL::route($currentLocale . '.iblog.'.$category->slug.'.slug', [$post->slug]) }}">Ver Mas<span class="glyphicon glyphicon-chevron-right"></span></a>
+                            <a class="btn btn-primary post-link" href="{{ $post->url }}">Ver Mas<span class="glyphicon glyphicon-chevron-right"></span></a>
                         </div>
                     </div>
 

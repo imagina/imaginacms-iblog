@@ -11,6 +11,10 @@ return [
     'form' => [
     ],
     'messages' => [
+        'title is required'=>'El título es requerido',
+        'title min 2'=>'El título debe contener mínimo dos caracteres',
+        'description is required'=>'La descripción es requerida',
+        'description min 2'=>'La descripción debe contener mínimo dos caracteres',
     ],
     'validation' => [
     ],

@@ -28,9 +28,11 @@ class Post extends Model
 
         if(!empty($value)){
             $this->attributes['slug'] = str_slug($value,'-');
+        }else{
+            $this->attributes['slug'] = str_slug($this->title,'-');
         }
 
-        $this->attributes['slug'] = str_slug($this->title,'-');
+
 
     }
 
@@ -40,7 +42,7 @@ class Post extends Model
         if(!empty($value)){
             $this->attributes['summary'] = $value;
         } else {
-            $this->attributes['summary'] = substr($this->description,0,150);
+            $this->attributes['summary'] = substr(strip_tags($this->description),0,150);
         }
 
     }
@@ -101,8 +103,6 @@ class Post extends Model
         return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$this->category->slug.'.slug', [$this->slug]);
 
     }
-
-
 
 
 

@@ -1,11 +1,11 @@
-@if (count(postgalery($post->id)) > 0)
+@if (count(postgallery($post->id)) > 0)
     <div class="row">
         <div class="general-block10 col-sm-12 col-xs-12 col-md-10 col-md-offset-1">
             <div class="titulo">
                 <span> Galería </span>
             </div>
             <div class="row">
-                @foreach(postgalery($post->id) as $image)
+                @foreach(postgallery($post->id) as $image)
                     <div class="col-md-3">
                         <a class="fancybox" href="{{ asset($image) }}" data-fancybox-group="gallery">
                             <img src="{{ asset($image) }}" class="img-thumbnail" alt="" /></a>

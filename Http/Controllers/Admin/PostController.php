@@ -15,6 +15,7 @@ use Modules\User\Contracts\Authentication;
 use Illuminate\Contracts\Foundation\Application;
 
 
+
 class PostController extends BcrudController
 {
     /**
@@ -181,7 +182,12 @@ class PostController extends BcrudController
 
     }
 
+    public function index()
+    {
+        parent::index();
 
+        return view('iblog::admin.list', $this->data);
+    }
     public function edit($id) {
 
         parent::edit($id);
@@ -206,8 +212,6 @@ class PostController extends BcrudController
         return view('iblog::admin.show', $this->data);
 
     }
-
-
 
     public function setup()
     {
@@ -250,7 +254,7 @@ class PostController extends BcrudController
         return parent::updateCrud($request);
     }
 
-    public function uploadGalleryimage(IblogRequest $request){
+    public function uploadGalleryimage(Request $request){
 
         $idpost                 = $request->input('idedit');
         $extension              = $request->file('file')->extension();
@@ -268,7 +272,7 @@ class PostController extends BcrudController
         return array('direccion'=> $destination_path);
     }
 
-    public function deleteGalleryimage(IblogRequest $request) {
+    public function deleteGalleryimage(Request $request) {
         $disk       = "publicmedia";
         $dirdata    = $request->input('dirdata');
         \Storage::disk($disk)->delete($dirdata);
@@ -320,7 +324,13 @@ class PostController extends BcrudController
 
         //Defined return.
         if(ends_with($value,'.jpg')) {
-            return $value;
+            $url=strpos($value,url(''));
+            if($url!==false){
+               return str_replace(url(''),"",$value);
+            }else{
+                return $value;
+            }
+
         }
 
         // if a base64 was sent, store it in the db
@@ -386,9 +396,8 @@ class PostController extends BcrudController
 
         //Imagina- Defaults?
         $requestimage = $request["mainimage"];
-
         //Put a default image while we save.
-        $request["mainimage"] = "assets/iblog/post/default.jpg";
+        $request["mainimage"] = "module/iblog/img/post/default.jpg";
 
 
         // insert item in the db

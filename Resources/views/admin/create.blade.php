@@ -6,7 +6,7 @@
 	    {{ trans('bcrud::crud.add') }} <span class="text-lowercase">{{ $crud->entity_name }}</span>
 	  </h1>
 	  <ol class="breadcrumb">
-		  <li><a href="{{ url('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
+		  <li><a href="{{ URL::route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
 	    <li><a href="{{ url($crud->route) }}" class="text-capitalize">{{ $crud->entity_name_plural }}</a></li>
 	    <li class="active">{{ trans('bcrud::crud.add') }}</li>
 	  </ol>
@@ -65,6 +65,5 @@
 		  {!! Form::close() !!}
 	</div>
 </div>
-
 
 @endsection

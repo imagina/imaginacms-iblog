@@ -5,7 +5,6 @@
     <link href="{{ asset('vendor/adminlte/plugins/datatables/dataTables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
 
 @endsection
-
 @section('content-header')
 	<section class="content-header">
 	  <h1>
@@ -13,7 +12,7 @@
 	    <small>{{ trans('bcrud::crud.all') }} <span class="text-lowercase">{{ $crud->entity_name_plural }}</span> {{ trans('bcrud::crud.in_the_database') }}.</small>
 	  </h1>
 	  <ol class="breadcrumb">
-        <li><a href="{{ url('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
+        <li><a href="{{URL::route('dashboard.index') }}"><i class="fa fa-dashboard"></i> {{ trans('core::core.breadcrumb.home') }}</a></li>
 	    <li><a href="{{ url($crud->route) }}" class="text-capitalize">{{ $crud->entity_name_plural }}</a></li>
 	    <li class="active">{{ trans('bcrud::crud.list') }}</li>
 	  </ol>
