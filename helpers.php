@@ -58,9 +58,7 @@ if (! function_exists('get_posts')) {
             ->take($options['take'])
             ->orderBy('created_at', $options['order']);
 
-
         return $posts->get();
-
 
     }
 }

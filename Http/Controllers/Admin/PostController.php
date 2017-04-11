@@ -264,7 +264,7 @@ class PostController extends BcrudController
             return 0;
         }
 
-        $nameimag           = encrypt(rand()) . '.' . $extension;
+        $nameimag           = str_random(8) . '.' . $extension;
         $destination_path   = 'assets/iblog/post/gallery/' . $idpost . '/'. $nameimag;
 
         $request->file('file')->storeAs('assets/iblog/post/gallery/' . $idpost , '/'. $nameimag, 'publicmedia');
@@ -403,7 +403,6 @@ class PostController extends BcrudController
         // insert item in the db
         $item = $this->crud->create($request->except(['redirect_after_save', '_token']));
         $this->data['entry'] = $this->crud->entry = $item;
-
 
 
         //Let's save the image for the post.

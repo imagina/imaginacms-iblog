@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="content col-xs-12 col-sm-10 col-sm-offset-2">
+                        <div class="content col-xs-12 col-sm-10 ">
                             <h2>{{ $post->title }}</h2>
                             {!! $post->description !!}
                         </div>
