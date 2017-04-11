@@ -33,32 +33,28 @@
 
 @section('content')
 
+<div class="page blog blog-revista blog-category-{{$category->slug}} blog-category-{{$category->id}}">
+<div class="container">
+
+    <div class="row fondo1 sombra-interna">
+
+        <div class="col-xs-12">
+            <div class="titulo-2">
+                <h2>
+                    <i class="fa fa-caret-right" aria-hidden="true"></i>
+                    {{$category->title}}
+                </h2>
+            </div>
+        </div>
 
 
-    <div class="page blog">
-        <div class="container">
-            <div class="row">
+        <div class="col-xs-12 col-sm-8 category-body-1 column1">
+        <div class="row">
+                @if (!empty($posts))
 
-                <div class="row">
-                    <div class="col-xs-12">
-                        <ol class="breadcrumb">
-                            <li><a href="/">Inicio</a></li>
-                            <li>{{$category->title}}</li>
-                        </ol>
-                    </div>
-                </div>
+                <?php $cont=0; ?>
 
-                <!-- Blog Entries Column -->
-                <div class="col-xs-12 col-md-12 category-body-1">
-
-                    <h1 class="page-header">{{$category->title}}</h1>
-
-
-                    @if (!empty($posts))
-
-                    <?php $cont=0; ?>
-
-                    @foreach($posts as $post)
+                @foreach($posts as $post)
                             <!-- Blog Post -->
                     <div class="col-xs-6 col-sm-3 contend post post{{$post->id}}">
                         <div class="bg-imagen">
@@ -71,13 +67,10 @@
                             </a>
                         </div>
                         <div class="content">
-                            <div class="date"><span class="glyphicon glyphicon-time"></span>{{format_date($post->create_at)}}</div>
-                            <h4>
                                 <a href="{{ $post->url }}">{{ $post->title }}</a>
-                            </h4>
-
-                            <p>{!! $post->summary !!} ...</p>
-
+                                <h4> {{ $post->title }}</h4>
+                                <p>{!! $post->summary !!} ...</p>
+                            </a>
 
                             <a class="btn btn-primary post-link" href="{{ $post->url }}">Ver Mas<span class="glyphicon glyphicon-chevron-right"></span></a>
                         </div>
@@ -85,23 +78,50 @@
 
                     <?php $cont++; ?>
 
-                    @if($cont%4==0)
+                    @if($cont%2==0)
                         <div class="clearfix"></div>
                     @endif
 
-                    @if($cont%2==0)
-                        <div class="clearfix visible-xs-block"></div>
-                    @endif
+                @endforeach
 
-                    @endforeach
+                <div class="clearfix"></div>
 
-                    <div class="clearfix"></div>
-                    <div class="paginacion-blog row">
+                <div class="pagination paginacion-blog row">
+                    <div class="pull-right">
                         {{ $posts->links() }}
                     </div>
-
-                    @endif
                 </div>
+
+                @endif
+        </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-3 col-sm-offset-1 column2">
+
+            <div class="sidebar-revista">
+
+                <div class="cate">
+                    <h3>Categorias</h3>
+
+                    <div class="listado-cat">
+                        <ul>
+                           @php
+                            $categories=get_categories();
+                            @endphp
+
+                            @if(isset($categories))
+                                @foreach($categories as $index=>$category)
+                                    <li><a href="{{url($category->slug)}}">{{$category->title}}</a></li>
+                                @endforeach
+                            @endif
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
             </div>
 

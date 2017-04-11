@@ -32,31 +32,27 @@
 @stop
 
 @section('content')
-
-    <div class="page">
+    <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
         <div class="container" id="body-wrapper">
             <div class="row">
-                <div class="col-lg-12">
-                <span class="linkBack">
-                     <a href="{{url($category->slug)}}"><i class="glyphicon glyphicon-chevron-left"></i> Regresar</a>
-                </span>
+                <div class="col-xs-12 col-sm-9 column1">
                     <div class="row">
-                        <h1>{{ $post->title }}</h1>
-
-                        <span class="date">{{format_date($post->create_at)}}</span>
-                        <div class="bgimg">
-                            @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
-                                <img class="image img-responsive" src="{{url($post->options->mainimage)}}"/>
-                            @else
-                                <img class="image img-responsive" src="{{url('module/iblog/img/post/default.jpg')}}"/>
-                            @endif
+                        <div class="col-xs-12">
+                            <div class="bgimg">
+                                @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
+                                    <img class="image img-responsive" src="{{url($post->options->mainimage)}}"/>
+                                @else
+                                    <img class="image img-responsive"
+                                         src="{{url('module/iblog/img/post/default.jpg')}}"/>
+                                @endif
+                            </div>
                         </div>
-                        <div class="content">
+                    </div>
+                    <div class="row">
+                        <div class="content col-xs-12 col-sm-10 col-sm-offset-2">
+                            <h2>{{ $post->title }}</h2>
                             {!! $post->description !!}
                         </div>
-
-                        @include('iblog::frontend.gallery.viewline')
-
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
@@ -111,33 +107,72 @@
                             </div>
                         </div>
                     </div>
+                    <div class="facebook-comments">
 
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <ul class="post-nav">
-                                <?php if ($previous = $post->present()->previous): ?>
-                                <li class="post-prev">
-                                    <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$previous->slug]) }}"><i
-                                                class="fa fa-angle-left"></i> </a>
-                                </li>
-                                <?php endif; ?>
-                                @if ($next = $post->present()->next)
-                                    <li class="post-next">
-                                        <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$next->slug]) }}"><i
-                                                    class="fa fa-angle-right"></i> Siguiente </a>
-                                    </li>
-                                @else
-                                    <li class="post-next">
-                                        <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$previous->slug]) }}">anterior </a>
-                                    </li>
-                                @endif
-                            </ul>
+                        <div class="fb-comments"
+                             data-href="{{url($post->url)}}"
+                             data-numposts="5" data-width="100%">
                         </div>
+
                     </div>
+
+                </div>
+
+                <div class="col-xs-12 col-sm-3 column2">
+                    <div class="sidebar-revista">
+                        <div class="cate">
+                            <h3>Categorias</h3>
+
+                            <div class="listado-cat">
+                                <ul>
+                                    @php
+                                    $categories=get_categories();
+                                    @endphp
+
+                                    @if(isset($categories))
+                                        @foreach($categories as $index=>$category)
+                                            <li><a href="{{url($category->slug)}}">{{$category->title}}</a></li>
+                                        @endforeach
+                                    @endif
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="fb-root"></div>
+                <script>(function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s);
+                        js.id = id;
+                        js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
+                        fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));
+                </script>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <ul class="post-nav">
+                        <?php if ($previous = $post->present()->previous): ?>
+                        <li class="post-prev">
+                            <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$previous->slug]) }}"><i
+                                        class="fa fa-angle-left"></i> </a>
+                        </li>
+                        <?php endif; ?>
+                        @if ($next = $post->present()->next)
+                            <li class="post-next">
+                                <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$next->slug]) }}"><i
+                                            class="fa fa-angle-right"></i> Siguiente </a>
+                            </li>
+                        @else
+                            <li class="post-next">
+                                <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$previous->slug]) }}">anterior </a>
+                            </li>
+                        @endif
+                    </ul>
                 </div>
             </div>
         </div>
-
     </div>
-
 @stop

@@ -79,6 +79,41 @@ if (! function_exists('all_users_by_rol')) {
     }
 }
 
+if (!function_exists('get_categories')) {
+
+    function get_categories($options = array())
+    {
+        $default_options = array(
+            'include' => array(),//id de Categorias  para incluir en una consulta, se envia como arreglo ['include'=>[1,2,3]]
+            'exclude' => array(),//id de categorias  que desee excluir de una consulta metodo de llmado category=>'[1,2]'
+            'parent' => '0', //id de categorias  padre que desee mostrar en una consulta metodo de llmado category=>'[1,2]'
+            'take' => 5, //Numero de posts a obtener,
+            'skip' => 0, //Omitir Cuantos post a llamar
+            'order' => 'desc',//orden de llamado
+        );
+
+        $options = array_merge($default_options, $options);
+
+        $categories = Category::query();
+        if (!empty($options['include'])) {
+            $categories->whereIn('id', $options['include']);
+        }
+        if (!empty($options['exclude'])) {
+            $categories->whereNotIn('id', $options['exclude']);
+        }
+        if (!empty($options['parent'])) {
+            $categories->where('parent_id', $options['parent']);
+        }
+        $categories->skip($options['skip'])
+            ->take($options['take'])
+            ->orderBy('created_at', $options['order']);
+
+        return $categories->get();
+
+
+    }
+}
+
 if(! function_exists('format_date')){
 
     function format_date($date,$datetimezone='America/Bogota'){
