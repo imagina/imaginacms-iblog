@@ -21,6 +21,10 @@ return [
         'title' => 'Titulo'
     ],
     'form' => [
+        'gallery'=>'Galeria',
+        'drag'=>'Arrastre y suelte aqui',
+        'click'=>' Clic para subir'
+
     ],
     'messages' => [
     ],

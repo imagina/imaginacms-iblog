@@ -15,7 +15,6 @@ use Modules\User\Contracts\Authentication;
 use Illuminate\Contracts\Foundation\Application;
 
 
-
 class PostController extends BcrudController
 {
     /**
@@ -189,12 +188,9 @@ class PostController extends BcrudController
         return view('iblog::admin.list', $this->data);
     }
     public function edit($id) {
-
         parent::edit($id);
 
-        // $this->data['thumbnail']= $this->file->findFileByZoneForEntity('thumbnail', $this->data['entry']);
-
-        return view('iblog::admin.edit', $this->data);
+       return view('iblog::admin.edit_post', $this->data);
 
     }
 
@@ -229,33 +225,28 @@ class PostController extends BcrudController
             }
 
         }
-
         $this->crud->access = $allowpermissions;
     }
 
     public function store(IblogRequest $request) {
         //se modifica el valor de tags para agregar los nuevos registros
         $request['tags'] = $this->addTags($request['tags']);
-
         return $this->storeCrud($request);
 
     }
 
     public function update(IblogRequest $request) {
-
         //Let's update the image for the post.
         if(!empty($request['mainimage']) && !empty($request['id'])) {
             $request['mainimage'] = $this->saveImage($request['mainimage'],"assets/iblog/post/".$request['id'].".jpg");
+        }else{
+            $request['mainimage']='modules/iblog/img/post/default.jpg';
         }
-
-
         $request['tags'] = $this->addTags($request['tags']);
-
         return parent::updateCrud($request);
     }
 
     public function uploadGalleryimage(Request $request){
-
         $idpost                 = $request->input('idedit');
         $extension              = $request->file('file')->extension();
         $extensionpermissions   = array('JPG','JPEG','PNG','GIF');
@@ -266,9 +257,7 @@ class PostController extends BcrudController
 
         $nameimag           = str_random(8) . '.' . $extension;
         $destination_path   = 'assets/iblog/post/gallery/' . $idpost . '/'. $nameimag;
-
         $request->file('file')->storeAs('assets/iblog/post/gallery/' . $idpost , '/'. $nameimag, 'publicmedia');
-
         return array('direccion'=> $destination_path);
     }
 
@@ -319,19 +308,23 @@ class PostController extends BcrudController
 
     public function saveImage($value,$destination_path)
     {
-
         $disk = "publicmedia";
 
         //Defined return.
-        if(ends_with($value,'.jpg')) {
-            $url=strpos($value,url(''));
-            if($url!==false){
-               return str_replace(url(''),"",$value);
+        if(starts_with($value,'http')) {
+            $url= url('modules/bcrud/img/default.jpg');
+            if($value == $url){
+                return 'modules/iblog/img/post/default.jpg';
             }else{
-                return $value;
+                if(empty(str_replace(url(''),"",$value))){
+
+                    return 'modules/iblog/img/post/default.jpg';
+                }
+                str_replace(url(''),"",$value);
+                return str_replace(url(''),"",$value);
             }
 
-        }
+        };
 
         // if a base64 was sent, store it in the db
         if (starts_with($value, 'data:image'))
@@ -397,7 +390,6 @@ class PostController extends BcrudController
         //Imagina- Defaults?
         $requestimage = $request["mainimage"];
         //Put a default image while we save.
-        $request["mainimage"] = "module/iblog/img/post/default.jpg";
 
 
         // insert item in the db
@@ -424,8 +416,6 @@ class PostController extends BcrudController
             default:
                 return \Redirect::to($request->input('redirect_after_save'));
         }
-
-
 
     }
 

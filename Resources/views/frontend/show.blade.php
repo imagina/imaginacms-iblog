@@ -2,28 +2,25 @@
 
 @section('meta')
     <meta name="description" content="{!! $post->summary !!}">
-
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$post->name}}">
     <meta itemprop="description" content="{!! $post->summary !!}">
-    <meta itemprop="image" content=" {{url($post->options->mainimage or '') }}">
-
+    <meta itemprop="image" content=" {{url($post->options->mainimage) }}">
     <!-- Open Graph para Facebook-->
     <meta property="og:title" content="{{$post->name}}"/>
     <meta property="og:type" content="articulo"/>
     <meta property="og:url" content="{{url($post->slug)}}"/>
-    <meta property="og:image" content="{{url($post->options->mainimage or '')}}"/>
+    <meta property="og:image" content="{{url($post->options->mainimage)}}"/>
     <meta property="og:description" content="{!! $post->summary !!}"/>
-    <meta property="og:site_name" content="{{ Setting::get('core::site-name') }}"/>
+    <meta property="og:site_name" content="{{Setting::get('core::site-name') }}"/>
     <meta property="og:locale" content="{{locale().'_CO'}}">
-
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="{{ Setting::get('core::site-name') }}">
     <meta name="twitter:title" content="{{$post->name}}">
     <meta name="twitter:description" content="{!! $post->summary !!}">
     <meta name="twitter:creator" content="">
-    <meta name="twitter:image:src" content="{{url($post->options->mainimage or '')}}">
+    <meta name="twitter:image:src" content="{{url($post->options->mainimage)}}">
 
 @stop
 
@@ -40,10 +37,11 @@
                         <div class="col-xs-12">
                             <div class="bgimg">
                                 @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
-                                    <img class="image img-responsive" src="{{url($post->options->mainimage)}}"/>
+                                    <img class="image img-responsive" src="{{url($post->options->mainimage)}}"
+                                         alt="{{$post->title}}"/>
                                 @else
                                     <img class="image img-responsive"
-                                         src="{{url('module/iblog/img/post/default.jpg')}}"/>
+                                         src="{{url('modules/iblog/img/post/default.jpg')}}" alt="{{$post->title}}"/>
                                 @endif
                             </div>
                         </div>
@@ -52,6 +50,16 @@
                         <div class="content col-xs-12 col-sm-10 ">
                             <h2>{{ $post->title }}</h2>
                             {!! $post->description !!}
+
+                            @if(!$tags->isEmpty())
+                            <div class="tag">
+                                <span class="tags-links">
+                                    @foreach($tags as $tag)
+                                    <a href="{{$tag->url}}" rel="tag">{{$tag->title}}</a>
+                                    @endforeach
+                                </span>
+                            </div>
+                           @endif
                         </div>
                     </div>
                     <div class="row">
@@ -126,7 +134,7 @@
                             <div class="listado-cat">
                                 <ul>
                                     @php
-                                    $categories=get_categories();
+                                        $categories=get_categories();
                                     @endphp
 
                                     @if(isset($categories))
@@ -150,28 +158,6 @@
                         fjs.parentNode.insertBefore(js, fjs);
                     }(document, 'script', 'facebook-jssdk'));
                 </script>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <ul class="post-nav">
-                        <?php if ($previous = $post->present()->previous): ?>
-                        <li class="post-prev">
-                            <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$previous->slug]) }}"><i
-                                        class="fa fa-angle-left"></i> </a>
-                        </li>
-                        <?php endif; ?>
-                        @if ($next = $post->present()->next)
-                            <li class="post-next">
-                                <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$next->slug]) }}"><i
-                                            class="fa fa-angle-right"></i> Siguiente </a>
-                            </li>
-                        @else
-                            <li class="post-next">
-                                <a href="{{ route(locale() . '.iblog.'.$category->slug.'.slug', [$previous->slug]) }}">anterior </a>
-                            </li>
-                        @endif
-                    </ul>
-                </div>
             </div>
         </div>
     </div>

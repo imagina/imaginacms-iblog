@@ -4,18 +4,18 @@ return [
 
     'single' => 'Etiqueta',
     'plural' => 'Etiquetas',
-    'uri' => 'etiqueta',
+
     'list' => 'Etiquetas',
-    'create' => 'Crear etiquetas',
+    'create' => 'Criar etiquetas',
     'edit' => 'Editar etiquetas',
-    'destroy' => 'Eliminar etiquetas',
+    'destroy' => 'Remover etiquetas',
     'title' => [
         'tags' => 'Etiquetas',
-        'create product' => 'Crear etiqueta',
+        'create product' => 'Criar etiqueta',
         'edit product' => 'Editar etiqueta',
     ],
     'button' => [
-        'create product' => 'Crear etiqueta',
+        'create product' => 'Criar etiqueta',
     ],
     'table' => [
     ],

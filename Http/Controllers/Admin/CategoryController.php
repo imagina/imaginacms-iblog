@@ -12,20 +12,15 @@ use Modules\User\Contracts\Authentication;
 
 class CategoryController extends BcrudController
 {
-
-
     /**
      * @var CategoryRepository
      */
     private $category;
     private $auth;
-
     public function __construct(Authentication $auth)
     {
         parent::__construct();
-
         $this->auth = $auth;
-
 
         $driver = config('asgard.user.config.driver');
         /*
@@ -122,19 +117,12 @@ class CategoryController extends BcrudController
             'viewposition' => 'right',
         ]);
 
-
-
-
     }
 
     public function edit($id) {
 
         parent::edit($id);
-
-        // $this->data['thumbnail']= $this->file->findFileByZoneForEntity('thumbnail', $this->data['entry']);
-
         return view('iblog::admin.edit', $this->data);
-
     }
 
     public function create() {
@@ -151,7 +139,6 @@ class CategoryController extends BcrudController
         return view('iblog::admin.show', $this->data);
 
     }
-
 
 
     public function setup()
@@ -185,7 +172,7 @@ class CategoryController extends BcrudController
     {
                //Let's update the image for the post.
         if (!empty($request['mainimage']) && !empty($request['id'])) {
-            $request['mainimage'] = $this->saveImage($request['mainimage'], "assets/iblog/post/" . $request['id'] . ".jpg");
+            $request['mainimage'] = $this->saveImage($request['mainimage'], "assets/iblog/category/" . $request['id'] . ".jpg");
         }
         return parent::updateCrud($request);
     }

@@ -45,40 +45,13 @@ class Category extends Model
         return $this->belongsToMany('Modules\Iblog\Entities\Post','iblog__post__category');
     }
     protected function setSlugAttribute($value){
-
         if(!empty($value)){
             $this->attributes['slug'] = str_slug($value,'-');
         }else{$this->attributes['slug'] = str_slug($this->title,'-');}
 
-
-
     }
-    public function saveImageGallery($value,$destination_path){
-
-        $disk = "publicmedia";
-
-        // 0. Make the image
-        $image = \Image::make($value);
-
-        $image->resize(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        // 2. Store the image on disk.
-        \Storage::disk($disk)->put($destination_path, $image->stream('jpg','80'));
-
-
-        //Small Thumb
-        \Storage::disk($disk)->put(
-            str_replace('.jpg','_smallThumb.jpg',$destination_path),
-            $image->fit(config('asgard.iblog.config.smallthumbsize.width'),config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg','80')
-        );
-
-
-
-        return $destination_path;
-
+    public function getOptionsAttribute($value) {
+        return json_decode(json_decode($value));
     }
 
     /*

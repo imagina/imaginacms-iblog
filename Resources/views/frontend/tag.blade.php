@@ -1,46 +1,29 @@
 @extends('layouts.master')
 
 @section('meta')
-    <meta name="description" content="@if(!empty($category->description)){!!$category->description!!}@endif">
-
-    <!-- Schema.org para Google+ -->
-    <meta itemprop="name" content="{{$category->title}}">
-    <meta itemprop="description" content="@if(! empty($category->description)){!!$category->description!!} @endif">
-    <meta itemprop="image"
-          content=" @if(! empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif">
-
-    <!-- Open Graph para Facebook-->
-    <meta property="og:title" content="{{$category->title}}"/>
-    <meta property="og:type" content="categoria"/>
-    <meta property="og:url" content="{{url($category->slug)}}"/>
-    <meta property="og:image"
-          content="@if(!empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif"/>
-    <meta property="og:description" content="@if(!empty($category->description)){!!$category->description!!}@endif"/>
-    <meta property="og:site_name" content=""/>
-    <meta property="og:locale" content="{{locale().'_CO'}}">
+    <meta name="description" content="@if(!empty($tag->description)){!!$tag->description!!}@endif">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="">
-    <meta name="twitter:title" content="{{$category->title}}">
-    <meta name="twitter:description" content="{@if(!empty($category->description)){!!$category->description!!}@endif">
+    <meta name="twitter:title" content="{{$tag->title}}">
+    <meta name="twitter:description" content="{@if(!empty($tag->description)){!!$tag->description  !!}@endif">
     <meta name="twitter:creator" content="">
     <meta name="twitter:image:src"
-          content="@if(!empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif">
-
+          content="@if(!empty($tag->options->mainimage)){{url($tag->options->mainimage) }} @endif">
 @stop
 @section('title')
-    {{$category->title}} | @parent
+    {{$tag->title}} | @parent
 @stop
 @section('content')
-    <div class="page blog blog-revista blog-category-{{$category->slug}} blog-category-{{$category->id}}">
+    <div class="page blog blog-revista blog-category-{{$tag->slug}} blog-category-{{$tag->id}}">
         <div class="container">
             <div class="row fondo1 sombra-interna">
                 <div class="col-xs-12">
                     <div class="titulo-2">
                         <h2>
                             <i class="fa fa-caret-right" aria-hidden="true"></i>
-                            {{$category->title}}
+                            {{$tag->title}}
                         </h2>
                     </div>
                 </div>
@@ -48,11 +31,12 @@
                     <div class="row">
                     @if (!empty($posts))
                         @php $cont = 0; @endphp
+
                         @foreach($posts as $post)
                             <!-- Blog Post -->
                                 <div class="col-xs-6 col-sm-3 contend post post{{$post->id}}">
                                     <div class="bg-imagen">
-                                        <a href="{{$post->url}}">
+                                        <a href="{{ $post->url }}">
                                             @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
                                                 <img class="image img-responsive"
                                                      src="{{url(str_replace('.jpg','_mediumThumb.jpg',$post->options->mainimage))}}"
@@ -65,40 +49,39 @@
                                         </a>
                                     </div>
                                     <div class="content">
-                                        <a href="{{$post->url}}"><h2>{{$post->title}}</h2></a>
-                                        <p>{!! $post->summary!!}</p>
+                                        <a href="{{$post->url}}"><h4> {{$post->title}}</h4></a>
+                                        <p>{!!$post->summary!!}</p>
                                         <a class="btn btn-primary post-link" href="{{$post->url}}">Ver Mas<span
                                                     class="glyphicon glyphicon-chevron-right"></span></a>
                                     </div>
                                 </div>
                                 @php $cont++; @endphp
-                                @if($cont%3==0)
+                                @if($cont%2==0)
                                     <div class="clearfix"></div>
                                 @endif
+
                             @endforeach
+
                             <div class="clearfix"></div>
+
                             <div class="pagination paginacion-blog row">
                                 <div class="pull-right">
-                                    {{$posts->links()}}
+                                    {{ $posts->links() }}
                                 </div>
                             </div>
+
                         @endif
                     </div>
                 </div>
-
                 <div class="col-xs-12 col-sm-3 col-sm-offset-1 column2">
-
                     <div class="sidebar-revista">
-
                         <div class="cate">
                             <h3>Categorias</h3>
-
                             <div class="listado-cat">
                                 <ul>
                                     @php
                                         $categories=get_categories();
                                     @endphp
-
                                     @if(isset($categories))
                                         @foreach($categories as $index=>$category)
                                             <li><a href="{{url($category->slug)}}">{{$category->title}}</a></li>
@@ -111,6 +94,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 @stop

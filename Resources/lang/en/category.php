@@ -1,17 +1,20 @@
 <?php
 
 return [
-    'list' => 'List categories',
-    'create' => 'Create categories',
-    'edit' => 'Edit categories',
-    'destroy' => 'Destroy categories',
+    'single' => 'Category',
+    'plural' => 'Categories',
+
+    'list' => 'Categories',
+    'create' => 'Create Category',
+    'edit' => 'Edit Category',
+    'destroy' => 'Destroy Category',
     'title' => [
-        'categories' => 'Category',
-        'create category' => 'Create a category',
-        'edit category' => 'Edit a category',
+        'categories' => 'Categories',
+        'create category' => 'Create Category',
+        'edit category' => 'Edit Category',
     ],
     'button' => [
-        'create category' => 'Create a category',
+        'create category' => 'Create Category',
     ],
     'table' => [
     ],

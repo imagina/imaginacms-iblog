@@ -32,6 +32,7 @@ return [
     'categories' => 'Categorías',
 
     'title' => 'Título',
+    'slug'=>'Enlace permanente:',
     'description' => 'Descripción',
 
     'summary' => 'Sumario',

@@ -55,4 +55,9 @@ class EloquentTagRepository extends EloquentBaseRepository implements TagReposit
 
         return $this->create($data);
     }
+
+    public function findBySlug($slug)
+    {
+        return $this->model->where('slug', "$slug")->firstOrFail();
+    }
 }

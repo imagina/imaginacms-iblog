@@ -2,6 +2,7 @@
 
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Entities\Post;
+use Modules\Iblog\Entities\Tag;
 use Modules\User\Entities\Sentinel\User;
 use Modules\Iblog\Entities\Status;
 
@@ -107,6 +108,40 @@ if (!function_exists('get_categories')) {
             ->orderBy('created_at', $options['order']);
 
         return $categories->get();
+
+
+    }
+}
+
+if (!function_exists('get_tags')) {
+
+    function get_tags($options = array())
+    {
+        $default_options = array(
+            'include' => array(),//id de Categorias  para incluir en una consulta, se envia como arreglo ['include'=>[1,2,3]]
+            'exclude' => array(),//id de categorias  que desee excluir de una consulta metodo de llmado category=>'[1,2]'
+            'take' => 5, //Numero de posts a obtener,
+            'skip' => 0, //Omitir Cuantos post a llamar
+            'order' => 'desc',//orden de llamado
+        );
+
+        $options = array_merge($default_options, $options);
+
+        $tags = Tag::query();
+        if (!empty($options['include'])) {
+            $tags->whereIn('id', $options['include']);
+        }
+        if (!empty($options['exclude'])) {
+            $tags->whereNotIn('id', $options['exclude']);
+        }
+        if (!empty($options['parent'])) {
+            $tags->where('parent_id', $options['parent']);
+        }
+        $tags->skip($options['skip'])
+            ->take($options['take'])
+            ->orderBy('created_at', $options['order']);
+
+        return $tags->get();
 
 
     }

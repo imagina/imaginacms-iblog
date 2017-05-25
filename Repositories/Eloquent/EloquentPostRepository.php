@@ -123,4 +123,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         })->orderBy('created_at', 'DESC')->paginate(12);
 
     }
+    public function whereTag($id)
+    {
+
+        return $this->model->whereHas('tags', function ($query) use ($id) {
+            $query->where('tag_id', $id)
+                ->whereStatus(Status::PUBLISHED);
+        })->orderBy('created_at', 'DESC')->paginate(12);
+
+    }
 }

@@ -42,7 +42,12 @@ class Tag extends Model
     {
         return $this->belongsToMany(Post::class, 'iblog__post__tag');
     }
+    public function getUrlAttribute() {
 
+
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.tag.slug', [$this->slug]);
+
+    }
 
 
 }

@@ -32,7 +32,6 @@ class PublicController extends BasePublicController
     {
         //Search category.
         $uri = Route::current()->uri();
-
         //Default Template
         $tpl = 'iblog::frontend.index';
         $ttpl='iblog.index';
@@ -44,12 +43,10 @@ class PublicController extends BasePublicController
         } else {
             $category = $this->category->findBySlug($uri);
             $posts = $this->post->whereCategory($category->id);
-
             //Get Custom Template.
             $ctpl = "iblog.category.{$category->id}.index";
             if(view()->exists($ctpl)) $tpl = $ctpl;
         }
-
 
         return view($tpl, compact('posts','category'));
 
@@ -75,4 +72,26 @@ class PublicController extends BasePublicController
 
         return view($tpl, compact('post','category','tags'));
     }
+
+    public function tag($slug)
+    {
+
+        //Default Template
+        $tpl = 'iblog::frontend.tag';
+        $ttpl='iblog.tag';
+
+        if(view()->exists($ttpl)) $tpl = $ttpl;
+
+        $tag = $this->tag->findBySlug($slug);
+        $posts = $this->post->whereTag($tag->id);
+
+        //Get Custom Template.
+        $ctpl = "iblog.tag.{$tag->id}";
+        if(view()->exists($ctpl)) $tpl = $ctpl;
+
+
+        return view($tpl, compact('posts','tag'));
+
+    }
+
 }

@@ -8,6 +8,7 @@ use Modules\Iblog\Entities\tag;
 use Modules\Iblog\Http\Requests\IblogRequest;
 
 use Modules\Bcrud\Http\Controllers\BcrudController;
+use Modules\Iblog\Http\Requests\TagRequest;
 use Modules\User\Contracts\Authentication;
 
 class tagController extends BcrudController
@@ -103,12 +104,12 @@ class tagController extends BcrudController
         $this->crud->access = $allowpermissions;
     }
 
-    public function store(IblogRequest $request)
+    public function store(TagRequest $request)
     {
         return parent::storeCrud();
     }
 
-    public function update(IblogRequest $request)
+    public function update(TagRequest $request)
     {
         return parent::updateCrud($request);
     }

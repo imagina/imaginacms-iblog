@@ -1,17 +1,21 @@
 <?php
 
 return [
-    'list' => 'List tags',
-    'create' => 'Create tags',
-    'edit' => 'Edit tags',
-    'destroy' => 'Destroy tags',
+
+    'single' => 'Tag',
+    'plural' => 'Tags',
+    'uri' => 'tag',
+    'list' => 'List Tags',
+    'create' => 'Create Tags',
+    'edit' => 'Edit Tags',
+    'destroy' => 'Destroy Tags',
     'title' => [
         'tags' => 'Tags',
-        'create product' => 'Create a tags',
-        'edit product' => 'Edit a tags',
+        'create product' => 'Create a Tags',
+        'edit product' => 'Edit a Tags',
     ],
     'button' => [
-        'create product' => 'Create a tags',
+        'create product' => 'Creare a Tags',
     ],
     'table' => [
     ],
