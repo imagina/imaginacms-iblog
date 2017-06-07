@@ -3,11 +3,11 @@
 @section('meta')
     <meta name="description" content="{!! $post->summary !!}">
     <!-- Schema.org para Google+ -->
-    <meta itemprop="name" content="{{$post->name}}">
+    <meta itemprop="name" content="{{$post->title}}">
     <meta itemprop="description" content="{!! $post->summary !!}">
     <meta itemprop="image" content=" {{url($post->options->mainimage) }}">
     <!-- Open Graph para Facebook-->
-    <meta property="og:title" content="{{$post->name}}"/>
+    <meta property="og:title" content="{{$post->title}}"/>
     <meta property="og:type" content="articulo"/>
     <meta property="og:url" content="{{url($post->slug)}}"/>
     <meta property="og:image" content="{{url($post->options->mainimage)}}"/>
@@ -17,7 +17,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="{{ Setting::get('core::site-name') }}">
-    <meta name="twitter:title" content="{{$post->name}}">
+    <meta name="twitter:title" content="{{$post->title}}">
     <meta name="twitter:description" content="{!! $post->summary !!}">
     <meta name="twitter:creator" content="">
     <meta name="twitter:image:src" content="{{url($post->options->mainimage)}}">
