@@ -20,7 +20,7 @@ class PublicController extends BasePublicController
     private $category;
     private $tag;
 
-    public function __construct(PostRepository $post,CategoryRepository $category, TagRepository $tag)
+    public function __construct(PostRepository $post, CategoryRepository $category, TagRepository $tag)
     {
         parent::__construct();
         $this->post = $post;
@@ -60,7 +60,7 @@ class PublicController extends BasePublicController
         if(view()->exists($ttpl)) $tpl = $ttpl;
 
         $post = $this->post->findBySlug($slug);
-        $category = $post->categories()->first();
+        $category = $post->category;
         $tags = $post->tags()->get();
 
         //Get Custom Template.

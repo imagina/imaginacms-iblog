@@ -18,6 +18,7 @@ if (! function_exists('get_posts')) {
             'exclude' => array(),// post, categorias o usuarios, que desee excluir de una consulta metodo de llmado category=>'', posts=>'' , users=>''
             'exclude_categories' => null,// categoria o categorias que desee Excluir, se envia como arreglo ['exclude_categories'=>[1,2,3]]
             'exclude_users' => null, //usuario o usuarios que desea Excluir, se envia como arreglo ['users'=>[1,2,3]]
+            'created_at'=>['operator'=>'<=','date'=>date('Y-m-d H:i:s')],
             'take' => 5, //Numero de posts a obtener,
             'skip' => 0, //Omitir Cuantos post a llamar
             'order' => 'desc',//orden de llamado
@@ -54,6 +55,10 @@ if (! function_exists('get_posts')) {
                 $query->whereNotIn('user_id', $options['exclude_users']);
             });
         }
+        if (isset($options['created_at'])) {
+            $posts->where('created_at',$options['created_at']['operator'], $options['created_at']['date']);
+        }
+
         $posts->whereStatus($options['status'])
             ->skip($options['skip'])
             ->take($options['take'])
@@ -148,12 +153,16 @@ if (!function_exists('get_tags')) {
 }
 
 if(! function_exists('format_date')){
+/**
+ * Format date according to local module configuration.
+ * @param object $date
+ * @param string $format
+ *
+ * @return string
+ **/
 
-    function format_date($date,$datetimezone='America/Bogota'){
-
-        date_default_timezone_set($datetimezone);
-        setlocale(LC_TIME, "es_CO.UTF-8");
-        return strftime("%A, %B %d, %Y",strtotime($date));
+    function format_date($date, $format='%A, %B %d, %Y'){
+        return strftime($format,strtotime($date));
     }
 
 }
@@ -166,4 +175,5 @@ if (! function_exists('postgallery')){
     }
 }
 
-
+date_default_timezone_set(config('asgard.iblog.config.timezone','UTC'));
+setlocale(LC_TIME, config('asgard.iblog.config.localetime','en_US.UTF-8'));

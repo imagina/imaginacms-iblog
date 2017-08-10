@@ -53,6 +53,10 @@ class CategoryController extends BcrudController
             'name' => 'title',
             'label' => trans('iblog::common.title'),
         ]);
+        $this->crud->addColumn([
+            'label' => 'Slug',
+            'name' => 'slug',
+        ]);
 
         $this->crud->addColumn([
             'name' => 'parent_id',

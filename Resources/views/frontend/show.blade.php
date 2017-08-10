@@ -4,16 +4,16 @@
     <meta name="description" content="{!! $post->summary !!}">
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$post->title}}">
-    <meta itemprop="description" content="{!! $post->summary !!}">
+    <meta itemprop="description" content="{!!$post->summary!!}">
     <meta itemprop="image" content=" {{url($post->options->mainimage) }}">
     <!-- Open Graph para Facebook-->
     <meta property="og:title" content="{{$post->title}}"/>
-    <meta property="og:type" content="articulo"/>
+    <meta property="og:type" content="article"/>
     <meta property="og:url" content="{{url($post->slug)}}"/>
     <meta property="og:image" content="{{url($post->options->mainimage)}}"/>
-    <meta property="og:description" content="{!! $post->summary !!}"/>
+    <meta property="og:description" content="{!!$post->summary!!}"/>
     <meta property="og:site_name" content="{{Setting::get('core::site-name') }}"/>
-    <meta property="og:locale" content="{{locale().'_CO'}}">
+    <meta property="og:locale" content="{{config('asgard.iblog.config.oglocal')}}">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="{{ Setting::get('core::site-name') }}">
@@ -60,6 +60,9 @@
                                 </span>
                             </div>
                            @endif
+                        </div>
+                        <div class="content col-xs-12 col-sm-10">
+                            @include('iblog::frontend.gallery.viewline')
                         </div>
                     </div>
                     <div class="row">
@@ -154,7 +157,7 @@
                         if (d.getElementById(id)) return;
                         js = d.createElement(s);
                         js.id = id;
-                        js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8";
+                        js.src = "//connect.facebook.net/{{config('asgard.iblog.config.oglocal')}}/sdk.js#xfbml=1&version=v2.8";
                         fjs.parentNode.insertBefore(js, fjs);
                     }(document, 'script', 'facebook-jssdk'));
                 </script>

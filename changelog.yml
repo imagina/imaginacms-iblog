@@ -1,0 +1,25 @@
+url: https://github.com/imagina/asgardcms-iblog
+versions:
+    "0.1.2":
+        added:
+            - Dynamic Fields from config
+            - Dynamic Entity Relationships from config
+            - Timezone Configuration from config
+            - Locale Configuration from config
+            - og:locale Configuration from config
+            - New metadata in Post View
+            - Modifiable create_date field for Post Entity
+            - Author Field for Post Entity.
+            - Preview Button for Post Entity
+        removed:
+            - metadata in category fiels
+        changed:
+            - Name of the gallery images
+            - Helper function format_date for views
+            - Dynamic Author
+            - Multiple Child Categories
+
+    "0.1.1":
+        changed:
+            - Fixes AsgardCms/Platform#46 - Old input is kept in all fields
+            - Using the <code>old()</code> method helper

@@ -35,6 +35,9 @@ return [
     'slug'=>'Enlace permanente:',
     'description' => 'Descripción',
 
+    'date'      =>  'Fecha y hora',
+    'optional'  =>  '(Opcional)',
+    
     'summary' => 'Sumario',
     'content' => 'Content',
 

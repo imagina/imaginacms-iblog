@@ -35,6 +35,9 @@ return [
     'slug'=>'Slug',
     'description' => 'Description',
 
+    'date'      =>  'Date and Time',
+    'optional'  =>  '(Optional)',
+
     'summary' => 'Sumary',
     'content' => 'Content',
 

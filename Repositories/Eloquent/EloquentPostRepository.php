@@ -120,7 +120,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $this->model->whereHas('categories', function ($query) use ($id) {
             $query->where('category_id', $id)
                 ->whereStatus(Status::PUBLISHED);
-        })->orderBy('created_at', 'DESC')->paginate(12);
+        })->where('created_at','<',date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
 
     }
     public function whereTag($id)
@@ -129,7 +129,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $this->model->whereHas('tags', function ($query) use ($id) {
             $query->where('tag_id', $id)
                 ->whereStatus(Status::PUBLISHED);
-        })->orderBy('created_at', 'DESC')->paginate(12);
+        })->where('created_at','<',date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
 
     }
 }

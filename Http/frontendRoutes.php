@@ -2,9 +2,8 @@
 
 use Illuminate\Routing\Router;
 use Modules\Iblog\Entities\Category as Category;
-use Modules\Iblog\Entities\Tag as Tag;
 
-/** @var Router $router */
+/** @var Router $router*/
 if (! App::runningInConsole()) {
     foreach (Category::all()  as $category) {
         /** @var Router $router */
@@ -26,7 +25,6 @@ if (! App::runningInConsole()) {
 
 
 }
-
 
 /** @var Router $router */
 $router->group(['prefix' => trans('iblog::tag.uri')], function (Router $router) {

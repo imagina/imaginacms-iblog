@@ -34,6 +34,9 @@ return [
     'title' => 'Título',
     'description' => 'Descrição',
 
+    'date'      =>  'Data e hora',
+    'optional'  =>  '(Opcional)',
+
     'summary' => 'Sumario',
     'content' => 'Content',
 

@@ -46,7 +46,11 @@
 	</div>
 	<div class="col-xs-12 col-md-4">
 		@stack('right_fields')
-
+		@if(!isset($id))
+			<script type="application/javascript">
+				$( "input[name='created_at']" ).val('');
+			</script>
+		@endif
 	</div>
 
 </form>

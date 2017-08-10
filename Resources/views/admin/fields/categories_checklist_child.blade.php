@@ -14,7 +14,7 @@
 
 
             @if(count($child->children))
-                @include('categories_checklist_child',['children' => $child->children])
+                @include('iblog::admin.fields.categories_checklist_child',['children' => $child->children])
             @endif
         </li>
     @endforeach

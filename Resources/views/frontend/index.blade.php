@@ -2,31 +2,11 @@
 
 @section('meta')
     <meta name="description" content="@if(!empty($category->description)){!!$category->description!!}@endif">
-
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$category->title}}">
     <meta itemprop="description" content="@if(! empty($category->description)){!!$category->description!!} @endif">
     <meta itemprop="image"
           content=" @if(! empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif">
-
-    <!-- Open Graph para Facebook-->
-    <meta property="og:title" content="{{$category->title}}"/>
-    <meta property="og:type" content="categoria"/>
-    <meta property="og:url" content="{{url($category->slug)}}"/>
-    <meta property="og:image"
-          content="@if(!empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif"/>
-    <meta property="og:description" content="@if(!empty($category->description)){!!$category->description!!}@endif"/>
-    <meta property="og:site_name" content=""/>
-    <meta property="og:locale" content="{{locale().'_CO'}}">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="">
-    <meta name="twitter:title" content="{{$category->title}}">
-    <meta name="twitter:description" content="{@if(!empty($category->description)){!!$category->description!!}@endif">
-    <meta name="twitter:creator" content="">
-    <meta name="twitter:image:src"
-          content="@if(!empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif">
 
 @stop
 @section('title')
@@ -46,11 +26,10 @@
                 </div>
                 <div class="col-xs-12 col-sm-8 category-body-1 column1">
                     <div class="row">
-                    @if (!empty($posts))
+                    @if (count($posts) !=0)
                         @php $cont = 0; @endphp
                         @foreach($posts as $post)
-                            <!-- Blog Post -->
-                                <div class="col-xs-6 col-sm-3 contend post post{{$post->id}}">
+                                <div class="col-xs-6 col-sm-4 contend post post{{$post->id}}">
                                     <div class="bg-imagen">
                                         <a href="{{$post->url}}">
                                             @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
@@ -73,7 +52,7 @@
                                 </div>
                                 @php $cont++; @endphp
                                 @if($cont%3==0)
-                                    <div class="clearfix"></div>
+                                    <div class="clearfix" style="margin:10px 0"></div>
                                 @endif
                             @endforeach
                             <div class="clearfix"></div>
@@ -82,6 +61,14 @@
                                     {{$posts->links()}}
                                 </div>
                             </div>
+                         @else
+                        <div class="col-xs-12 con-sm-12">
+                            <div class="white-box">
+                                <h3>Ups... :(</h3>
+                                <h1>404 Post no encontrado</h1>
+                                <hr>
+                                <p style="text-align: center;">No hemos podido encontrar el Contenido que estás buscando.</p>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -111,6 +98,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 @stop

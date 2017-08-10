@@ -9,7 +9,6 @@ use Modules\Iblog\Entities\Status;
 use Modules\Iblog\Entities\Tag;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Media\Repositories\FileRepository;
-
 use Modules\Bcrud\Http\Controllers\BcrudController;
 use Modules\User\Contracts\Authentication;
 use Illuminate\Contracts\Foundation\Application;
@@ -29,7 +28,7 @@ class PostController extends BcrudController
         parent::__construct();
 
         $this->auth = $auth;
-        $this->file= $file;
+        $this->file = $file;
         $driver = config('asgard.user.config.driver');
 
         /*
@@ -63,6 +62,10 @@ class PostController extends BcrudController
 
         ]);
         $this->crud->addColumn([
+            'label' => 'Slug',
+            'name' => 'slug',
+        ]);
+        $this->crud->addColumn([
             'name' => 'category_id', // The db column name
             'label' => trans('iblog::category.single'),// Table column heading
             'type' => 'select',
@@ -93,7 +96,7 @@ class PostController extends BcrudController
             'name' => 'summary',
             'label' => trans('iblog::common.summary'),
             'type' => 'textarea',
-            'attributes' => ['rows'=>'6'],
+            'attributes' => ['rows' => '6'],
             'viewposition' => 'left',
         ]);
 
@@ -112,9 +115,20 @@ class PostController extends BcrudController
             'attribute' => 'title', // foreign key attribute that is shown to user
             'model' => "Modules\\Iblog\\Entities\\Category", // foreign key model
             'viewposition' => 'right',
-            'nullable'=>false
+            'nullable' => false
         ]);
 
+        $this->crud->addField([   // DateTime
+            'name' => 'created_at',
+            'label' => trans('iblog::common.date') . ' ' . trans('iblog::common.optional'),
+            'type' => 'datetime_picker',
+            // optional:
+            'datetime_picker_options' => [
+                'format' => 'DD/MM/YYYY HH:mm:ss',
+                'language' => 'es',
+            ],
+            'viewposition' => 'right',
+        ]);
 
         $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
             'label' => trans('iblog::category.plural'),
@@ -143,7 +157,7 @@ class PostController extends BcrudController
 
         $this->crud->addField([  // Select
             'label' => trans('iblog::common.author'),
-            'type' => 'select',
+            'type' => 'user',
             'name' => 'user_id', // the db column for the foreign key
             'entity' => 'user', // the method that defines the relationship in your Model
             'attribute' => 'email', // foreign key attribute that is shown to user
@@ -154,10 +168,10 @@ class PostController extends BcrudController
 
 
         $this->crud->addField([
-            'name'        => 'status',
-            'label'       => trans('iblog::common.status_text'),
-            'type'        => 'radio',
-            'options'     => [
+            'name' => 'status',
+            'label' => trans('iblog::common.status_text'),
+            'type' => 'radio',
+            'options' => [
                 0 => trans('iblog::common.status.draft'),
                 1 => trans('iblog::common.status.pending'),
                 2 => trans('iblog::common.status.published'),
@@ -177,7 +191,13 @@ class PostController extends BcrudController
             'viewposition' => 'left',
         ]);
 
+        if (config()->has('asgard.iblog.config.fields')) {
+            $fields = config()->get('asgard.iblog.config.fields');
+            foreach ($fields as $field) {
+                $this->crud->addField($field);
+            }
 
+        }
 
     }
 
@@ -187,25 +207,31 @@ class PostController extends BcrudController
 
         return view('iblog::admin.list', $this->data);
     }
-    public function edit($id) {
+
+    public function edit($id)
+    {
         parent::edit($id);
 
-       return view('iblog::admin.edit_post', $this->data);
+        return view('iblog::admin.edit_post', $this->data);
 
     }
 
-    public function create() {
+    public function create()
+    {
 
         parent::create();
 
         return view('iblog::admin.create', $this->data);
 
     }
-    public function show($id=null) {
 
-        parent::show($id=null);
+    public function show($id)
+    {
+        $post= Post::find($id);
+        $category = $post->category;
+        $locale = \LaravelLocalization::setLocale() ?: \App::getLocale();
 
-        return view('iblog::admin.show', $this->data);
+        return redirect()->route($locale . '.iblog.' . $category->slug .'.slug', ['slug' => $post->slug]);
 
     }
 
@@ -215,12 +241,12 @@ class PostController extends BcrudController
 
         $permissions = ['index', 'create', 'edit', 'destroy'];
         $allowpermissions = ['show'];
-        foreach($permissions as $permission) {
+        foreach ($permissions as $permission) {
 
-            if($this->auth->hasAccess("iblog.posts.$permission")) {
-                if($permission=='index') $permission = 'list';
-                if($permission=='edit') $permission = 'update';
-                if($permission=='destroy') $permission = 'delete';
+            if ($this->auth->hasAccess("iblog.posts.$permission")) {
+                if ($permission == 'index') $permission = 'list';
+                if ($permission == 'edit') $permission = 'update';
+                if ($permission == 'destroy') $permission = 'delete';
                 $allowpermissions[] = $permission;
             }
 
@@ -228,42 +254,55 @@ class PostController extends BcrudController
         $this->crud->access = $allowpermissions;
     }
 
-    public function store(IblogRequest $request) {
+    public function store(IblogRequest $request)
+    {
+
+        if ($request['created_at'] == null) {
+            unset($request['created_at']);
+        }
+
         //se modifica el valor de tags para agregar los nuevos registros
         $request['tags'] = $this->addTags($request['tags']);
         return $this->storeCrud($request);
 
     }
 
-    public function update(IblogRequest $request) {
-        //Let's update the image for the post.
-        if(!empty($request['mainimage']) && !empty($request['id'])) {
-            $request['mainimage'] = $this->saveImage($request['mainimage'],"assets/iblog/post/".$request['id'].".jpg");
-        }else{
-            $request['mainimage']='modules/iblog/img/post/default.jpg';
+    public function update(IblogRequest $request)
+    {
+
+        if (!empty($request['mainimage']) && !empty($request['id'])) {
+            $request['mainimage'] = $this->saveImage($request['mainimage'], "assets/iblog/post/" . $request['id'] . ".jpg");
+        } else {
+            $request['mainimage'] = 'modules/iblog/img/post/default.jpg';
         }
         $request['tags'] = $this->addTags($request['tags']);
         return parent::updateCrud($request);
     }
 
-    public function uploadGalleryimage(Request $request){
-        $idpost                 = $request->input('idedit');
-        $extension              = $request->file('file')->extension();
-        $extensionpermissions   = array('JPG','JPEG','PNG','GIF');
+    public function uploadGalleryimage(Request $request)
+    {
 
-        if(!in_array(strtoupper($extension), $extensionpermissions)) {
+        $original_filename = $request->file('file')->getClientOriginalName();
+
+        $idpost = $request->input('idedit');
+        $extension = $request->file('file')->extension();
+        $allowedextensions = array('JPG', 'JPEG', 'PNG', 'GIF');
+        $name=str_slug(str_replace($extension,'',$original_filename ),'-');
+        if (!in_array(strtoupper($extension), $allowedextensions)) {
             return 0;
         }
 
-        $nameimag           = str_random(8) . '.' . $extension;
-        $destination_path   = 'assets/iblog/post/gallery/' . $idpost . '/'. $nameimag;
-        $request->file('file')->storeAs('assets/iblog/post/gallery/' . $idpost , '/'. $nameimag, 'publicmedia');
-        return array('direccion'=> $destination_path);
+        $nameimag = $name.'.'.$extension;
+        $destination_path = 'assets/iblog/post/gallery/' . $idpost . '/' . $nameimag;
+        $request->file('file')->storeAs('assets/iblog/post/gallery/' . $idpost, '/' . $nameimag, 'publicmedia');
+
+        return array('direccion' => $destination_path);
     }
 
-    public function deleteGalleryimage(Request $request) {
-        $disk       = "publicmedia";
-        $dirdata    = $request->input('dirdata');
+    public function deleteGalleryimage(Request $request)
+    {
+        $disk = "publicmedia";
+        $dirdata = $request->input('dirdata');
         \Storage::disk($disk)->delete($dirdata);
         return array('success' => true);
     }
@@ -273,21 +312,22 @@ class PostController extends BcrudController
      * Devuelve un arreglo con los viejos tags y los tags nuevos
      * para ser insertados o actualizados en el registro post
      */
-    function addTags($tags){
-        $tags       = $tags;
-        $newtags    = Array();
+    function addTags($tags)
+    {
+        $tags = $tags;
+        $newtags = Array();
         $lasttagsid = Array();
-        $newtagsid  = Array();
+        $newtagsid = Array();
         //se verifica si se evvio tags desde el form
-        if(!empty($tags)){
+        if (!empty($tags)) {
             //se recorren todos lostags en busca de alguno nuevo
             foreach ($tags as $tag) {
                 //si el tag no existe se agrega al array de de nuevos tags
-                if(count(Tag::find($tag)) <= 0){
-                    array_push($newtags,$tag);
-                }else{
+                if (count(Tag::find($tag)) <= 0) {
+                    array_push($newtags, $tag);
+                } else {
                     //si el tag existe se agrega en un array de viejos tags
-                    array_push($lasttagsid,$tag);
+                    array_push($lasttagsid, $tag);
                 }
             }
         }
@@ -295,40 +335,37 @@ class PostController extends BcrudController
         foreach ($newtags as $newtag) {
             $modeltag = new Tag;
             $modeltag->title = $newtag;
-            $modeltag->slug = str_slug($newtag,'-');
+            $modeltag->slug = str_slug($newtag, '-');
             $modeltag->save();
-            array_push($newtagsid,$modeltag->id);
+            array_push($newtagsid, $modeltag->id);
         }
         //se modifica el valor tags enviado desde el form uniendolos visjos tags y los tags nuevos
-        return array_merge($lasttagsid,$newtagsid);
+        return array_merge($lasttagsid, $newtagsid);
     }
 
 
-
-
-    public function saveImage($value,$destination_path)
+    public function saveImage($value, $destination_path)
     {
         $disk = "publicmedia";
 
         //Defined return.
-        if(starts_with($value,'http')) {
-            $url= url('modules/bcrud/img/default.jpg');
-            if($value == $url){
+        if (starts_with($value, 'http')) {
+            $url = url('modules/bcrud/img/default.jpg');
+            if ($value == $url) {
                 return 'modules/iblog/img/post/default.jpg';
-            }else{
-                if(empty(str_replace(url(''),"",$value))){
+            } else {
+                if (empty(str_replace(url(''), "", $value))) {
 
                     return 'modules/iblog/img/post/default.jpg';
                 }
-                str_replace(url(''),"",$value);
-                return str_replace(url(''),"",$value);
+                str_replace(url(''), "", $value);
+                return str_replace(url(''), "", $value);
             }
 
         };
 
         // if a base64 was sent, store it in the db
-        if (starts_with($value, 'data:image'))
-        {
+        if (starts_with($value, 'data:image')) {
             // 0. Make the image
             $image = \Image::make($value);
             // resize and prevent possible upsizing
@@ -339,18 +376,18 @@ class PostController extends BcrudController
             });
 
             // 2. Store the image on disk.
-            \Storage::disk($disk)->put($destination_path, $image->stream('jpg','80'));
+            \Storage::disk($disk)->put($destination_path, $image->stream('jpg', '80'));
 
 
             // Save Thumbs
             \Storage::disk($disk)->put(
-                str_replace('.jpg','_mediumThumb.jpg',$destination_path),
-                $image->fit(config('asgard.iblog.config.mediumthumbsize.width'),config('asgard.iblog.config.mediumthumbsize.height'))->stream('jpg','80')
+                str_replace('.jpg', '_mediumThumb.jpg', $destination_path),
+                $image->fit(config('asgard.iblog.config.mediumthumbsize.width'), config('asgard.iblog.config.mediumthumbsize.height'))->stream('jpg', '80')
             );
 
             \Storage::disk($disk)->put(
-                str_replace('.jpg','_smallThumb.jpg',$destination_path),
-                $image->fit(config('asgard.iblog.config.smallthumbsize.width'),config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg','80')
+                str_replace('.jpg', '_smallThumb.jpg', $destination_path),
+                $image->fit(config('asgard.iblog.config.smallthumbsize.width'), config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg', '80')
             );
 
             // 3. Return the path
@@ -358,7 +395,7 @@ class PostController extends BcrudController
         }
 
         // if the image was erased
-        if ($value==null) {
+        if ($value == null) {
             // delete the image from disk
             \Storage::disk($disk)->delete($destination_path);
 
@@ -368,7 +405,6 @@ class PostController extends BcrudController
 
 
     }
-
 
     public function storeCrud(\Modules\Bcrud\Http\Requests\CrudRequest $request = null)
     {
@@ -398,10 +434,10 @@ class PostController extends BcrudController
 
 
         //Let's save the image for the post.
-        if(!empty($requestimage && !empty($item->id))) {
-            $mainimage = $this->saveImage($requestimage,"assets/iblog/post/".$item->id.".jpg");
+        if (!empty($requestimage && !empty($item->id))) {
+            $mainimage = $this->saveImage($requestimage, "assets/iblog/post/" . $item->id . ".jpg");
 
-            $item->update($this->crud->compactFakeFields(['mainimage'=>$mainimage]));
+            $item->update($this->crud->compactFakeFields(['mainimage' => $mainimage]));
             //TODO: i don't like the re-save. Find another way to do it.
         }
 
@@ -411,7 +447,7 @@ class PostController extends BcrudController
         // redirect the user where he chose to be redirected
         switch ($request->input('redirect_after_save')) {
             case 'current_item_edit':
-                return \Redirect::to($this->crud->route.'/'.$item->getKey().'/edit');
+                return \Redirect::to($this->crud->route . '/' . $item->getKey() . '/edit');
 
             default:
                 return \Redirect::to($request->input('redirect_after_save'));

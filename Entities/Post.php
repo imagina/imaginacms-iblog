@@ -14,9 +14,35 @@ class Post extends Model
 
     protected $table = 'iblog__posts';
 
-    protected $fillable = ['title','description','slug','user_id','status', 'summary','category_id','options'];
+    protected $fillable = ['title','description','slug','user_id','status', 'summary','category_id','options','created_at'];
     protected $presenter = PostPresenter::class;
     protected $fakeColumns = ['options'];
+
+    protected $casts = [
+        'options' => 'array'
+    ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'iblog__post__category');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'iblog__post__tag');
+    }
+
+    public function user()
+    {
+        $driver = config('asgard.user.config.driver');
+
+        return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
+    }
 
 
     /**
@@ -33,11 +59,9 @@ class Post extends Model
         }
 
 
-
     }
 
     protected function setSummaryAttribute($value){
-
 
         if(!empty($value)){
             $this->attributes['summary'] = $value;
@@ -47,53 +71,16 @@ class Post extends Model
 
     }
 
-
-    protected $casts = [
-        'options' => 'array'
-    ];
-
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class, 'iblog__post__category');
-    }
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class, 'iblog__post__tag');
-    }
-
-    public function user()
-    {
-        $driver = config('asgard.user.config.driver');
-
-        return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
-    }
-
-
-
-    public function setGalleryAttribute($value){
-
-        $this->saveImageGallery($value,"assets/iblog/post/gallery/". $this->data['id'] ."/". rand() .".jpg");
-
-    }
-
     public function getOptionsAttribute($value) {
-
         return json_decode(json_decode($value));
 
     }
 
-    /*
-     * Function to get the URL for the Post.
+    /**
+     * URL post
+     * @return string
      */
     public function getUrlAttribute() {
-
 
         if(!isset($this->category->slug)) {
             $this->category = Category::take(1)->get()->first();
@@ -104,35 +91,28 @@ class Post extends Model
 
     }
 
+    /**
+     * Magic Method modification to allow dynamic relations to other entities.
+     * @var $value
+     * @var $destination_path
+     * @return string
+     */
 
 
-    public function saveImageGallery($value,$destination_path){
+    public function __call($method, $parameters)
+    {
+        #i: Convert array to dot notation
+        $config = implode('.', ['asgard.iblog.config.relations', $method]);
 
-        $disk = "publicmedia";
+        #i: Relation method resolver
+        if (config()->has($config)) {
+            $function = config()->get($config);
 
-        // 0. Make the image
-        $image = \Image::make($value);
+            return $function($this);
+        }
 
-        $image->resize(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        // 2. Store the image on disk.
-        \Storage::disk($disk)->put($destination_path, $image->stream('jpg','80'));
-
-
-        //Small Thumb
-        \Storage::disk($disk)->put(
-            str_replace('.jpg','_smallThumb.jpg',$destination_path),
-            $image->fit(config('asgard.iblog.config.smallthumbsize.width'),config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg','80')
-        );
-
-
-
-        return $destination_path;
-
+        #i: No relation found, return the call to parent (Eloquent) to handle it.
+        return parent::__call($method, $parameters);
     }
-
 
 }
