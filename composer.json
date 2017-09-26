@@ -30,5 +30,11 @@
         "psr-4": {
             "Modules\\Iblog\\": ""
         }
+    },
+
+    "extra": {
+        "branch-alias": {
+            "dev-2.0": "2.0.x-dev"
+        }
     }
 }
