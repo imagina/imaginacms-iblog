@@ -34,6 +34,8 @@ return [
     'title' => 'Títle',
     'slug'=>'Slug',
     'description' => 'Description',
+    'metatitle' =>'Meta Title',
+    'metadescription' =>'Meta Description',
 
     'date'      =>  'Date and Time',
     'optional'  =>  '(Optional)',

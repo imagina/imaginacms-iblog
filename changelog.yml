@@ -1,5 +1,17 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+    "3.0.1":
+        added:
+            - Field metadata for Post and Categories
+            - Optional Watermark for Post and Category Images
+        removed:
+            - View admin
+            - Functions index, edit, create from post,category controller
+        changed:
+            - Field gallery added in the Post create form
+            - Field gallery added to controller (Bcrud)
+            - Error of fake fields solved
+
     "0.1.2":
         added:
             - Dynamic Fields from config

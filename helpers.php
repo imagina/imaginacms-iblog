@@ -29,11 +29,21 @@ if (! function_exists('get_posts')) {
 
         $posts = Post::with(['user', 'categories']);
 
-        if (!empty($options['categories'])) {
-            $posts->whereHas('categories', function ($query) use ($options) {
-                $query->whereIn('category_id', $options['categories']);
-            });
+        if (!empty($options['categories']) || isset($options['exclude_categories'])) {
+
+            $posts->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id');
         }
+
+        if (!empty($options['categories'])) {
+
+            $posts->whereIn('iblog__post__category.category_id', $options['categories']);
+
+        }
+        if (isset($options['exclude_categories'])) {
+
+            $posts->whereNotIn('iblog__post__category.category_id', $options['exclude_categories']);
+        }
+
         if (!empty($options['users'])) {
             $posts->whereHas('user', function ($query) use ($options) {
                 $query->whereIn('user_id', $options['users']);
@@ -45,11 +55,7 @@ if (! function_exists('get_posts')) {
         if (!empty($options['exclude'])) {
             $posts->whereNotIn('id', $options['exclude']);
         }
-        if (isset($options['exclude_categories'])) {
-            $posts->whereHas('categories', function ($query) use ($options) {
-                $query->whereNotIn('category_id', $options['exclude_categories']);
-            });
-        }
+
         if (isset($options['exclude_users'])) {
             $posts->whereHas('user', function ($query) use ($options) {
                 $query->whereNotIn('user_id', $options['exclude_users']);

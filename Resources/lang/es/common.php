@@ -34,6 +34,8 @@ return [
     'title' => 'Título',
     'slug'=>'Enlace permanente:',
     'description' => 'Descripción',
+    'metatitle' =>'Meta Título',
+    'metadescription' =>'Meta Descripción',
 
     'date'      =>  'Fecha y hora',
     'optional'  =>  '(Opcional)',

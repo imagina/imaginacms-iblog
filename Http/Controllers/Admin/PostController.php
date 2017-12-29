@@ -153,8 +153,6 @@ class PostController extends BcrudController
         ]);
 
 
-
-
         $this->crud->addField([  // Select
             'label' => trans('iblog::common.author'),
             'type' => 'user',
@@ -164,7 +162,6 @@ class PostController extends BcrudController
             'model' => "Modules\\User\\Entities\\{$driver}\\User", // foreign key model,
             'viewposition' => 'right',
         ]);
-
 
 
         $this->crud->addField([
@@ -191,6 +188,40 @@ class PostController extends BcrudController
             'viewposition' => 'left',
         ]);
 
+
+        $this->crud->addField([
+            'name' => 'metatitle',
+            'label' => trans('iblog::common.metatitle'),
+            'type' => 'text',
+            'fake' => true,
+            'store_in' => 'options',
+            'viewposition' => 'additional',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'metadescription',
+            'label' => trans('iblog::common.metadescription'),
+            'type' => 'textarea',
+            'attributes' => ['rows' => '6'],
+            'fake' => true,
+            'store_in' => 'options',
+            'viewposition' => 'additional',
+        ]);
+
+
+        $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
+            'name' => 'gallery', // the method that defines the relationship in your Model
+            'label' => 'Gallery',
+            'type' => 'gallery',
+            'viewposition' => 'gallery',
+            'label_drag'=>trans('iblog::post.form.drag'),
+            'label_click'=>trans('iblog::post.form.click'),
+            'folder'=>'assets/iblog/post/gallery/',
+            'route_upload'=>route('iblog.gallery.upload'),
+            'route_delete'=>route('iblog.gallery.delete')
+
+        ]);
+
         if (config()->has('asgard.iblog.config.fields')) {
             $fields = config()->get('asgard.iblog.config.fields');
             foreach ($fields as $field) {
@@ -201,37 +232,13 @@ class PostController extends BcrudController
 
     }
 
-    public function index()
-    {
-        parent::index();
-
-        return view('iblog::admin.list', $this->data);
-    }
-
-    public function edit($id)
-    {
-        parent::edit($id);
-
-        return view('iblog::admin.edit_post', $this->data);
-
-    }
-
-    public function create()
-    {
-
-        parent::create();
-
-        return view('iblog::admin.create', $this->data);
-
-    }
-
     public function show($id)
     {
-        $post= Post::find($id);
+        $post = Post::find($id);
         $category = $post->category;
         $locale = \LaravelLocalization::setLocale() ?: \App::getLocale();
 
-        return redirect()->route($locale . '.iblog.' . $category->slug .'.slug', ['slug' => $post->slug]);
+        return redirect()->route($locale . '.iblog.' . $category->slug . '.slug', ['slug' => $post->slug]);
 
     }
 
@@ -285,16 +292,28 @@ class PostController extends BcrudController
         $original_filename = $request->file('file')->getClientOriginalName();
 
         $idpost = $request->input('idedit');
-        $extension = $request->file('file')->extension();
+        $extension = $request->file('file')->getClientOriginalExtension();
         $allowedextensions = array('JPG', 'JPEG', 'PNG', 'GIF');
-        $name=str_slug(str_replace($extension,'',$original_filename ),'-');
+
         if (!in_array(strtoupper($extension), $allowedextensions)) {
             return 0;
         }
+        $disk = 'publicmedia';
+        $image = \Image::make($request->file('file'));
+        $name = str_slug(str_replace('.' . $extension, '', $original_filename), '-');
 
-        $nameimag = $name.'.'.$extension;
+
+        $image->fit(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
+            $constraint->upsize();
+        });
+
+        if (config('asgard.iblog.config.watermark.activated')) {
+            $image->insert(config('asgard.iblog.config.watermark.url'), config('asgard.iblog.config.watermark.position'), config('asgard.iblog.config.watermark.x'), config('asgard.iblog.config.watermark.y'));
+        }
+        $nameimag = $name . '.' . $extension;
         $destination_path = 'assets/iblog/post/gallery/' . $idpost . '/' . $nameimag;
-        $request->file('file')->storeAs('assets/iblog/post/gallery/' . $idpost, '/' . $nameimag, 'publicmedia');
+
+        \Storage::disk($disk)->put($destination_path, $image->stream($extension, '100'));
 
         return array('direccion' => $destination_path);
     }
@@ -374,7 +393,9 @@ class PostController extends BcrudController
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-
+            if (config('asgard.iblog.config.watermark.activated')) {
+                $image->insert(config('asgard.iblog.config.watermark.url'), config('asgard.iblog.config.watermark.position'), config('asgard.iblog.config.watermark.x'), config('asgard.iblog.config.watermark.y'));
+            }
             // 2. Store the image on disk.
             \Storage::disk($disk)->put($destination_path, $image->stream('jpg', '80'));
 
@@ -429,7 +450,7 @@ class PostController extends BcrudController
 
 
         // insert item in the db
-        $item = $this->crud->create($request->except(['redirect_after_save', '_token']));
+        $item = $this->crud->create($request->except(['save_action', '_token', '_method']));
         $this->data['entry'] = $this->crud->entry = $item;
 
 
@@ -437,21 +458,27 @@ class PostController extends BcrudController
         if (!empty($requestimage && !empty($item->id))) {
             $mainimage = $this->saveImage($requestimage, "assets/iblog/post/" . $item->id . ".jpg");
 
-            $item->update($this->crud->compactFakeFields(['mainimage' => $mainimage]));
+            $options = (array)$item->options;
+            $options["mainimage"] = $mainimage;
+
+            $item->update($this->crud->compactFakeFields($options));
             //TODO: i don't like the re-save. Find another way to do it.
+        }
+        if (!empty($request['gallery'] && !empty($item->id))) {
+            if (count(\Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $request['gallery']))) {
+                \File::makeDirectory('assets/iblog/post/gallery/' . $item->id);
+                $success = rename('assets/iblog/post/gallery/' . $request['gallery'], 'assets/iblog/post/gallery/' . $item->id);
+            }
         }
 
         // show a success message
         //\Alert::success(trans('bcrud::crud.insert_success'))->flash();
 
         // redirect the user where he chose to be redirected
-        switch ($request->input('redirect_after_save')) {
-            case 'current_item_edit':
-                return \Redirect::to($this->crud->route . '/' . $item->getKey() . '/edit');
+        // save the redirect choice for next time
+        $this->setSaveAction();
 
-            default:
-                return \Redirect::to($request->input('redirect_after_save'));
-        }
+        return $this->performSaveAction($item->getKey());
 
     }
 

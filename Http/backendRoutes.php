@@ -5,11 +5,11 @@ use Illuminate\Routing\Router;
 
 $router->group(['prefix' =>'/iblog'], function (Router $router) {
 
-    $router->post('category/upload/image', [
+    $router->post('post/upload/image', [
         'as' => 'iblog.gallery.upload',
         'uses' => 'PostController@uploadGalleryimage',
     ]);
-    $router->post('category/delete/img', [
+    $router->post('post/delete/img', [
         'as' => 'iblog.gallery.delete',
         'uses' => 'PostController@deleteGalleryimage',
     ]);

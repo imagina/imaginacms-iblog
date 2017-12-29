@@ -121,29 +121,26 @@ class CategoryController extends BcrudController
             'viewposition' => 'right',
         ]);
 
-    }
+        $this->crud->addField([
+            'name' => 'metatitle',
+            'label' => trans('iblog::common.metatitle'),
+            'type' => 'text',
+            'fake' => true,
+            'store_in' => 'options',
+            'viewposition' => 'additional',
+        ]);
 
-    public function edit($id) {
-
-        parent::edit($id);
-        return view('iblog::admin.edit', $this->data);
-    }
-
-    public function create() {
-
-        parent::create();
-
-        return view('iblog::admin.create', $this->data);
-
-    }
-    public function show($id=null) {
-
-        parent::show($id=null);
-
-        return view('iblog::admin.show', $this->data);
+        $this->crud->addField([
+            'name' => 'metadescription',
+            'label' => trans('iblog::common.metadescription'),
+            'type' => 'textarea',
+            'attributes' => ['rows' => '6'],
+            'fake' => true,
+            'store_in' => 'options',
+            'viewposition' => 'additional',
+        ]);
 
     }
-
 
     public function setup()
     {
@@ -201,7 +198,9 @@ class CategoryController extends BcrudController
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-
+            if(config('asgard.iblog.config.watermark.activated')){
+                $image->insert(config('asgard.iblog.config.watermark.url'), config('asgard.iblog.config.watermark.position'), config('asgard.iblog.config.watermark.x'), config('asgard.iblog.config.watermark.y'));
+            }
             // 2. Store the image on disk.
             \Storage::disk($disk)->put($destination_path, $image->stream('jpg','80'));
 
@@ -233,7 +232,6 @@ class CategoryController extends BcrudController
 
     }
 
-
     public function storeCrud(\Modules\Bcrud\Http\Requests\CrudRequest $request = null)
     {
 
@@ -253,22 +251,23 @@ class CategoryController extends BcrudController
 
         //Imagina- Defaults?
         $requestimage = $request["mainimage"];
-
         //Put a default image while we save.
         $request["mainimage"] = "assets/iblog/category/default.jpg";
 
 
         // insert item in the db
-        $item = $this->crud->create($request->except(['redirect_after_save', '_token']));
+        $item = $this->crud->create($request->except(['save_action', '_token', '_method']));
         $this->data['entry'] = $this->crud->entry = $item;
-
 
 
         //Let's save the image for the post.
         if(!empty($requestimage && !empty($item->id))) {
             $mainimage = $this->saveImage($requestimage,"assets/iblog/category/".$item->id.".jpg");
 
-            $item->update($this->crud->compactFakeFields(['mainimage'=>$mainimage]));
+            $options = (array)$item->options;
+            $options["mainimage"] = $mainimage;
+
+            $item->update($this->crud->compactFakeFields($options));
             //TODO: i don't like the re-save. Find another way to do it.
         }
 
@@ -276,15 +275,10 @@ class CategoryController extends BcrudController
         //\Alert::success(trans('bcrud::crud.insert_success'))->flash();
 
         // redirect the user where he chose to be redirected
-        switch ($request->input('redirect_after_save')) {
-            case 'current_item_edit':
-                return \Redirect::to($this->crud->route.'/'.$item->getKey().'/edit');
+        // save the redirect choice for next time
+        $this->setSaveAction();
 
-            default:
-                return \Redirect::to($request->input('redirect_after_save'));
-        }
-
-
+        return $this->performSaveAction($item->getKey());
 
     }
 

@@ -9,16 +9,16 @@ return [
     'mediumthumbsize' => ['width' => 400, 'height' => 300],
     'smallthumbsize' => ['width' => 100, 'height' => 80],
 
-/*
- |--------------------------------------------------------------------------
- | Dynamic fields
- |--------------------------------------------------------------------------
- | Add fields that will be dynamically added to the Post entity based on Bcrud
- | https://laravel-backpack.readme.io/docs/crud-fields
- */
+    /*
+     |--------------------------------------------------------------------------
+     | Dynamic fields
+     |--------------------------------------------------------------------------
+     | Add fields that will be dynamically added to the Post entity based on Bcrud
+     | https://laravel-backpack.readme.io/docs/crud-fields
+     */
     'fields' => [
 //        'image' => [
-            // image
+        // image
 //            'label' => trans('iblog::common.image'),
 //            'name' => "imgsecund",
 //            'type' => 'image',
@@ -53,7 +53,7 @@ return [
    |
    */
 
-    'localetime'=>'es_CO.UTF-8',
+    'localetime' => 'es_CO.UTF-8',
 
     /*
   |--------------------------------------------------------------------------
@@ -66,7 +66,7 @@ return [
   |
   */
 
-    'datetimezone'=>'America/Bogota',
+    'datetimezone' => 'America/Bogota',
 
     /*
   |--------------------------------------------------------------------------
@@ -79,6 +79,24 @@ return [
   |
   */
 
-    'oglocale'=>'es_LA'
+    'oglocale' => 'es_LA',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Iblog Watermark Configuration
+    |--------------------------------------------------------------------------
+    |
+    |
+    |
+    */
+
+    'watermark' => [
+        'activated' => false,
+        'url' => 'modules/iblog/img/watermark/watermark.png',
+        'position' => 'top-left', #top, top-right, left, center, right, bottom-left, bottom, bottom-right
+        'x' => 10,
+        'y' => 10,
+    ],
+
 
 ];
