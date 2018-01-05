@@ -6,7 +6,7 @@
     "require": {
         "php": ">=7.0.0",
         "idavoll/core-module": "~3.0",
-        "imagina/bcrud-module": ">3.0.5"
+        "imagina/bcrud-module": ">=3.0.5"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
