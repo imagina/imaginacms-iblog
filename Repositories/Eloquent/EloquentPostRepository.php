@@ -118,7 +118,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     {
 
         return $this->model->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id')
-            ->whereIn('iblog__post__category.category_id', $id)
+            ->whereIn('iblog__post__category.category_id', [$id])
             ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
 
     }
@@ -127,7 +127,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     {
 
         return $this->model->leftJoin('iblog__post__tag', 'iblog__post__tag.post_id', '=', 'iblog__posts.id')
-            ->whereIn('iblog__post__tag.tag_id', $id)
+            ->whereIn('iblog__post__tag.tag_id', [$id])
                 ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
 
     }

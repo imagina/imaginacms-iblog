@@ -450,7 +450,7 @@ class PostController extends BcrudController
 
 
         // insert item in the db
-        $item = $this->crud->create($request->except(['save_action', '_token', '_method']));
+        $item = $this->crud->create($request->except(['save_action', '_token', '_method', 'gallery']));
         $this->data['entry'] = $this->crud->entry = $item;
 
 
