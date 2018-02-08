@@ -49,11 +49,8 @@ if (! function_exists('get_posts')) {
                 $query->whereIn('user_id', $options['users']);
             });
         }
-        if (!empty($options['include'])) {
-            $posts->whereIn('id', $options['include']);
-        }
         if (!empty($options['exclude'])) {
-            $posts->whereNotIn('id', $options['exclude']);
+            $posts->whereNotIn('iblog__posts.id', $options['exclude']);
         }
 
         if (isset($options['exclude_users'])) {
@@ -67,9 +64,16 @@ if (! function_exists('get_posts')) {
 
         $posts->whereStatus($options['status'])
             ->skip($options['skip'])
-            ->take($options['take'])
-            ->orderBy('created_at', $options['order']);
+            ->take($options['take']);
 
+      $posts->orderBy('created_at', $options['order']);
+
+        if (!empty($options['include'])) {
+            $posts->orWhere(function ($query) use ($options) {
+                $query-> whereIn('iblog__posts.id', $options['include']);
+            });
+
+        }
         return $posts->get();
 
     }
@@ -105,9 +109,6 @@ if (!function_exists('get_categories')) {
         $options = array_merge($default_options, $options);
 
         $categories = Category::query();
-        if (!empty($options['include'])) {
-            $categories->whereIn('id', $options['include']);
-        }
         if (!empty($options['exclude'])) {
             $categories->whereNotIn('id', $options['exclude']);
         }
@@ -117,7 +118,11 @@ if (!function_exists('get_categories')) {
         $categories->skip($options['skip'])
             ->take($options['take'])
             ->orderBy('created_at', $options['order']);
-
+        if (!empty($options['include'])) {
+            $categories->orWhere(function ($query) use ($options) {
+                $query-> whereIn('id', $options['include']);;
+            });
+        }
         return $categories->get();
 
 
@@ -139,9 +144,7 @@ if (!function_exists('get_tags')) {
         $options = array_merge($default_options, $options);
 
         $tags = Tag::query();
-        if (!empty($options['include'])) {
-            $tags->whereIn('id', $options['include']);
-        }
+
         if (!empty($options['exclude'])) {
             $tags->whereNotIn('id', $options['exclude']);
         }
@@ -151,7 +154,11 @@ if (!function_exists('get_tags')) {
         $tags->skip($options['skip'])
             ->take($options['take'])
             ->orderBy('created_at', $options['order']);
-
+        if (!empty($options['include'])) {
+            $tags->orWhere(function ($query) use ($options) {
+                $query-> whereIn('id', $options['include']);;
+            });
+        }
         return $tags->get();
 
 
@@ -159,13 +166,13 @@ if (!function_exists('get_tags')) {
 }
 
 if(! function_exists('format_date')){
-/**
- * Format date according to local module configuration.
- * @param object $date
- * @param string $format
- *
- * @return string
- **/
+    /**
+     * Format date according to local module configuration.
+     * @param object $date
+     * @param string $format
+     *
+     * @return string
+     **/
 
     function format_date($date, $format='%A, %B %d, %Y'){
         return strftime($format,strtotime($date));

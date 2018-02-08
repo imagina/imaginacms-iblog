@@ -1,10 +1,13 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
-    3.0.3":
-        added:
-            - the exclude to the variable gallery in storeCrud method in the postControler
+    "3.0.5":
         changed:
-            - correction to wereIn for id category and tag query of Eloquent Post Repository
+            - The ambiguity error in the inclusion and exclusion of posts in the function get_post have been solved
+    "3.0.3":
+        added:
+            - The exclude to the variable gallery in storeCrud method in the postControler
+        changed:
+            - Correction to whereIn for id category and tag query of Eloquent Post Repository
 
 
     "3.0.2":
