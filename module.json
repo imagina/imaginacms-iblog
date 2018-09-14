@@ -3,12 +3,13 @@
     "alias": "iblog",
     "description": "A simple blog module with categories and tags",
     "keywords": [],
-    "version": "3.0.5",
+    "version": "3.0.6",
     "active": 1,
     "order": 1,
     "providers": [
         "Modules\\Iblog\\Providers\\IblogServiceProvider",
-        "Modules\\Iblog\\Providers\\RouteServiceProvider"
+        "Modules\\Iblog\\Providers\\RouteServiceProvider",
+        "Modules\\Iblog\\Providers\\EventServiceProvider"
     ],
     "widgets": [
         "Modules\\Iblog\\Widgets\\PostsWidget",

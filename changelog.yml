@@ -1,5 +1,29 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+    "3.1.0":
+        added:
+            - Config dateformat
+            - Method get mainimage and url in Category entity
+            - Method get mainimage,url, metatitle and metadescription in Post entity
+            - Method get url en Tag entity
+            - New PostWasCreated, PostWasDeleted, PostWasUpdate in Events
+            - Controller Category, Post, Tag in Api
+            - apiRoutes
+            - CategoryPresenter
+            - Transformers Category,Post,Tag,FullCategory,FullPost,FullTag
+            - Colum slug in index Tag
+            - WhereFilter in EloquentCategoryRepository, EloquentPostRepository and EloquentTagsRepository
+            - Helper saveImage
+         changed:
+            - Method setSlug category,post and Tag entities
+            - Method create EloquentCategoryRepository
+            - Method post EloquentPostRepository
+
+          removed:
+            - Method saveimage  admin PostController
+            - Method saveimage  admin CategoryController
+
+
     "3.0.5":
         changed:
             - The ambiguity error in the inclusion and exclusion of posts in the function get_post have been solved

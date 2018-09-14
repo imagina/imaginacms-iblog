@@ -43,7 +43,12 @@ class PublicController extends BasePublicController
         } else {
             $category = $this->category->findBySlug($uri);
             $posts = $this->post->whereCategory($category->id);
+            //$posts = $this->post->whereCategory($category->id);
             //Get Custom Template.
+            $ptpl="iblog.category.{$category->parent_id}.index";
+            if($category->parent_id!=0 && view()->exists($ptpl)){
+                $tpl = $ptpl;
+            }
             $ctpl = "iblog.category.{$category->id}.index";
             if(view()->exists($ctpl)) $tpl = $ctpl;
         }
@@ -63,6 +68,10 @@ class PublicController extends BasePublicController
         $category = $post->category;
         $tags = $post->tags()->get();
 
+        $ptpl="iblog.category.{$category->parent_id}.show";
+        if($category->parent_id!=0 && view()->exists($ptpl)){
+            $tpl = $ptpl;
+        }
         //Get Custom Template.
         $ctpl = "iblog.category.{$category->id}.show";
 

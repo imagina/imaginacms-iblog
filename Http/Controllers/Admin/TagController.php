@@ -53,6 +53,11 @@ class tagController extends BcrudController
             'label' => 'ID',
         ]);
 
+        $this->crud->addColumn([
+            'name' => 'slug',
+            'label' => 'slug',
+        ]);
+
 
         $this->crud->addColumn([
             'name' => 'title',
@@ -74,15 +79,6 @@ class tagController extends BcrudController
             'type' => 'text',
             'viewposition' => 'right',
         ]);
-
-
-        $this->crud->addField([
-            'name' => 'description',
-            'label' => trans('iblog::common.description'),
-            'type' => 'textarea',
-            'viewposition' => 'right',
-        ]);
-
 
 
     }

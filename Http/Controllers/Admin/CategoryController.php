@@ -4,6 +4,7 @@ namespace Modules\Iblog\Http\Controllers\Admin;
 
 use Illuminate\Http\Response;
 use Modules\Iblog\Entities\Category;
+use Modules\Iblog\Events\CategoryWasCreated;
 use Modules\Iblog\Http\Requests\IblogRequest;
 
 use Modules\Bcrud\Http\Controllers\BcrudController;
@@ -166,120 +167,20 @@ class CategoryController extends BcrudController
 
     public function store(IblogRequest $request)
     {
-        return parent::storeCrud();
+        parent::storeCrud();
+       event(new CategoryWasCreated($this->data['entry'], $request->all()));
+        return $this->performSaveAction($this->data['entry']->getKey());
     }
 
     public function update(IblogRequest $request)
     {
                //Let's update the image for the post.
         if (!empty($request['mainimage']) && !empty($request['id'])) {
-            $request['mainimage'] = $this->saveImage($request['mainimage'], "assets/iblog/category/" . $request['id'] . ".jpg");
+            $request['mainimage'] = saveImage($request['mainimage'], "assets/iblog/category/" . $request['id'] . ".jpg");
         }
         return parent::updateCrud($request);
     }
-    public function saveImage($value,$destination_path)
-    {
-
-        $disk = "publicmedia";
-
-        //Defined return.
-        if(ends_with($value,'.jpg')) {
-            return $value;
-        }
-
-        // if a base64 was sent, store it in the db
-        if (starts_with($value, 'data:image'))
-        {
-            // 0. Make the image
-            $image = \Image::make($value);
-            // resize and prevent possible upsizing
-
-            $image->resize(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            if(config('asgard.iblog.config.watermark.activated')){
-                $image->insert(config('asgard.iblog.config.watermark.url'), config('asgard.iblog.config.watermark.position'), config('asgard.iblog.config.watermark.x'), config('asgard.iblog.config.watermark.y'));
-            }
-            // 2. Store the image on disk.
-            \Storage::disk($disk)->put($destination_path, $image->stream('jpg','80'));
 
 
-            // Save Thumbs
-            \Storage::disk($disk)->put(
-                str_replace('.jpg','_mediumThumb.jpg',$destination_path),
-                $image->fit(config('asgard.iblog.config.mediumthumbsize.width'),config('asgard.iblog.config.mediumthumbsize.height'))->stream('jpg','80')
-            );
-
-            \Storage::disk($disk)->put(
-                str_replace('.jpg','_smallThumb.jpg',$destination_path),
-                $image->fit(config('asgard.iblog.config.smallthumbsize.width'),config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg','80')
-            );
-
-            // 3. Return the path
-            return $destination_path;
-        }
-
-        // if the image was erased
-        if ($value==null) {
-            // delete the image from disk
-            \Storage::disk($disk)->delete($destination_path);
-
-            // set null in the database column
-            return null;
-        }
-
-
-    }
-
-    public function storeCrud(\Modules\Bcrud\Http\Requests\CrudRequest $request = null)
-    {
-
-        $this->crud->hasAccessOrFail('create');
-
-        // fallback to global request instance
-        if (is_null($request)) {
-            $request = \Request::instance();
-        }
-
-        // replace empty values with NULL, so that it will work with MySQL strict mode on
-        foreach ($request->input() as $key => $value) {
-            if (empty($value) && $value !== '0') {
-                $request->request->set($key, null);
-            }
-        }
-
-        //Imagina- Defaults?
-        $requestimage = $request["mainimage"];
-        //Put a default image while we save.
-        $request["mainimage"] = "assets/iblog/category/default.jpg";
-
-
-        // insert item in the db
-        $item = $this->crud->create($request->except(['save_action', '_token', '_method']));
-        $this->data['entry'] = $this->crud->entry = $item;
-
-
-        //Let's save the image for the post.
-        if(!empty($requestimage && !empty($item->id))) {
-            $mainimage = $this->saveImage($requestimage,"assets/iblog/category/".$item->id.".jpg");
-
-            $options = (array)$item->options;
-            $options["mainimage"] = $mainimage;
-
-            $item->update($this->crud->compactFakeFields($options));
-            //TODO: i don't like the re-save. Find another way to do it.
-        }
-
-        // show a success message
-        //\Alert::success(trans('bcrud::crud.insert_success'))->flash();
-
-        // redirect the user where he chose to be redirected
-        // save the redirect choice for next time
-        $this->setSaveAction();
-
-        return $this->performSaveAction($item->getKey());
-
-    }
 
 }

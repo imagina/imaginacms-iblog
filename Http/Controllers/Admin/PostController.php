@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Status;
 use Modules\Iblog\Entities\Tag;
+use Modules\Iblog\Events\PostWasCreated;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Media\Repositories\FileRepository;
 use Modules\Bcrud\Http\Controllers\BcrudController;
@@ -264,13 +265,18 @@ class PostController extends BcrudController
     public function store(IblogRequest $request)
     {
 
-        if ($request['created_at'] == null) {
-            unset($request['created_at']);
+        if ($request->created_at == null) {
+            $request['created_at'] = \Carbon\Carbon::now();
         }
-
-        //se modifica el valor de tags para agregar los nuevos registros
+        if (!isset($request->slug) && empty($request->slug)) {
+            $request['slug'] = str_slug($request->title,'-');
+        }
+       //se modifica el valor de tags para agregar los nuevos registros
         $request['tags'] = $this->addTags($request['tags']);
-        return $this->storeCrud($request);
+        parent::storeCrud();
+
+        event(new PostWasCreated($this->data['entry'], $request->all()));
+        return $this->performSaveAction($this->data['entry']->getKey());
 
     }
 
@@ -278,7 +284,7 @@ class PostController extends BcrudController
     {
 
         if (!empty($request['mainimage']) && !empty($request['id'])) {
-            $request['mainimage'] = $this->saveImage($request['mainimage'], "assets/iblog/post/" . $request['id'] . ".jpg");
+            $request['mainimage'] = saveImage($request['mainimage'], "assets/iblog/post/" . $request['id'] . ".jpg");
         } else {
             $request['mainimage'] = 'modules/iblog/img/post/default.jpg';
         }
@@ -360,126 +366,6 @@ class PostController extends BcrudController
         }
         //se modifica el valor tags enviado desde el form uniendolos visjos tags y los tags nuevos
         return array_merge($lasttagsid, $newtagsid);
-    }
-
-
-    public function saveImage($value, $destination_path)
-    {
-        $disk = "publicmedia";
-
-        //Defined return.
-        if (starts_with($value, 'http')) {
-            $url = url('modules/bcrud/img/default.jpg');
-            if ($value == $url) {
-                return 'modules/iblog/img/post/default.jpg';
-            } else {
-                if (empty(str_replace(url(''), "", $value))) {
-
-                    return 'modules/iblog/img/post/default.jpg';
-                }
-                str_replace(url(''), "", $value);
-                return str_replace(url(''), "", $value);
-            }
-
-        };
-
-        // if a base64 was sent, store it in the db
-        if (starts_with($value, 'data:image')) {
-            // 0. Make the image
-            $image = \Image::make($value);
-            // resize and prevent possible upsizing
-
-            $image->resize(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            if (config('asgard.iblog.config.watermark.activated')) {
-                $image->insert(config('asgard.iblog.config.watermark.url'), config('asgard.iblog.config.watermark.position'), config('asgard.iblog.config.watermark.x'), config('asgard.iblog.config.watermark.y'));
-            }
-            // 2. Store the image on disk.
-            \Storage::disk($disk)->put($destination_path, $image->stream('jpg', '80'));
-
-
-            // Save Thumbs
-            \Storage::disk($disk)->put(
-                str_replace('.jpg', '_mediumThumb.jpg', $destination_path),
-                $image->fit(config('asgard.iblog.config.mediumthumbsize.width'), config('asgard.iblog.config.mediumthumbsize.height'))->stream('jpg', '80')
-            );
-
-            \Storage::disk($disk)->put(
-                str_replace('.jpg', '_smallThumb.jpg', $destination_path),
-                $image->fit(config('asgard.iblog.config.smallthumbsize.width'), config('asgard.iblog.config.smallthumbsize.height'))->stream('jpg', '80')
-            );
-
-            // 3. Return the path
-            return $destination_path;
-        }
-
-        // if the image was erased
-        if ($value == null) {
-            // delete the image from disk
-            \Storage::disk($disk)->delete($destination_path);
-
-            // set null in the database column
-            return null;
-        }
-
-
-    }
-
-    public function storeCrud(\Modules\Bcrud\Http\Requests\CrudRequest $request = null)
-    {
-
-        $this->crud->hasAccessOrFail('create');
-
-        // fallback to global request instance
-        if (is_null($request)) {
-            $request = \Request::instance();
-        }
-
-        // replace empty values with NULL, so that it will work with MySQL strict mode on
-        foreach ($request->input() as $key => $value) {
-            if (empty($value) && $value !== '0') {
-                $request->request->set($key, null);
-            }
-        }
-
-        //Imagina- Defaults?
-        $requestimage = $request["mainimage"];
-        //Put a default image while we save.
-
-
-        // insert item in the db
-        $item = $this->crud->create($request->except(['save_action', '_token', '_method', 'gallery']));
-        $this->data['entry'] = $this->crud->entry = $item;
-
-
-        //Let's save the image for the post.
-        if (!empty($requestimage && !empty($item->id))) {
-            $mainimage = $this->saveImage($requestimage, "assets/iblog/post/" . $item->id . ".jpg");
-
-            $options = (array)$item->options;
-            $options["mainimage"] = $mainimage;
-
-            $item->update($this->crud->compactFakeFields($options));
-            //TODO: i don't like the re-save. Find another way to do it.
-        }
-        if (!empty($request['gallery'] && !empty($item->id))) {
-            if (count(\Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $request['gallery']))) {
-                \File::makeDirectory('assets/iblog/post/gallery/' . $item->id);
-                $success = rename('assets/iblog/post/gallery/' . $request['gallery'], 'assets/iblog/post/gallery/' . $item->id);
-            }
-        }
-
-        // show a success message
-        //\Alert::success(trans('bcrud::crud.insert_success'))->flash();
-
-        // redirect the user where he chose to be redirected
-        // save the redirect choice for next time
-        $this->setSaveAction();
-
-        return $this->performSaveAction($item->getKey());
-
     }
 
 }

@@ -43,6 +43,9 @@
                                             @endif
                                         </a>
                                     </div>
+                                    @foreach($post->categories as $category)
+                                    {{$category->title}}
+                                    @endforeach
                                     <div class="content">
                                         <a href="{{$post->url}}"><h2>{{$post->title}}</h2></a>
                                         <p>{!! $post->summary!!}</p>
@@ -79,8 +82,9 @@
 
                         <div class="cate">
                             <h3>Categorias</h3>
+                            <button type="submit"></button>
 
-                            <div class="listado-cat">
+                            {{--<div class="listado-cat">
                                 <ul>
                                     @php
                                         $categories=get_categories();
@@ -92,7 +96,7 @@
                                         @endforeach
                                     @endif
                                 </ul>
-                            </div>
+                            </div>--}}
                         </div>
                     </div>
                 </div>

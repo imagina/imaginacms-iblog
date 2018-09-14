@@ -5,9 +5,9 @@ return [
 
     'middleware' => [],
 
-    'imagesize' => ['width' => 1024, 'height' => 768],
-    'mediumthumbsize' => ['width' => 400, 'height' => 300],
-    'smallthumbsize' => ['width' => 100, 'height' => 80],
+    'imagesize' => ['width' => 1024, 'height' => 768, 'quality'=>80],
+    'mediumthumbsize' => ['width' => 400, 'height' => 300, 'quality'=>80],
+    'smallthumbsize' => ['width' => 100, 'height' => 80, 'quality'=>80],
 
     /*
      |--------------------------------------------------------------------------
@@ -98,5 +98,6 @@ return [
         'y' => 10,
     ],
 
+    'dateformat'=>'%A, %B %d, %Y',
 
 ];

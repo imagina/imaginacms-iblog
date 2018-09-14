@@ -7,10 +7,13 @@ use Modules\Bcrud\Support\Traits\CrudTrait;
 use Modules\Iblog\Entities\Feature;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Iblog\Presenters\PostPresenter;
+//use Modules\Bcrud\Support\ModelTraits\SpatieTranslatable\Sluggable;
+//use Modules\Bcrud\Support\ModelTraits\SpatieTranslatable\SluggableScopeHelpers;
 
 class Post extends Model
 {
     use CrudTrait,  PresentableTrait;
+    //use Sluggable, SluggableScopeHelpers;
 
     protected $table = 'iblog__posts';
 
@@ -44,7 +47,20 @@ class Post extends Model
         return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
     }
 
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
 
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'slug_or_title',
+            ],
+        ];
+    }
+*/
     /**
      * The attributes that should be casted to native types.
      *
@@ -55,7 +71,7 @@ class Post extends Model
         if(!empty($value)){
             $this->attributes['slug'] = str_slug($value,'-');
         }else{
-            $this->attributes['slug'] = str_slug($this->title,'-');
+            $this->attributes['slug'] = str_slug($this->attributes['title'],'-');
         }
 
 
@@ -66,9 +82,16 @@ class Post extends Model
         if(!empty($value)){
             $this->attributes['summary'] = $value;
         } else {
-            $this->attributes['summary'] = substr(strip_tags($this->description),0,150);
+            $this->attributes['summary'] = substr(strip_tags($this->attributes['description']),0,150);
         }
 
+    }
+
+
+    protected function getSummaryAttribute(){
+
+
+           return $this->summary ?? substr(strip_tags($this->description),0,150);
     }
 
     public function getOptionsAttribute($value) {
@@ -92,13 +115,74 @@ class Post extends Model
     }
 
     /**
+     * get main image
+     * @return string
+     */
+    public function getMainimageAttribute()
+    {
+
+        return url($this->options->mainimage  ?? 'modules/iblog/img/post/default.jpg' . '?v=' . format_date($this->updated_at, '%u%w%g%k%M%S'));
+    }
+
+    /**
+     * get medium image
+     * @return mixed|string
+     */
+
+    public function getMediumimageAttribute()
+    {
+
+        return url(str_replace('.jpg', '_mediumThumb.jpg', $this->options->mainimage  ?? 'modules/iblog/img/post/default.jpg') . '?v=' . format_date($this->updated_at, '%u%w%g%k%M%S'));
+    }
+
+    /**
+     * get small image
+     * @return mixed|string
+     */
+    public function getThumbailsAttribute()
+    {
+
+        return url(str_replace('.jpg', '_smallThumb.jpg', $this->options->mainimage  ?? 'modules/iblog/img/post/default.jpg') . '?v=' . format_date($this->updated_at, '%u%w%g%k%M%S') );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMetadescriptionAttribute()
+    {
+
+        return $this->options->metadescription ?? $this->summary;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMetatitleAttribute()
+    {
+
+        return $this->options->metatitle ?? $this->title;
+    }
+
+    /**
+     * get Gallery
+     * @return string
+     */
+    public function getGalleryAttribute()
+    {
+
+        $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
+        if (count($images)) {
+            return $images;
+        }
+        return null;
+    }
+
+    /**
      * Magic Method modification to allow dynamic relations to other entities.
      * @var $value
      * @var $destination_path
      * @return string
      */
-
-
     public function __call($method, $parameters)
     {
         #i: Convert array to dot notation
