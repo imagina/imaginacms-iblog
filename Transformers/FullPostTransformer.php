@@ -27,8 +27,8 @@ class FullPostTransformer extends Resource
             'metatitle'=>$this->metatitle??$this->title,
             'metadescription'=>$this->metadescription??$this->summary,
             'options'=>$options,
-            'created_at'=>format_date($this->created_at,$dateformat),
-            'updated_at'=>format_date($this->updated_at,$dateformat)
+            //'created_at'=>format_date($this->created_at,$dateformat),
+            //'updated_at'=>format_date($this->updated_at,$dateformat)
         ];
 
         if (in_array('categories',$includes)) {

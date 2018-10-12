@@ -219,7 +219,7 @@ if(!function_exists('get_status')){
 }
 
 
-if (!function_exists(' saveImage')) {
+if (!function_exists('saveImage')) {
 
     function saveImage($value, $destination_path, $disk='publicmedia', $size = array(), $watermark = array())
     {

@@ -60,7 +60,7 @@ class Category extends Model
      */
     public function getMainimageAttribute(){
 
-        return ($this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.format_date($this->updated_at,'%u%w%g%k%M%S');
+        return ($this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
     }
 
     /**
@@ -69,7 +69,7 @@ class Category extends Model
      */
     public function getMediumimageAttribute(){
 
-        return str_replace('.jpg','_mediumThumb.jpg',$this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.format_date($this->updated_at,'%u%w%g%k%M%S');
+        return str_replace('.jpg','_mediumThumb.jpg',$this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
     }
 
     /**
@@ -78,7 +78,7 @@ class Category extends Model
      */
     public function getThumbailsAttribute(){
 
-        return str_replace('.jpg','_smallThumb.jpg',$this->options->mainimage?? 'modules/iblog/img/post/default.jpg').'?v='.format_date($this->updated_at,'%u%w%g%k%M%S');
+        return str_replace('.jpg','_smallThumb.jpg',$this->options->mainimage?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
     }
     public function getMetadescriptionAttribute(){
 
