@@ -5,8 +5,7 @@ namespace Modules\Iblog\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Log;
 use Mockery\CountValidator\Exception;
-use Modules\Core\Http\Controllers\BasePublicController;
-use Modules\Icustom\Http\Controllers\BaseApiController;  //Base API
+use Modules\Ihelpers\Http\Controllers\Api\BaseApiController;  //Base API
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Iblog\Repositories\PostRepository;

@@ -6,18 +6,17 @@ namespace Modules\Iblog\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Log;
 use Mockery\CountValidator\Exception;
-use Modules\Core\Http\Controllers\BasePublicController;
 use Modules\Iblog\Entities\Tag;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Iblog\Repositories\TagRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Iblog\Transformers\TagTransformer;
-use Modules\Iblog\Transformers\FullTagTransformer;
 use Modules\Iblog\Transformers\PostTransformer;
+use Modules\Ihelpers\Http\Controllers\Api\BaseApiController;
 use Route;
 
 
-class TagController extends BasePublicController
+class TagController extends BaseApiControlle
 {
 
     /**

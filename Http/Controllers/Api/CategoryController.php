@@ -12,7 +12,7 @@ use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Iblog\Transformers\CategoryTransformer;
 use Modules\Iblog\Transformers\PostTransformer;
-use Modules\Icustom\Http\Controllers\BaseApiController;
+use Modules\Ihelpers\Http\Controllers\Api\BaseApiController;
 use Modules\User\Transformers\UserProfileTransformer;
 use Route;
 
