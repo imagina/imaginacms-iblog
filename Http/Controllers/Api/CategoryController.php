@@ -11,13 +11,14 @@ use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Iblog\Transformers\CategoryTransformer;
-use Modules\Iblog\Transformers\FullCategoryTransformer;
-use Modules\Iblog\Transformers\FullPostTransformer;
 use Modules\Iblog\Transformers\PostTransformer;
+use Modules\Icustom\Http\Controllers\BaseApiController;
 use Modules\User\Transformers\UserProfileTransformer;
 use Route;
 
-class CategoryController extends BasePublicController
+//Base API
+
+class CategoryController extends BaseApiController
 {
     /**
      *
@@ -33,13 +34,75 @@ class CategoryController extends BasePublicController
         $this->category = $category;
     }
 
+    /**
+     * Get Data from Categories
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function index(Request $request)
+    {
+        try {
+            //Get Parameters from URL.
+            $p = $this->parametersUrl(1, 12, false, []);
+
+            //Request to Repository
+            $categories = $this->category->index($p->page, $p->take, $p->filter, $p->include);
+
+            //Response
+            $response = ["data" => CategoryTransformer::collection($categories)];
+
+            //If request pagination add meta-page
+            $p->page ? $response["meta"] = ["page" => $this->pageTransformer($categories)] : false;
+        } catch (\Exception $e) {
+            //Message Error
+            $status = 500;
+            $response = [
+                "errors" => $e->getMessage()
+            ];
+        }
+
+        return response()->json($response, $status ?? 200);
+    }
+
+    /**
+     * Get Data by category
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function show($slug, Request $request)
+    {
+        try {
+            //Get Parameters from URL.
+            $p = $this->parametersUrl(false, false, false, []);
+
+            //Request to Repository
+            $category = $this->category->show($slug, $p->include);
+
+            //Response
+            $response = [
+                "data" => is_null($category) ? false : new CategoryTransformer($category)];
+        } catch (\Exception $e) {
+            //Message Error
+            $status = 500;
+            $response = [
+                "errors" => $e->getMessage()
+            ];
+        }
+
+        return response()->json($response, $status ?? 200);
+    }
+/*
     public function categories(Request $request)
     {
 
         try {
-            if(isset($request->include)){
+            if (isset($request->include)) {
                 $includes = explode(",", $request->include);
-            }else{$includes=null;}
+            } else {
+                $includes = null;
+            }
             if (isset($request->filters) && !empty($request->filters)) {
                 $filters = json_decode($request->filters);
                 $results = $this->category->whereFilters($filters, $includes);
@@ -50,7 +113,7 @@ class CategoryController extends BasePublicController
                             "take" => $filters->take ?? 5,
                             "skip" => $filters->skip ?? 0,
                         ],
-                        'data' => FullCategoryTransformer::collection($results),
+                        'data' => CategoryTransformer::collection($results),
                     ];
                 } else {
                     $response = [
@@ -59,7 +122,7 @@ class CategoryController extends BasePublicController
                             "per_page" => $results->perPage(),
                             "total-item" => $results->total()
                         ],
-                        'data' => FullCategoryTransformer::collection($results),
+                        'data' => CategoryTransformer::collection($results),
                         'links' => [
                             "self" => $results->currentPage(),
                             "first" => $results->hasMorePages(),
@@ -80,7 +143,7 @@ class CategoryController extends BasePublicController
                         "per_page" => $results->perPage(),
                         "total-item" => $results->total()
                     ],
-                    'data' => FullCategoryTransformer::collection($results),
+                    'data' => CategoryTransformer::collection($results),
                     'links' => [
                         "self" => $results->currentPage(),
                         "first" => $results->hasMorePages(),
@@ -169,7 +232,7 @@ class CategoryController extends BasePublicController
 
         return response()->json($response, $status ?? 200);
     }
-
+*/
     public function posts(Category $category, Request $request)
     {
         try {
@@ -186,7 +249,7 @@ class CategoryController extends BasePublicController
                             "take" => $filters->take ?? 5,
                             "skip" => $filters->skip ?? 0,
                         ],
-                        'data' => FullPostTransformer::collection($results),
+                        'data' => PostTransformer::collection($results),
                     ];
                 } else {
                     $response = [
@@ -195,7 +258,7 @@ class CategoryController extends BasePublicController
                             "per_page" => $results->perPage(),
                             "total-item" => $results->total()
                         ],
-                        'data' => FullPostTransformer::collection($results),
+                        'data' => PostTransformer::collection($results),
                         'links' => [
                             "self" => $results->currentPage(),
                             "first" => $results->hasMorePages(),
@@ -215,7 +278,7 @@ class CategoryController extends BasePublicController
                         "per_page" => $results->perPage(),
                         "total-item" => $results->total()
                     ],
-                    'data' => FullPostTransformer::collection($results),
+                    'data' => PostTransformer::collection($results),
                     'links' => [
                         "self" => $results->currentPage(),
                         "first" => $results->hasMorePages(),

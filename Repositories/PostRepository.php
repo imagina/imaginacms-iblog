@@ -34,4 +34,11 @@ interface PostRepository extends BaseRepository
      */
     public function find($id);
 
+    /**
+     * Get the next post of the given post
+     * @param object $id
+     * @return object
+     */
+    public function category($id);
+
 }

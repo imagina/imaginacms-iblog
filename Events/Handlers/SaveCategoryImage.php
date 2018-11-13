@@ -19,19 +19,23 @@ class SaveCategoryImage
 
     public function handle(CategoryWasCreated $event)
     {
+
         $id = $event->entity->id;
+
         if (!empty($event->data['mainimage'])) {
             $mainimage = saveImage($event->data['mainimage'], "assets/iblog/category/" . $id . ".jpg");
             if(isset($event->data['options'])){
                 $options=(array)$event->data['options'];
-            }else{$options = array();}
+            }else{
+                $options = array();
+            }
             $options["mainimage"] = $mainimage;
             $event->data['options'] = json_encode($options);
         }else{
             $event->data['options'] = json_encode($event->data['options']);
         }
 
-        $this->category->update($event->entity, $event->data);
+       $this->category->update($event->entity, $event->data);
     }
 
 }

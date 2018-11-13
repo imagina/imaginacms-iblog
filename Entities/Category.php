@@ -2,7 +2,6 @@
 
 namespace Modules\Iblog\Entities;
 
-use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Bcrud\Support\Traits\CrudTrait;
 
@@ -60,16 +59,18 @@ class Category extends Model
      */
     public function getMainimageAttribute(){
 
-        return ($this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
+        return url($this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
     }
 
     /**
      * get medium image
      * @return mixed|string
      */
-    public function getMediumimageAttribute(){
 
-        return str_replace('.jpg','_mediumThumb.jpg',$this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
+    public function getMediumimageAttribute()
+    {
+
+        return url(str_replace('.jpg', '_mediumThumb.jpg', $this->options->mainimage  ?? 'modules/iblog/img/post/default.jpg') . '?v=' . $this->updated_at);
     }
 
     /**
@@ -78,7 +79,7 @@ class Category extends Model
      */
     public function getThumbailsAttribute(){
 
-        return str_replace('.jpg','_smallThumb.jpg',$this->options->mainimage?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
+        return url(str_replace('.jpg','_smallThumb.jpg',$this->options->mainimage?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at);
     }
     public function getMetadescriptionAttribute(){
 

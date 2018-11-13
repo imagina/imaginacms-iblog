@@ -3,6 +3,7 @@
 namespace Modules\Iblog\Repositories\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Modules\Iblog\Entities\Post;
@@ -13,6 +14,89 @@ use Modules\Iblog\Repositories\PostRepository;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
+    /**
+     * Return posts by parameters
+     *
+     * @param $page
+     * @param $take
+     * @param $filter
+     * @param $include
+     * @return mixed
+     */
+    public function index($page, $take, $filter, $include)
+    {
+        //Initialize Query
+        $query = $this->model->query();
+
+        /*== RELATIONSHIPS ==*/
+        if (count($include)) {
+            //Include relationships for default
+            $includeDefault = [];
+            $query->with(array_merge($includeDefault, $include));
+        }
+
+        /*== FILTER ==*/
+        if ($filter) {
+            //Filter by category slug
+            if (isset($filter->categorySlug)) {
+                //change parameter $filter->categoryId
+                $category = DB::table('iblog__categories')->where('slug', $filter->categorySlug)->first(['id']);
+
+                if ($category) {
+                    $filter->categoryId = $category->id;
+                }
+            }
+
+            //Filter by category ID
+            if (isset($filter->categoryId)) {
+                $query->whereIn('id', function ($query) use ($filter) {
+                    $query->select('post_id')
+                        ->from('iblog__post__category')
+                        ->where('category_id', $filter->categoryId);
+                });
+            }
+
+            //Add order By
+            $orderBy = isset($filter->orderBy) ? $filter->orderBy : 'created_at';
+            $orderType = isset($filter->orderType) ? $filter->orderType : 'desc';
+            $query->orderBy($orderBy, $orderType);
+        }
+
+        /*=== REQUEST ===*/
+        if ($page) {//Return request with pagination
+            $take ? true : $take = 12; //If no specific take, query default take is 12
+            return $query->paginate($take);
+        } else {//Return request without pagination
+            $take ? $query->take($take) : false; //Set parameter take(limit) if is requesting
+            return $query->get();
+        }
+    }
+
+    /**
+     * Return post data
+     *
+     * @param $slug
+     * @param $include
+     * @return mixed
+     */
+    public function show($param, $include)
+    {
+        //Initialize Query
+        $query = $this->model->query();
+        $query = $this->model->where('slug', $param);
+
+        /*== RELATIONSHIPS ==*/
+        if (count($include)) {
+            //Include relationships for default
+            $includeDefault = [];
+            $query->with(array_merge($includeDefault, $include));
+        }
+
+        /*=== REQUEST ===*/
+        return $query->first();
+    }
+
+
     /**
      * @param  int $id
      * @return object
@@ -111,7 +195,6 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
      */
     public function findBySlug($slug)
     {
-
         return $this->model->with('category', 'categories', 'tags', 'user')->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
 
@@ -213,6 +296,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         } else {
             return $query->paginate(12);
         }
+    }
+
+    public function category($id){
+        return $this->model->where('category_id',$id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
     }
 
 }

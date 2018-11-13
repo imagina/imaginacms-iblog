@@ -35,7 +35,7 @@ class CategoryController extends BcrudController
         $this->access = [];
         $this->crud->enableAjaxTable();
         $this->crud->orderBy('created_at', 'DESC');
-        $this->crud->allowAccess('reorder');
+        //$this->crud->allowAccess('reorder');
         $this->crud->enableReorder('title', 2);
 
         /*
@@ -142,6 +142,15 @@ class CategoryController extends BcrudController
         ]);
 
     }
+    public function show($id)
+    {
+        $category = Category::find($id);
+
+        $locale = \LaravelLocalization::setLocale() ?: \App::getLocale();
+
+        return redirect()->route($locale . '.iblog.' . $category->slug );
+
+    }
 
     public function setup()
     {
@@ -158,10 +167,7 @@ class CategoryController extends BcrudController
                 $allowpermissions[] = $permission;
             }
 
-            $allowpermissions[] = 'reorder';
-
         }
-
         $this->crud->access = $allowpermissions;
     }
 
@@ -169,6 +175,7 @@ class CategoryController extends BcrudController
     {
         parent::storeCrud();
        event(new CategoryWasCreated($this->data['entry'], $request->all()));
+
         return $this->performSaveAction($this->data['entry']->getKey());
     }
 

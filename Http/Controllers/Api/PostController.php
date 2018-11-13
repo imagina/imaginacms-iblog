@@ -6,17 +6,19 @@ use Illuminate\Http\Request;
 use Log;
 use Mockery\CountValidator\Exception;
 use Modules\Core\Http\Controllers\BasePublicController;
+use Modules\Icustom\Http\Controllers\BaseApiController;  //Base API
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Http\Requests\IblogRequest;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Iblog\Transformers\CategoryTransformer;
-use Modules\Iblog\Transformers\FullPostTransformer;
 use Modules\Iblog\Transformers\PostTransformer;
 use Modules\Iblog\Transformers\TagTransformer;
 use Modules\User\Transformers\UserProfileTransformer;
 use Route;
 
-class PostController extends BasePublicController
+//Base API
+
+class PostController extends BaseApiController
 {
     /**
      * @var PostRepository
@@ -30,7 +32,68 @@ class PostController extends BasePublicController
 
     }
 
-    public function posts(Request $request)
+    /**
+     * Get Data from Posts
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function index(Request $request)
+    {
+        try {
+            //Get Parameters from URL.
+            $p = $this->parametersUrl(false, false, false, []);
+
+            //Request to Repository
+            $posts = $this->post->index($p->page, $p->take, $p->filter, $p->include);
+
+            //Response
+            $response = ["data" => PostTransformer::collection($posts)];
+
+            //If request pagination add meta-page
+            $p->page ? $response["meta"] = ["page" => $this->pageTransformer($posts)] : false;
+        } catch (\Exception $e) {
+            //Message Error
+            $status = 500;
+            $response = [
+                "errors" => $e->getMessage()
+            ];
+        }
+
+        return response()->json($response, $status ?? 200);
+    }
+
+    /**
+     * Get Data by post
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function show($param, Request $request)
+    {
+        try {
+            //Get Parameters from URL.
+            $p = $this->parametersUrl(false, false, false, []);
+
+            //Request to Repository
+            $post = $this->post->show($param, $p->include);
+
+            //Response
+            $response = [
+                "data" => is_null($post) ? false : new PostTransformer($post)];
+        } catch (\Exception $e) {
+            //Message Error
+            $status = 500;
+            $response = [
+                "errors" => $e->getMessage()
+            ];
+        }
+
+        return response()->json($response, $status ?? 200);
+    }
+
+
+  /*  public function posts(Request $request)
     {
         try {
             if (isset($request->include)) {
@@ -50,7 +113,7 @@ class PostController extends BasePublicController
                             "take" => $filters->take ?? 5,
                             "skip" => $filters->skip ?? 0,
                         ],
-                        'data' => FullPostTransformer::collection($results),
+                        'data' => PostTransformer::collection($results),
                     ];
                 } else {
                     $response = [
@@ -59,7 +122,7 @@ class PostController extends BasePublicController
                             "per_page" => $results->perPage(),
                             "total-item" => $results->total()
                         ],
-                        'data' => FullPostTransformer::collection($results),
+                        'data' => PostTransformer::collection($results),
                         'links' => [
                             "self" => $results->currentPage(),
                             "first" => $results->hasMorePages(),
@@ -79,7 +142,7 @@ class PostController extends BasePublicController
                         "per_page" => $results->perPage(),
                         "total-item" => $results->total()
                     ],
-                    'data' => FullPostTransformer::collection($results),
+                    'data' => PostTransformer::collection($results),
                     'links' => [
                         "self" => $results->currentPage(),
                         "first" => $results->hasMorePages(),
@@ -165,7 +228,7 @@ class PostController extends BasePublicController
 
         return response()->json($response, $status ?? 200);
     }
-
+*/
     public function store(IblogRequest $request)
     {
         try {

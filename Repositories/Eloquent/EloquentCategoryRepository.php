@@ -10,6 +10,119 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 {
 
     /**
+     * Return categories by parameters
+     *
+     * @param $page
+     * @param $take
+     * @param $filter
+     * @param $include
+     */
+    public function index($page, $take, $filter, $include)
+    {
+        //Initialize Query
+        $query = $this->model->query();
+
+        /*== RELATIONSHIPS ==*/
+        if (count($include)) {
+            //Include relationships for default
+            $includeDefault = [];
+            $query->with(array_merge($includeDefault, $include));
+        }
+
+        /*== FILTER ==*/
+        if ($filter) {
+            //Filter by slug
+            if (isset($filter->slug)) {
+                $query->where('slug', $filter->slug);
+            }
+
+            //Filter by parent_id
+            if (isset($filter->parentId) && is_array($filter->parentId)) {
+                $query->whereIn('parent_id', $filter->parentId);
+            }
+
+            //Filter by parent_slug
+            if (isset($filter->parentSlug) && is_array($filter->parentSlug)) {
+                $query->whereIn('parent_id', function ($query) use ($filter) {
+                    $query->select('iblog__categories.id')
+                        ->from('iblog__categories')
+                        ->whereIn('iblog__categories.slug', $filter->parentSlug);
+                });
+            }
+
+            //Filter excluding categories by ID
+            if (isset($filter->excludeById) && is_array($filter->excludeById)) {
+                $query->whereNotIn('id', $filter->excludeById);
+            }
+
+            //Get specific categories by ID
+            if (isset($filter->includeById) && is_array($filter->includeById)) {
+                $query->whereIn('id', $filter->includeById);
+            }
+
+            //Search filter
+            if (isset($filter->search) && !empty($filter->search)) {
+                //Get the words separately from the criterion
+                $words = explode(' ', trim($filter->search));
+
+                //Add condition of search to query
+                $query->where(function ($query) use ($words) {
+                    foreach ($words as $index => $word) {
+                        $query->where('title', 'like', "%" . $word . "%")
+                            ->orWhere('description', 'like', "%" . $word . "%");
+                    }
+                });
+            }
+
+            //Add order By
+            $orderBy = isset($filter->orderBy) ? $filter->orderBy : 'created_at';
+            $orderType = isset($filter->orderType) ? $filter->orderType : 'desc';
+            $query->orderBy($orderBy, $orderType);
+        }
+
+        /*=== REQUEST ===*/
+        if ($page) {//Return request with pagination
+            $take ? true : $take = 12; //If no specific take, query default take is 12
+            return $query->paginate($take);
+        } else {//Return request without pagination
+            $take ? $query->take($take) : false; //Set parameter take(limit) if is requesting
+            return $query->get();
+        }
+    }
+
+    /**
+     * Return category data
+     *
+     * @param $slug
+     * @param $include
+     * @return mixed
+     */
+    public function show($param, $include)
+    {
+        $isID = (int)$param >= 1 ? true : false;
+
+        //Initialize Query
+        $query = $this->model->query();
+
+        if ($isID) {//if is by ID
+            $query = $this->model->where('id', $param);
+        } else {//if is by Slug
+            $query = $this->model->where('slug', $param);
+        }
+
+        /*== RELATIONSHIPS ==*/
+        if (count($include)) {
+            //Include relationships for default
+            $includeDefault = [];
+            $query->with(array_merge($includeDefault, $include));
+        }
+
+        /*=== REQUEST ===*/
+        return $query->first();
+    }
+
+
+    /**
      * @inheritdoc
      */
     public function find($id)
@@ -18,8 +131,9 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             return $this->model->with('translations')->find($id);
         }
 
-        return $this->model->with('parent','children')->find($id);
+        return $this->model->with('parent', 'children')->find($id);
     }
+
     /**
      * Find a resource by the given slug
      *
@@ -34,18 +148,20 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     public function create($data)
     {
 
-       $category= $this->model->create($data);
+        $category = $this->model->create($data);
 
-       event(new CategoryWasCreated($category, $data));
+        event(new CategoryWasCreated($category, $data));
 
-       return $this->find($category->id);
+        return $this->find($category->id);
     }
 
-    public function whereFilters($filters,$includes=array())
+    public function whereFilters($filters, $includes = array())
     {
-        $query=count($includes)!==0?$this->model->with($includes) : $this->model->with('parent') ;
-        if (!empty($filters->parent)) {
-            $query->where('id', $filters->parent);
+        $query = count($includes) !== 0 ?
+            $this->model->with($includes) : $this->model->with('parent');
+
+        if (!empty($filters->parent) || $filters->parent === 0) {
+            $query->where('parent_id', $filters->parent);
         }
 
         if (!empty($filters->exclude)) {
@@ -53,8 +169,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
         }
 
 
-        if (isset($filters->order)) { //si hay que filtrar por rango de precio
-
+        if (isset($filters->order)) {
             $orderby = $filters->order->by ?? 'created_at';
             $ordertype = $filters->order->type ?? 'desc';
         } else {
@@ -67,10 +182,10 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             });
 
         }
-        if (isset($filters->search)) { //si hay que filtrar por rango de precio
+        if (isset($filters->search)) {
             $criterion = $filters->search;
             $param = explode(' ', $criterion);
-          $query->where(function ($query) use ($param) {
+            $query->where(function ($query) use ($param) {
                 foreach ($param as $index => $word) {
                     if ($index == 0) {
                         $query->where('title', 'like', "%" . $word . "%")->orWhere('description', 'like', "%" . $word . "%");

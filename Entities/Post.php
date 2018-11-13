@@ -4,7 +4,6 @@ namespace Modules\Iblog\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Modules\Bcrud\Support\Traits\CrudTrait;
-use Modules\Iblog\Entities\Feature;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Iblog\Presenters\PostPresenter;
 //use Modules\Bcrud\Support\ModelTraits\SpatieTranslatable\Sluggable;
@@ -82,7 +81,7 @@ class Post extends Model
         if(!empty($value)){
             $this->attributes['summary'] = $value;
         } else {
-            $this->attributes['summary'] = substr(strip_tags($this->attributes['description']),0,150);
+            $this->attributes['summary'] = isubstr(strip_tags($this->description),150);
         }
 
     }
@@ -91,7 +90,7 @@ class Post extends Model
     protected function getSummaryAttribute(){
 
 
-           return $this->summary ?? substr(strip_tags($this->description),0,150);
+           return $this->summary ?? isubstr(strip_tags($this->description),150);
     }
 
     public function getOptionsAttribute($value) {
