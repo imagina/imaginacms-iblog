@@ -1,5 +1,8 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+    "3.1.2":
+        changed:
+            - FullCategoryTransformer in PostTranformer and CategoryTransformer
     "3.1.1":
         changed:
             - Uses BaseApiComtroller in Post, Category and Tag Api Controllers

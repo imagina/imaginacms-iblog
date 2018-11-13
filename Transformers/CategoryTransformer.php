@@ -36,7 +36,7 @@ class CategoryTransformer extends Resource
 
     /*Transform Relation Ships*/
     if (in_array('children', $includes)) {
-      $data['children'] = FullCategoryTransformer::collection($this->children);
+      $data['children'] = CategoryTransformer::collection($this->children);
     }
 
     if (in_array('posts', $includes)) {

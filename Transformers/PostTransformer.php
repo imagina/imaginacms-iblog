@@ -48,7 +48,7 @@ class PostTransformer extends Resource
 
         /*Transform Relation Ships*/
         if (in_array('category', $includes)) {
-            $data['category'] = new FullCategoryTransformer($this->category);
+            $data['category'] = new CategoryTransformer($this->category);
         }
 
         if (in_array('categories',$includes)) {
