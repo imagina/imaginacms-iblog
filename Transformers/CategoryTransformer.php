@@ -31,11 +31,19 @@ class CategoryTransformer extends Resource
       'metadescription' => $this->metadescription ?? $this->summary,
       'options' => $options,
       'created_at' => format_date($this->created_at, $dateformat),
-      'updated_at' => format_date($this->updated_at, $dateformat)
+      'updated_at' => format_date($this->updated_at, $dateformat),
+      'breadCrum' => ["items" => [], "path" => '']
     ];
 
+    /*Bread Crum*/
+    //Items
+    $this->parent ? array_push($data['breadCrum']['items'],$this->parent->slug) : false;
+    array_push($data['breadCrum']['items'],$this->slug);
+    //Path
+    $data['breadCrum']['path'] = join('/', $data['breadCrum']['items']);
+
     /*Transform Relation Ships*/
-    if (in_array('children', $includes)) {
+    if (in_array('children', $includes) && !is_null($this->children)) {
       $data['children'] = CategoryTransformer::collection($this->children);
     }
 
@@ -43,7 +51,7 @@ class CategoryTransformer extends Resource
       $data['posts'] = PostTransformer::collection($this->posts);
     }
 
-    if (in_array('parent', $includes)) {
+    if (in_array('parent', $includes) && !is_null($this->parent)) {
       $data['parent'] = new CategoryTransformer($this->parent);
     }
 
