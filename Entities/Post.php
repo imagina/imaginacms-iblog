@@ -81,14 +81,13 @@ class Post extends Model
         if(!empty($value)){
             $this->attributes['summary'] = $value;
         } else {
-            $this->attributes['summary'] = isubstr(strip_tags($this->description),150);
+            $this->attributes['summary'] = isubstr(strip_tags($this->attributes['description']),150);
         }
 
     }
 
 
     protected function getSummaryAttribute(){
-
 
            return $this->summary ?? isubstr(strip_tags($this->description),150);
     }
