@@ -288,10 +288,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->whereStatus(get_status($filters->status ?? '1'))
             ->skip($filters->skip ?? 0);
         $query->orderBy($orderby, $ordertype);
-        if (isset($filter->take)) {
+        if (isset($filters->take)) {
             $query->take($filter->take ?? 5);
             return $query->get();
-        } elseif (isset($filter->paginate) && is_integer($filters->paginate)) {
+        } elseif (isset($filters->paginate) && is_integer($filters->paginate)) {
             return $query->paginate($filters->paginate);
         } else {
             return $query->paginate(12);

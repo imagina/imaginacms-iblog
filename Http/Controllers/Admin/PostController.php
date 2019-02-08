@@ -309,7 +309,8 @@ class PostController extends BcrudController
         $name = str_slug(str_replace('.' . $extension, '', $original_filename), '-');
 
 
-        $image->fit(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
+        $image->resize(config('asgard.iblog.config.imagesize.width'), config('asgard.iblog.config.imagesize.height'), function ($constraint) {
+            $constraint->aspectRatio();
             $constraint->upsize();
         });
 

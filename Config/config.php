@@ -100,4 +100,19 @@ return [
 
     'dateformat'=>'%A, %B %d, %Y',
 
+    /*
+       |--------------------------------------------------------------------------
+       | Iblog feed Configuration
+       |--------------------------------------------------------------------------
+       |Activates the import, combination and display of RSS and Atom feeds
+       |
+       |
+       */
+
+    'feed' => [
+        'activated' => true,
+        'posts_per_feed'=>20,
+        'logo'=>''
+    ],
+
 ];
