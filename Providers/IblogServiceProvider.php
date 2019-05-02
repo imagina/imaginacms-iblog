@@ -3,9 +3,13 @@
 namespace Modules\Iblog\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\Core\Traits\CanPublishConfiguration;
+use Modules\Core\Events\BuildingSidebar;
+use Modules\Core\Events\LoadingBackendTranslations;
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Tag;
+use Modules\Iblog\Events\Handlers\RegisterIblogSidebar;
 use Modules\Iblog\Repositories\Cache\CacheCategoryDecorator;
 use Modules\Iblog\Repositories\Cache\CachePostDecorator;
 use Modules\Iblog\Repositories\Cache\CacheTagDecorator;
@@ -15,7 +19,7 @@ use Modules\Iblog\Repositories\Eloquent\EloquentPostRepository;
 use Modules\Iblog\Repositories\Eloquent\EloquentTagRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Iblog\Repositories\TagRepository;
-use Modules\Core\Traits\CanPublishConfiguration;
+use Modules\Tag\Repositories\TagManager;
 
 class IblogServiceProvider extends ServiceProvider
 {
@@ -35,13 +39,23 @@ class IblogServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerBindings();
+        $this->app['events']->listen(BuildingSidebar::class, RegisterIblogSidebar::class);
+        $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
+            $event->load('post', array_dot(trans('iblog::post')));
+            $event->load('category', array_dot(trans('iblog::category')));
+            // append translations
+        });
     }
 
     public function boot()
     {
         $this->publishConfig('iblog', 'config');
-        //$this->publishConfig('iblog', 'settings');
+        $this->publishConfig('iblog', 'settings');
         $this->publishConfig('iblog', 'permissions');
+
+        $this->app[TagManager::class]->registerNamespace(new Post());
+
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
     /**

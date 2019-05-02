@@ -19,7 +19,7 @@ class SavePostImage
 
     public function handle(PostWasCreated $event)
     {
-        $id = $event->post->id;
+       /* $id = $event->post->id;
         if (!empty($event->data['mainimage'])) {
             $mainimage = saveImage($event->data['mainimage'], "assets/iblog/post/" . $id . ".jpg");
             if(isset($event->data['options'])){
@@ -38,6 +38,7 @@ class SavePostImage
         }
 
         $this->post->update($event->post, $event->data);
+       */
     }
 
 }

@@ -2,192 +2,133 @@
 
 namespace Modules\Iblog\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 use Modules\Iblog\Entities\Category;
-use Modules\Iblog\Events\CategoryWasCreated;
-use Modules\Iblog\Http\Requests\IblogRequest;
-
-use Modules\Bcrud\Http\Controllers\BcrudController;
-use Modules\User\Contracts\Authentication;
+use Modules\Iblog\Http\Requests\CreateCategoryRequest;
+use Modules\Iblog\Repositories\CategoryRepository;
 
 
-class CategoryController extends BcrudController
+class CategoryController extends AdminBaseController
 {
     /**
      * @var CategoryRepository
      */
     private $category;
-    private $auth;
-    public function __construct(Authentication $auth)
+
+    public function __construct(CategoryRepository $category)
     {
         parent::__construct();
-        $this->auth = $auth;
 
-        $driver = config('asgard.user.config.driver');
-        /*
-        |--------------------------------------------------------------------------
-        | BASIC CRUD INFORMATION
-        |--------------------------------------------------------------------------
-        */
-        $this->crud->setModel('Modules\Iblog\Entities\Category');
-        $this->crud->setRoute('backend/iblog/category');
-        $this->crud->setEntityNameStrings(trans('iblog::category.single'), trans('iblog::category.plural'));
-        $this->access = [];
-        $this->crud->enableAjaxTable();
-        $this->crud->orderBy('created_at', 'DESC');
-        //$this->crud->allowAccess('reorder');
-        $this->crud->enableReorder('title', 2);
-
-        /*
-        |--------------------------------------------------------------------------
-        | COLUMNS AND FIELDS
-        |--------------------------------------------------------------------------
-        */
-        // ------ CRUD COLUMNS
-        $this->crud->addColumn([
-            'name' => 'id',
-            'label' => 'ID',
-        ]);
-
-
-        $this->crud->addColumn([
-            'name' => 'title',
-            'label' => trans('iblog::common.title'),
-        ]);
-        $this->crud->addColumn([
-            'label' => 'Slug',
-            'name' => 'slug',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'parent_id',
-            'label' => trans('iblog::common.parent'),
-            'type' => 'select',
-            'entity' => 'parent',
-            'attribute' => 'title',
-            'model' => 'Modules\Iblog\Entities\Category',
-            'defaultvalue' => '0'
-        ]);
-
-
-        $this->crud->addColumn([
-            'name' => 'created_at',
-            'label' => trans('iblog::common.created_at'),
-        ]);
-
-        // ------ CRUD FIELDS
-        $this->crud->addField([
-            'name' => 'title',
-            'label' => trans('iblog::common.title'),
-            'viewposition' => 'left'
-
-        ]);
-
-        $this->crud->addField([
-            'name' => 'slug',
-            'label' => 'Slug',
-            'type' => 'text',
-            'viewposition' => 'left'
-
-        ]);
-
-        $this->crud->addField([
-            'name' => 'parent_id',
-            'label' => trans('iblog::common.parent'),
-            'type' => 'select',
-            'entity' => 'parent',
-            'attribute' => 'title',
-            'model' => 'Modules\Iblog\Entities\Category',
-            'viewposition' => 'right',
-            'emptyvalue'=>0
-        ]);
-
-
-        $this->crud->addField([
-            'name' => 'description',
-            'label' => trans('iblog::common.description'),
-            'type' => 'wysiwyg',
-            'viewposition' => 'left'
-
-        ]);
-        $this->crud->addField([ // image
-            'label' => trans('iblog::common.image'),
-            'name' => "mainimage",
-            'type' => 'image',
-            'upload' => true,
-            'crop' => true, // set to true to allow cropping, false to disable
-            'aspect_ratio' => 0, // ommit or set to 0 to allow any aspect ratio
-            'fake' => true,
-            'store_in' => 'options',
-            'viewposition' => 'right',
-        ]);
-
-        $this->crud->addField([
-            'name' => 'metatitle',
-            'label' => trans('iblog::common.metatitle'),
-            'type' => 'text',
-            'fake' => true,
-            'store_in' => 'options',
-            'viewposition' => 'additional',
-        ]);
-
-        $this->crud->addField([
-            'name' => 'metadescription',
-            'label' => trans('iblog::common.metadescription'),
-            'type' => 'textarea',
-            'attributes' => ['rows' => '6'],
-            'fake' => true,
-            'store_in' => 'options',
-            'viewposition' => 'additional',
-        ]);
-
-    }
-    public function show($id)
-    {
-        $category = Category::find($id);
-
-        $locale = \LaravelLocalization::setLocale() ?: \App::getLocale();
-
-        return redirect()->route($locale . '.iblog.' . $category->slug );
+        $this->category = $category;
 
     }
 
-    public function setup()
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
     {
-        parent::setup();
+        $categories = $this->category->paginate(20);
 
-        $permissions = ['index', 'create', 'edit', 'destroy'];
-        $allowpermissions = ['show'];
-        foreach($permissions as $permission) {
+        return view('iblog::admin.categories.index', compact('categories'));
+    }
 
-            if($this->auth->hasAccess("iblog.categories.$permission")) {
-                if($permission=='index') $permission = 'list';
-                if($permission=='edit') $permission = 'update';
-                if($permission=='destroy') $permission = 'delete';
-                $allowpermissions[] = $permission;
-            }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+
+        $categories = $this->category->all();
+        return view('iblog::admin.categories.create', compact('categories'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  CreateCategoryRequest $request
+     * @return Response
+     */
+    public function store(CreateCategoryRequest $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $this->category->create($request->all());
+            \DB::commit();//Commit to Data Base
+            return redirect()->route('admin.iblog.category.index')
+                ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('iblog::categories.title.categories')]));
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            \Log::error($e);
+            return redirect()->back()
+                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::categories.title.categories')]))->withInput($request->all());
 
         }
-        $this->crud->access = $allowpermissions;
+
     }
 
-    public function store(IblogRequest $request)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param Category $category
+     * @return Response
+     */
+    public function edit(Category $category)
     {
-        parent::storeCrud();
-       event(new CategoryWasCreated($this->data['entry'], $request->all()));
 
-        return $this->performSaveAction($this->data['entry']->getKey());
+        $categories = $this->category->all();
+        return view('iblog::admin.categories.edit', compact('category', 'categories'));
     }
 
-    public function update(IblogRequest $request)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Category $Category
+     * @param CreateCategoryRequest $request
+     * @return Response
+     */
+    public function update(Category $Category, CreateCategoryRequest $request)
     {
-               //Let's update the image for the post.
-        if (!empty($request['mainimage']) && !empty($request['id'])) {
-            $request['mainimage'] = saveImage($request['mainimage'], "assets/iblog/category/" . $request['id'] . ".jpg");
+        try {
+            $this->category->update($Category, $request->all());
+
+            return redirect()->route('admin.iblog.category.index')
+                ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('iblog::categories.title.categories')]));
+        } catch (\Exception $e) {
+            \Log::error($e);
+            return redirect()->back()
+                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::categories.title.categories')]))->withInput($request->all());
+
         }
-        return parent::updateCrud($request);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  Category $Category
+     * @return Response
+     */
+    public function destroy(Category $Category)
+    {
+        try {
+            $this->category->destroy($Category);
+
+            return redirect()->route('admin.iblog.category.index')
+                ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('iblog::categories.title.categories')]));
+        } catch (\Exception $e) {
+            \Log::error($e);
+            return redirect()->back()
+                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::categories.title.categories')]));
+
+        }
+    }
 
 
 }

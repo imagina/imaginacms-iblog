@@ -2,16 +2,23 @@
 
 namespace Modules\Iblog\Entities;
 
+use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Bcrud\Support\Traits\CrudTrait;
+use Laracasts\Presenter\PresentableTrait;
+use Modules\Core\Traits\NamespacedEntity;
+use Modules\Media\Entities\File;
+use Modules\Media\Support\Traits\MediaRelation;
 
 class Category extends Model
 {
-    use CrudTrait;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity;
 
     protected $table = 'iblog__categories';
+    protected static $entityNamespace = 'iblog/category';
 
-    protected $fillable = ['title','description','slug','parent_id','options'];
+    protected $fillable = ['title', 'description', 'slug', 'parent_id', 'options', 'translatableoption'];
+
+    public $translatedAttributes = ['title', 'description', 'slug', 'metatitle', 'metadescription', 'metakeywords', 'translatableoption'];
 
     protected $fakeColumns = ['options'];
     /**
@@ -24,7 +31,6 @@ class Category extends Model
     ];
 
 
-
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
@@ -34,6 +40,7 @@ class Category extends Model
     {
         return $this->belongsTo('Modules\Iblog\Entities\Category', 'parent_id');
     }
+
     public function children()
     {
         return $this->hasMany('Modules\Iblog\Entities\Category', 'parent_id');
@@ -41,65 +48,34 @@ class Category extends Model
 
     public function posts()
     {
-        return $this->belongsToMany('Modules\Iblog\Entities\Post','iblog__post__category');
+        return $this->belongsToMany('Modules\Iblog\Entities\Post', 'iblog__post__category');
     }
-    protected function setSlugAttribute($value){
-        if(!empty($value)){
-            $this->attributes['slug'] = str_slug($value,'-');
-        }else{$this->attributes['slug'] = str_slug($this->attributes['title'],'-');}
 
-    }
-    public function getOptionsAttribute($value) {
+    public function getOptionsAttribute($value)
+    {
         return json_decode(json_decode($value));
     }
 
-    /**
-     * get main image
-     * @return string
-     */
-    public function getMainimageAttribute(){
-
-        return url($this->options->mainimage ?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at;
-    }
-
-    /**
-     * get medium image
-     * @return mixed|string
-     */
-
-    public function getMediumimageAttribute()
+    public function getSecundaryimageAttribute()
     {
+        $thumbnail = $this->files()->where('zone', 'secundaryimage')->first()->path??null;
 
-        return url(str_replace('.jpg', '_mediumThumb.jpg', $this->options->mainimage  ?? 'modules/iblog/img/post/default.jpg') . '?v=' . $this->updated_at);
+        if ($thumbnail === null) {
+            return 'modules/iblog/img/post/default.jpg';
+        }
+
+        return $thumbnail;
     }
+    public function getMainimageAttribute()
+    {
+        $thumbnail = $this->files()->where('zone', 'mainimage')->first()->path??null;
 
-    /**
-     * get small image
-     * @return mixed|string
-     */
-    public function getThumbailsAttribute(){
+        if ($thumbnail === null) {
+            return 'modules/iblog/img/post/default.jpg';
+        }
 
-        return url(str_replace('.jpg','_smallThumb.jpg',$this->options->mainimage?? 'modules/iblog/img/post/default.jpg').'?v='.$this->updated_at);
+        return $thumbnail;
     }
-    public function getMetadescriptionAttribute(){
-
-        return $this->options->metadescription ?? substr(strip_tags($this->description),0,150);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMetatitleAttribute(){
-
-        return $this->options->metatitle ?? $this->title;
-    }
-
-    public function getUrlAttribute() {
-
-        return url($this->slug);
-
-    }
-
 
     /*
     |--------------------------------------------------------------------------

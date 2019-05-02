@@ -1,9 +1,9 @@
 {
     "name": "Iblog",
     "alias": "iblog",
-    "description": "A simple blog module with categories and tags",
+    "description": "The Blog module allows authorized users to maintain a blog.",
     "keywords": [],
-    "version": "3.1.4",
+    "version": "dev-4.0",
     "active": 1,
     "order": 1,
     "providers": [

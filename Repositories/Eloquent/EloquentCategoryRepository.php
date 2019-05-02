@@ -9,116 +9,105 @@ use Modules\Iblog\Repositories\CategoryRepository;
 class EloquentCategoryRepository extends EloquentBaseRepository implements CategoryRepository
 {
 
-    /**
-     * Return categories by parameters
-     *
-     * @param $page
-     * @param $take
-     * @param $filter
-     * @param $include
-     */
-    public function index($page, $take, $filter, $include)
+    public function getItemsBy($params = false)
     {
-        //Initialize Query
+        /*== initialize query ==*/
         $query = $this->model->query();
 
         /*== RELATIONSHIPS ==*/
-        if (count($include)) {
-            //Include relationships for default
-            $includeDefault = [];
-            $query->with(array_merge($includeDefault, $include));
+        if (in_array('*', $params->include)) {//If Request all relationships
+            $query->with([]);
+        } else {//Especific relationships
+            $includeDefault = ['translations'];//Default relationships
+            if (isset($params->include))//merge relations with default relationships
+                $includeDefault = array_merge($includeDefault, $params->include);
+            $query->with($includeDefault);//Add Relationships to query
         }
 
-        /*== FILTER ==*/
-        if ($filter) {
-            //Filter by slug
-            if (isset($filter->slug)) {
-                $query->where('slug', $filter->slug);
+        /*== FILTERS ==*/
+        if (isset($params->filter)) {
+            $filter = $params->filter;//Short filter
+            if (isset($filter->parent)) {
+                $query->where('parent_id',$filter->parent);
             }
 
-            //Filter by parent_id
-            if (isset($filter->parentId) && is_array($filter->parentId)) {
-                $query->whereIn('parent_id', $filter->parentId);
-            }
-
-            //Filter by parent_slug
-            if (isset($filter->parentSlug) && is_array($filter->parentSlug)) {
-                $query->whereIn('parent_id', function ($query) use ($filter) {
-                    $query->select('iblog__categories.id')
-                        ->from('iblog__categories')
-                        ->whereIn('iblog__categories.slug', $filter->parentSlug);
-                });
-            }
-
-            //Filter excluding categories by ID
-            if (isset($filter->excludeById) && is_array($filter->excludeById)) {
-                $query->whereNotIn('id', $filter->excludeById);
-            }
-
-            //Get specific categories by ID
-            if (isset($filter->includeById) && is_array($filter->includeById)) {
-                $query->whereIn('id', $filter->includeById);
-            }
-
-            //Search filter
-            if (isset($filter->search) && !empty($filter->search)) {
-                //Get the words separately from the criterion
-                $words = explode(' ', trim($filter->search));
-
-                //Add condition of search to query
-                $query->where(function ($query) use ($words) {
-                    foreach ($words as $index => $word) {
-                        $query->where('title', 'like', "%" . $word . "%")
-                            ->orWhere('description', 'like', "%" . $word . "%");
+            if (isset($filter->search)) { //si hay que filtrar por rango de precio
+                $criterion = $filter->search;
+                $param = explode(' ', $criterion);
+                $query->where(function ($query) use ($param) {
+                    foreach ($param as $index => $word) {
+                        if ($index == 0) {
+                            $query->where('title', 'like', "%" . $word . "%");
+                            $query->orWhere('sku', 'like', "%" . $word . "%");
+                        } else {
+                            $query->orWhere('title', 'like', "%" . $word . "%");
+                            $query->orWhere('sku', 'like', "%" . $word . "%");
+                        }
                     }
+
                 });
             }
 
-            //Add order By
-            $orderBy = isset($filter->orderBy) ? $filter->orderBy : 'created_at';
-            $orderType = isset($filter->orderType) ? $filter->orderType : 'desc';
-            $query->orderBy($orderBy, $orderType);
+            //Filter by date
+            if (isset($filter->date)) {
+                $date = $filter->date;//Short filter date
+                $date->field = $date->field ?? 'created_at';
+                if (isset($date->from))//From a date
+                    $query->whereDate($date->field, '>=', $date->from);
+                if (isset($date->to))//to a date
+                    $query->whereDate($date->field, '<=', $date->to);
+            }
+
+            //Order by
+            if (isset($filter->order)) {
+                $orderByField = $filter->order->field ?? 'created_at';//Default field
+                $orderWay = $filter->order->way ?? 'desc';//Default way
+                $query->orderBy($orderByField, $orderWay);//Add order to query
+            }
         }
 
-        /*=== REQUEST ===*/
-        if ($page) {//Return request with pagination
-            $take ? true : $take = 12; //If no specific take, query default take is 12
-            return $query->paginate($take);
-        } else {//Return request without pagination
-            $take ? $query->take($take) : false; //Set parameter take(limit) if is requesting
+        /*== FIELDS ==*/
+        if (isset($params->fields) && count($params->fields))
+            $query->select($params->fields);
+
+        /*== REQUEST ==*/
+        if (isset($params->page) && $params->page) {
+            return $query->paginate($params->take);
+        } else {
+            $params->take ? $query->take($params->take) : false;//Take
             return $query->get();
         }
     }
 
-    /**
-     * Return category data
-     *
-     * @param $slug
-     * @param $include
-     * @return mixed
-     */
-    public function show($param, $include)
+    public function getItem($criteria, $params = false)
     {
-        $isID = (int)$param >= 1 ? true : false;
-
-        //Initialize Query
+        //Initialize query
         $query = $this->model->query();
 
-        if ($isID) {//if is by ID
-            $query = $this->model->where('id', $param);
-        } else {//if is by Slug
-            $query = $this->model->where('slug', $param);
-        }
-
         /*== RELATIONSHIPS ==*/
-        if (count($include)) {
-            //Include relationships for default
-            $includeDefault = [];
-            $query->with(array_merge($includeDefault, $include));
+        if (in_array('*', $params->include)) {//If Request all relationships
+            $query->with([]);
+        } else {//Especific relationships
+            $includeDefault = [];//Default relationships
+            if (isset($params->include))//merge relations with default relationships
+                $includeDefault = array_merge($includeDefault, $params->include);
+            $query->with($includeDefault);//Add Relationships to query
         }
 
-        /*=== REQUEST ===*/
-        return $query->first();
+        /*== FILTER ==*/
+        if (isset($params->filter)) {
+            $filter = $params->filter;
+
+            if (isset($filter->field))//Filter by specific field
+                $field = $filter->field;
+        }
+
+        /*== FIELDS ==*/
+        if (isset($params->fields) && count($params->fields))
+            $query->select($params->fields);
+
+        /*== REQUEST ==*/
+        return $query->where($field ?? 'id', $criteria)->first();
     }
 
 

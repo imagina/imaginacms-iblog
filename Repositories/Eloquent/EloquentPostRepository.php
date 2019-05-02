@@ -9,91 +9,114 @@ use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Status;
 use Modules\Iblog\Events\PostWasCreated;
+use Modules\Iblog\Events\PostWasUpdated;
 use Modules\Iblog\Repositories\Collection;
 use Modules\Iblog\Repositories\PostRepository;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
+
     /**
-     * Return posts by parameters
-     *
-     * @param $page
-     * @param $take
-     * @param $filter
-     * @param $include
+     * @param bool $params
      * @return mixed
      */
-    public function index($page, $take, $filter, $include)
+    public function getItemsBy($params = false)
     {
-        //Initialize Query
+        /*== initialize query ==*/
         $query = $this->model->query();
 
         /*== RELATIONSHIPS ==*/
-        if (count($include)) {
-            //Include relationships for default
-            $includeDefault = [];
-            $query->with(array_merge($includeDefault, $include));
+        if (in_array('*', $params->include)) {//If Request all relationships
+            $query->with([]);
+        } else {//Especific relationships
+            $includeDefault = ['translations'];//Default relationships
+            if (isset($params->include))//merge relations with default relationships
+                $includeDefault = array_merge($includeDefault, $params->include);
+            $query->with($includeDefault);//Add Relationships to query
         }
 
-        /*== FILTER ==*/
-        if ($filter) {
-            //Filter by category slug
-            if (isset($filter->categorySlug)) {
-                //change parameter $filter->categoryId
-                $category = DB::table('iblog__categories')->where('slug', $filter->categorySlug)->first(['id']);
+        /*== FILTERS ==*/
+        if (isset($params->filter)) {
+            $filter = $params->filter;//Short filter
 
-                if ($category) {
-                    $filter->categoryId = $category->id;
-                }
-            }
 
-            //Filter by category ID
-            if (isset($filter->categoryId)) {
-                $query->whereIn('id', function ($query) use ($filter) {
-                    $query->select('post_id')
-                        ->from('iblog__post__category')
-                        ->where('category_id', $filter->categoryId);
+            if (isset($filter->search)) { //si hay que filtrar por rango de precio
+                $criterion = $filter->search;
+                $param = explode(' ', $criterion);
+                $query->where(function ($query) use ($param) {
+                    foreach ($param as $index => $word) {
+                        if ($index == 0) {
+                            $query->where('title', 'like', "%" . $word . "%");
+                            $query->orWhere('sku', 'like', "%" . $word . "%");
+                        } else {
+                            $query->orWhere('title', 'like', "%" . $word . "%");
+                            $query->orWhere('sku', 'like', "%" . $word . "%");
+                        }
+                    }
+
                 });
             }
 
-            //Add order By
-            $orderBy = isset($filter->orderBy) ? $filter->orderBy : 'created_at';
-            $orderType = isset($filter->orderType) ? $filter->orderType : 'desc';
-            $query->orderBy($orderBy, $orderType);
+            //Filter by date
+            if (isset($filter->date)) {
+                $date = $filter->date;//Short filter date
+                $date->field = $date->field ?? 'created_at';
+                if (isset($date->from))//From a date
+                    $query->whereDate($date->field, '>=', $date->from);
+                if (isset($date->to))//to a date
+                    $query->whereDate($date->field, '<=', $date->to);
+            }
+
+            //Order by
+            if (isset($filter->order)) {
+                $orderByField = $filter->order->field ?? 'created_at';//Default field
+                $orderWay = $filter->order->way ?? 'desc';//Default way
+                $query->orderBy($orderByField, $orderWay);//Add order to query
+            }
         }
 
-        /*=== REQUEST ===*/
-        if ($page) {//Return request with pagination
-            $take ? true : $take = 12; //If no specific take, query default take is 12
-            return $query->paginate($take);
-        } else {//Return request without pagination
-            $take ? $query->take($take) : false; //Set parameter take(limit) if is requesting
+        /*== FIELDS ==*/
+        if (isset($params->fields) && count($params->fields))
+            $query->select($params->fields);
+
+        /*== REQUEST ==*/
+        if (isset($params->page) && $params->page) {
+            return $query->paginate($params->take);
+        } else {
+            $params->take ? $query->take($params->take) : false;//Take
             return $query->get();
         }
     }
 
-    /**
-     * Return post data
-     *
-     * @param $slug
-     * @param $include
-     * @return mixed
-     */
-    public function show($param, $include)
+    public function getItem($criteria, $params = false)
     {
-        //Initialize Query
+        //Initialize query
         $query = $this->model->query();
-        $query = $this->model->where('slug', $param);
 
         /*== RELATIONSHIPS ==*/
-        if (count($include)) {
-            //Include relationships for default
-            $includeDefault = [];
-            $query->with(array_merge($includeDefault, $include));
+        if (in_array('*', $params->include)) {//If Request all relationships
+            $query->with([]);
+        } else {//Especific relationships
+            $includeDefault = [];//Default relationships
+            if (isset($params->include))//merge relations with default relationships
+                $includeDefault = array_merge($includeDefault, $params->include);
+            $query->with($includeDefault);//Add Relationships to query
         }
 
-        /*=== REQUEST ===*/
-        return $query->first();
+        /*== FILTER ==*/
+        if (isset($params->filter)) {
+            $filter = $params->filter;
+
+            if (isset($filter->field))//Filter by specific field
+                $field = $filter->field;
+        }
+
+        /*== FIELDS ==*/
+        if (isset($params->fields) && count($params->fields))
+            $query->select($params->fields);
+
+        /*== REQUEST ==*/
+        return $query->where($field ?? 'id', $criteria)->first();
     }
 
 
@@ -124,9 +147,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     {
         $post->update($data);
 
-        $post->tags()->sync(array_get($data, 'tags', []));
+        $post->categories()->sync(array_get($data, 'categories', []));
 
-        //event(new PostWasUpdated($post, $data));
+        event(new PostWasUpdated($post, $data));
+        $post->setTags(array_get($data, 'tags', []));
 
         return $post;
     }
@@ -139,17 +163,16 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     public function create($data)
     {
         $post = $this->model->create($data);
-
-        $post->tags()->sync(array_get($data, 'tags', []));
-
+        $post->categories()->sync(array_get($data, 'categories', []));
         event(new PostWasCreated($post, $data));
-
+        $post->setTags(array_get($data, 'tags', []));
         return $post;
     }
 
     public function destroy($model)
     {
-        //event(new PostWasDeleted($model->id, get_class($model)));
+        $model->untag();
+        event(new PostWasDeleted($model->id, get_class($model)));
 
         return $model->delete();
     }
@@ -298,8 +321,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         }
     }
 
-    public function category($id){
-        return $this->model->where('category_id',$id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
+    public function category($id)
+    {
+        return $this->model->where('category_id', $id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
     }
 
 }

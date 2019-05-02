@@ -19,7 +19,7 @@ class SaveCategoryImage
 
     public function handle(CategoryWasCreated $event)
     {
-
+/*
         $id = $event->entity->id;
 
         if (!empty($event->data['mainimage'])) {
@@ -36,6 +36,7 @@ class SaveCategoryImage
         }
 
        $this->category->update($event->entity, $event->data);
+*/
     }
 
 }

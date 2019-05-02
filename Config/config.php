@@ -5,10 +5,12 @@ return [
 
     'middleware' => [],
 
-    'imagesize' => ['width' => 1024, 'height' => 768, 'quality'=>80],
-    'mediumthumbsize' => ['width' => 400, 'height' => 300, 'quality'=>80],
-    'smallthumbsize' => ['width' => 100, 'height' => 80, 'quality'=>80],
-
+    'imagesize' => ['width' => 1024, 'height' => 768, 'quality' => 80],
+    'mediumthumbsize' => ['width' => 400, 'height' => 300, 'quality' => 80],
+    'smallthumbsize' => ['width' => 100, 'height' => 80, 'quality' => 80],
+    'roles'=>[
+        'editor'=>'admin'
+    ],
     /*
      |--------------------------------------------------------------------------
      | Dynamic fields
@@ -17,18 +19,12 @@ return [
      | https://laravel-backpack.readme.io/docs/crud-fields
      */
     'fields' => [
-//        'image' => [
-        // image
-//            'label' => trans('iblog::common.image'),
-//            'name' => "imgsecund",
-//            'type' => 'image',
-//            'upload' => true,
-//            'crop' => true, // set to true to allow cropping, false to disable
-//            'aspect_ratio' => 0, // ommit or set to 0 to allow any aspect ratio
-//            'fake' => true,
-//            'store_in' => 'options',
-//            'viewposition' => 'left',
-//        ]
+        'category' => [
+            'secondaryimage' => true,
+        ],
+        'post' => [
+            'secondaryimage' => false,
+        ]
     ],
     /*
    |--------------------------------------------------------------------------
@@ -98,7 +94,7 @@ return [
         'y' => 10,
     ],
 
-    'dateformat'=>'%A, %B %d, %Y',
+    'dateformat' => '%A, %B %d, %Y',
 
     /*
        |--------------------------------------------------------------------------
@@ -111,8 +107,8 @@ return [
 
     'feed' => [
         'activated' => true,
-        'posts_per_feed'=>20,
-        'logo'=>''
+        'posts_per_feed' => 20,
+        'logo' => ''
     ],
 
 ];
