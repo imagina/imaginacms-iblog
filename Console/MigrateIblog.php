@@ -124,7 +124,7 @@ class MigrateIblog extends Command
                     $data[$locale]['metatitle'] = $post->options->metatitle;
                 }
                 if (isset($post->options->metadescrition)) {
-                    $data[$locale]['metatitle'] = $post->options->metadescrition;
+                    $data[$locale]['metadescription'] = $post->options->metadescription;
                 }
                 $cats = $post->categories;
                 $categoriesPost = array();
