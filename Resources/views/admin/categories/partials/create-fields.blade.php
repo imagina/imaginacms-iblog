@@ -9,8 +9,8 @@
     </div>
 
 
-    @if (config('asgard.iblog.config.category.partials.translatable.create') && config('asgard.iblog.config.category.partials.translatable.create') !== [])
-        @foreach (config('asgard.page.config.category.partials.translatable.create') as $partial)
+    @if (config('asgard.iblog.config.fields.category.partials.translatable.create') && config('asgard.iblog.config.fields.category.partials.translatable.create') !== [])
+        @foreach (config('asgard.iblog.config.fields.category.partials.translatable.create') as $partial)
             @include($partial)
         @endforeach
     @endif

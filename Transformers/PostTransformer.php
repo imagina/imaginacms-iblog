@@ -27,7 +27,7 @@ class PostTransformer extends Resource
           'options'=>$this->when($this->options,json_decode($this->option)),
           'category'=>new CategoryTransformer($this->whenLoaded('category')),
           'editor'=>new UserProfileTransformer($this->whenLoaded('user')),
-          'translatable'=>$this->whenLoaded('translatable'),
+          'translatable'=>$this->whenLoaded('translatable')->groupBy('locale'),
           'categories'=> CategoryTransformer::collection($this->whenLoaded('categories')),
           'tags'=>TagTransformer::collection($this->whenLoaded('tags'))
 

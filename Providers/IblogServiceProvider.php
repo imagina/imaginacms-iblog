@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Modules\Core\Traits\CanPublishConfiguration;
 use Modules\Core\Events\BuildingSidebar;
 use Modules\Core\Events\LoadingBackendTranslations;
+use Modules\Iblog\Console\MigrateIblog;
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Tag;
@@ -45,6 +46,7 @@ class IblogServiceProvider extends ServiceProvider
             $event->load('category', array_dot(trans('iblog::category')));
             // append translations
         });
+        $this->registerCommands();
     }
 
     public function boot()
@@ -101,4 +103,23 @@ class IblogServiceProvider extends ServiceProvider
         });
 
     }
+
+    /**
+     * Register all commands for this module
+     */
+    private function registerCommands()
+    {
+        $this->registerMigrateIblogCommand();
+    }
+
+    /**
+     * Register the refresh thumbnails command
+     */
+    private function registerMigrateIblogCommand()
+    {
+
+        $this->app['command.iblog.migrateiblog'] = $this->app->make(MigrateIblog::class);;
+        $this->commands(['command.iblog.migrateiblog']);
+    }
+
 }

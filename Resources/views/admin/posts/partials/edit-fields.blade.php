@@ -33,7 +33,7 @@
                        data-toggle="collapse"><i class="fa fa-minus"></i>
                     </a>
                 </div>
-                <label>{{ trans('iblog::common.form.metadata')}}</label>
+                <label>{{ trans('iblog::post.form.metadata')}}</label>
             </div>
             <div class="panel-collapse collapse" id="aditional{{$lang}}">
                 <div class="box-body ">
@@ -56,8 +56,8 @@
             </div>
         </div>
     </div>
-    @if (config('asgard.iblog.config.post.partials.translatable.edit') && config('asgard.iblog.config.post.partials.translatable.edit') !== [])
-    @foreach (config('asgard.page.config.post.partials.translatable.edit') as $partial)
+    @if (config('asgard.iblog.config.fields.post.partials.translatable.edit') && config('asgard.iblog.config.fields.post.partials.translatable.edit') !== [])
+    @foreach (config('asgard.iblog.config.fields.post.partials.translatable.edit') as $partial)
     @include($partial)
     @endforeach
    @endif

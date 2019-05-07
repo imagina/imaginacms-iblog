@@ -21,9 +21,29 @@ return [
     'fields' => [
         'category' => [
             'secondaryimage' => true,
+            'partials' => [
+                'translatable' => [
+                    'create' => [],
+                    'edit' => [],
+                ],
+                'normal' => [
+                    'create' => [],
+                    'edit' => [],
+                ],
+            ],
         ],
         'post' => [
             'secondaryimage' => false,
+            'partials' => [
+                'translatable' => [
+                    'create' => [],
+                    'edit' => [],
+                ],
+                'normal' => [
+                    'create' => [],
+                    'edit' => [],
+                ],
+            ],
         ]
     ],
     /*

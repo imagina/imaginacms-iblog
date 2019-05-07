@@ -39,14 +39,14 @@
                         </div> {{-- end nav-tabs-custom --}}
                     </div>
                 </div>
-                @if (config('asgard.iblog.config.post.partials.normal.edit') && config('asgard.iblog.config.post.partials.normal.edit') !== [])
+                @if (config('asgard.iblog.config.fields.post.partials.normal.edit') && config('asgard.iblog.config.fields.post.partials.normal.edit') !== [])
 
                 <div class="col-xs-12 ">
                     <div class="box box-primary">
                         <div class="box-header">
                         </div>
                         <div class="box-body ">
-                            @foreach (config('asgard.iblog.config.post.partials.normal.edit') as $partial)
+                            @foreach (config('asgard.iblog.config.fields.post.partials.normal.edit') as $partial)
                             @include($partial)
                             @endforeach
 

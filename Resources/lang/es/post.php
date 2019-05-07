@@ -18,12 +18,32 @@ return [
         'create post' => 'Crear Artículo',
     ],
     'table' => [
-        'title' => 'Titulo'
+        'id'=>'id',
+        'title' => 'Titulo',
+        'slug'=>'Url Amigable',
+        'categories'=>'Categorias'
     ],
     'form' => [
         'gallery'=>'Galeria',
         'drag'=>'Arrastre y suelte aqui',
-        'click'=>' Clic para subir'
+        'click'=>' Clic para subir',
+        'title'=>'Titulo',
+        'slug'=>'Url Amigable',
+        'description'=>'Descripción',
+        'categories'=>'Categorias',
+        'secondary image'=>'Imagen  Segundaria',
+        'image'=>'Imagen Principal',
+        'Principal Category'=> 'Categoria Principal',
+        'Categories'=>'Categorias',
+        'metadata'=> 'SEO',
+        'metatitle'=>'Meta Titulo',
+        'metadescription'=>'Meta Descripción',
+        'metakeywords'=>'Palabras Clave',
+        'editor'=>'Nombre eel Editor',
+        'tags'=> 'Etiquetas',
+        'summary'=>'Descripcion Corta'
+
+
 
     ],
     'messages' => [

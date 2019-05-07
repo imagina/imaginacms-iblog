@@ -221,12 +221,23 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $this->model->with('category', 'categories', 'tags', 'user')->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
 
+    /*
+       public function whereCategory($id)
+       {
+           dd($id);
+           $post= $this->model->whereHas('categories', function (Builder $q) use ($id) {
+               $q->where('category_id', $id);
+           })->with('translations','category', 'categories', 'tags', 'user')->paginate);
+
+
+       }
+   */
     public function whereCategory($id)
     {
 
         return $this->model->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id')
-            ->whereIn('iblog__post__category.category_id', [$id])
-            ->with('category', 'categories', 'tags', 'user')
+            ->where('iblog__post__category.category_id', $id)
+            ->with('category', 'categories', 'tags', 'user', 'translations')
             ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
 
     }

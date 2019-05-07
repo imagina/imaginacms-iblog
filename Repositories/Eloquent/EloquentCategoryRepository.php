@@ -131,7 +131,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
      */
     public function findBySlug($slug)
     {
-        return $this->model->where('slug', "$slug")->firstOrFail();
+        return $this->model->where('slug', $slug)->firstOrFail();
     }
 
     public function create($data)

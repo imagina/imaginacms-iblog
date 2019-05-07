@@ -17,8 +17,8 @@
     </div>
 
 
-    @if (config('asgard.iblog.config.category.partials.translatable.edit') && config('asgard.iblog.config.category.partials.translatable.edit') !== [])
-    @foreach (config('asgard.page.config.category.partials.translatable.edit') as $partial)
+    @if (config('asgard.iblog.config.fields.category.partials.translatable.edit') && config('asgard.iblog.config.fields.category.partials.translatable.edit') !== [])
+    @foreach (config('asgard.iblog.config.fields.category.partials.translatable.edit') as $partial)
     @include($partial)
     @endforeach
    @endif
