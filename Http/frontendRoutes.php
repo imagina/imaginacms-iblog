@@ -7,7 +7,7 @@ use Modules\Iblog\Entities\Category as Category;
 if (!App::runningInConsole()) {
     foreach (Category::all() as $category) {
         /** @var Router $router */
-        $router->group(['prefix' =>'dsada/'.$category->slug], function (Router $router) use ($category) {
+        $router->group(['prefix' =>$category->slug], function (Router $router) use ($category) {
             $locale = LaravelLocalization::setLocale() ?: App::getLocale();
 
             $router->get('/', [
