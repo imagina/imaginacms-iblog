@@ -5,14 +5,6 @@ use Illuminate\Routing\Router;
 
 $router->group(['prefix' =>'/iblog'], function (Router $router) {
 
-    $router->post('post/upload/image', [
-        'as' => 'iblog.gallery.upload',
-        'uses' => 'PostController@uploadGalleryimage',
-    ]);
-    $router->post('post/delete/img', [
-        'as' => 'iblog.gallery.delete',
-        'uses' => 'PostController@deleteGalleryimage',
-    ]);
     $router->group(['prefix' => 'posts'], function (Router $router) {
         $router->bind('post', function ($id) {
             return app('Modules\Iblog\Repositories\PostRepository')->find($id);
@@ -22,6 +14,12 @@ $router->group(['prefix' =>'/iblog'], function (Router $router) {
             'uses' => 'PostController@index',
             'middleware' => 'can:iblog.posts.index'
         ]);
+        $router->get('q', [
+            'as' => 'admin.iblog.post.search',
+            'uses' => 'PostController@search',
+            'middleware' => 'can:iblog.posts.index'
+        ]);
+
         $router->get('create', [
             // dd('hgh'),
             'as' => 'admin.iblog.post.create',

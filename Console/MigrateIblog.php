@@ -61,10 +61,10 @@ class MigrateIblog extends Command
             DB::table('media__files')->where('id', $media )->update(['folder_id' => 0]);
 
             DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'iblog', '/assets/iblog', 0]);
-            $folder_blog = DB::table('media__files')->select('id')->where('filename', 'iblog')->first()->id;
             DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'post', '/assets/iblog/post', $folder_blog]);
             DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'category', '/assets/iblog/category', $folder_blog]);
             DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [0, 'default', 'modules/iblog/img/post/default.jpg', 0]);
+            $folder_blog = DB::table('media__files')->select('id')->where('filename', 'iblog')->first()->id;
             $folder_post = DB::table('media__files')->select('id')->where('filename', 'post')->first()->id;
             $folder_category = DB::table('media__files')->select('id')->where('filename', 'category')->first()->id;
             $defaulimage = DB::table('media__files')->select('id')->where('filename', 'default')->first()->id;

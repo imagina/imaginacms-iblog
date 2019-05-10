@@ -48,16 +48,23 @@ class Post extends Model implements TaggableInterface
     }
 
     public function getOptionsAttribute($value) {
-        return json_decode(json_decode($value));
+
+        $options=json_decode($value);
+        if(validateJson($options)){
+            $options=json_decode($options);
+        }
+        return $options;
+
 
     }
 
     public function getSecundaryimageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secundaryimage')->first()->path??null;
+        $thumbnail = $this->files()->where('zone', 'secundaryimage')->first();
 
         if ($thumbnail === null) {
-            return 'modules/iblog/img/post/default.jpg';
+            $thumbnail=(object)['path'=>null,'main-type'=>'image/jpeg'];
+            return $thumbnail->path='modules/iblog/img/post/default.jpg';
         }
 
         return $thumbnail;
@@ -67,10 +74,11 @@ class Post extends Model implements TaggableInterface
         $thumbnail = $this->files()->where('zone', 'mainimage')->first()->path??null;
 
         if ($thumbnail === null) {
+            $thumbnail=(object)['path'=>null,'main-type'=>'image/jpeg'];
             if(isset($this->options->mainimage)){
-                return $this->options->mainimage;
+                return $thumbnail->path=$this->options->mainimage;
             }
-            return 'modules/iblog/img/post/default.jpg';
+            return $thumbnail->path='modules/iblog/img/post/default.jpg';
         }
 
         return $thumbnail;

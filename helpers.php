@@ -190,7 +190,7 @@ if (!function_exists('postgallery')) {
     }
 }
 
-date_default_timezone_set(config('asgard.iblog.config.timezone', 'UTC'));
+date_default_timezone_set(config('asgard.iblog.config.timezone', 'America/Bogota'));
 setlocale(LC_TIME, config('asgard.iblog.config.localetime', 'en_US.UTF-8'));
 
 

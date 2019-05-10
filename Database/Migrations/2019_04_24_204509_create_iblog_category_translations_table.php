@@ -26,7 +26,6 @@ class CreateIblogCategoryTranslationsTable extends Migration
             $table->integer('category_id')->unsigned();
             $table->string('locale')->index();
             $table->unique(['category_id', 'locale']);
-            $table->unique(['slug', 'locale']);
             $table->foreign('category_id')->references('id')->on('iblog__categories')->onDelete('cascade');
         });
 

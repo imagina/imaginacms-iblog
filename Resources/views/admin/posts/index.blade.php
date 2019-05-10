@@ -24,6 +24,18 @@
             </div>
             <div class="box box-primary">
                 <div class="box-header">
+                    <h3 class="box-title">Lista de {{ trans('iblog::post.title.posts') }}</h3>
+                    <div class="box-tools">
+                        {!! Form::open(['route' => ['admin.iblog.post.index'], 'method' => 'get']) !!}
+                        <div class="input-group input-group-sm" style="width: 250px; margin-bottom: 10px">
+                            <input type="text" name="q" class="form-control pull-right" placeholder="Search">
+
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        {!! Form::close() !!}
+                    </div>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -31,10 +43,11 @@
                         <table class="data-table table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>{{ trans('iblog::post.table.id') }}</th>
-                                <th>{{ trans('iblog::post.table.title') }}</th>
-                                <th>{{ trans('iblog::post.table.slug') }}</th>
-                                <th>{{ trans('core::core.table.created at') }}</th>
+                                <th class="col-md-1">{{ trans('iblog::post.table.id') }}</th>
+                                <th class="col-md-4">{{ trans('iblog::post.table.title') }}</th>
+                                <th class="col-md-3">{{ trans('iblog::post.table.slug') }}</th>
+                                <th class="col-md-1">{{ trans('iblog::post.table.principal category') }}</th>
+                                <th class="col-md-1">{{ trans('core::core.table.created at') }}</th>
                                 <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
                             </tr>
                             </thead>
@@ -49,21 +62,26 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('admin.iblog.post.edit', [$post->id]) }}">
-                                                {{ $post->title }}
+                                            {{ $post->title }}
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.iblog.post.edit', [$post->id]) }}">
+                                            <a href="{{$post->url}}">
                                                 {{ $post->slug }}
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.iblog.post.edit', [$post->id]) }}">
-                                                {{ $post->created_at }}
+                                            <a href="{{ route('admin.iblog.category.edit', [$post->category->id??'N/A'])}}">
+                                                {{ $post->category->title??'N/A'}}
                                             </a>
                                         </td>
                                         <td>
+                                            {{ $post->created_at }}
+                                        </td>
+                                        <td>
                                             <div class="btn-group">
+                                                <a href="{{$post->url}}"
+                                                   class="btn btn-success btn-flat"><i class="fa fa-eye"></i></a>
                                                 <a href="{{ route('admin.iblog.post.edit', [$post->id]) }}"
                                                    class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
                                                 <button class="btn btn-danger btn-flat" data-toggle="modal"

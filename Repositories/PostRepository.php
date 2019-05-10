@@ -41,4 +41,6 @@ interface PostRepository extends BaseRepository
      */
     public function category($id);
 
+    public function search($param);
+
 }

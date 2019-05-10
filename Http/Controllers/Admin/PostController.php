@@ -12,6 +12,7 @@ use Modules\Iblog\Http\Requests\CreatePostRequest;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\User\Repositories\RoleRepository;
+use Modules\User\Repositories\UserRepository;
 
 
 class PostController extends AdminBaseController

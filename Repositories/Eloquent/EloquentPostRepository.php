@@ -10,6 +10,7 @@ use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Status;
 use Modules\Iblog\Events\PostWasCreated;
 use Modules\Iblog\Events\PostWasUpdated;
+use Modules\Iblog\Events\PostWasDeleted;
 use Modules\Iblog\Repositories\Collection;
 use Modules\Iblog\Repositories\PostRepository;
 
@@ -137,6 +138,32 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $this->model->with('tags')->orderBy('created_at', 'DESC')->get();
     }
 
+
+    /**
+     * @param $param
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function search($keys)
+    {
+        $query = $this->model->query();
+        $criterion = $keys;
+        $param = explode(' ', $criterion);
+        $query->where(function ($query) use ($param,$keys) {
+            foreach ($param as $index => $word) {
+                if ($index == 0) {
+                    $query->Where('title', 'like', "%" . $word . "%");
+                    $query->orWhere('id', $word );
+                } else {
+                    $query->orWhere('title', 'like', "%" . $word . "%");
+                    $query->orWhere('id', $word );
+                }
+            }
+
+        });
+        return $query->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+
     /**
      * Update a resource
      * @param $post
@@ -215,12 +242,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
      *
      * @param  string $slug
      * @return object
-     */
+
     public function findBySlug($slug)
     {
         return $this->model->with('category', 'categories', 'tags', 'user')->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
-
+*/
     /*
        public function whereCategory($id)
        {
@@ -232,10 +259,27 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
        }
    */
+
+
+    /**
+     * @inheritdoc
+     */
+    public function findBySlug($slug)
+    {
+        if (method_exists($this->model, 'translations')) {
+            return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
+                $q->where('slug', $slug);
+            })->with('translations','category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();
+        }
+
+        return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();;
+    }
+
     public function whereCategory($id)
     {
 
-        return $this->model->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id')
+        return $this->model->select('*', 'iblog__posts.id as id')
+            ->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id')
             ->where('iblog__post__category.category_id', $id)
             ->with('category', 'categories', 'tags', 'user', 'translations')
             ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);

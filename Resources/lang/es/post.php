@@ -21,7 +21,8 @@ return [
         'id'=>'id',
         'title' => 'Titulo',
         'slug'=>'Url Amigable',
-        'categories'=>'Categorias'
+        'categories'=>'Categorias',
+        'principal category'=>'Categoria Principal'
     ],
     'form' => [
         'gallery'=>'Galeria',

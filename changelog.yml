@@ -1,5 +1,16 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.2":
+    added:
+      - lang 'es'
+    chagend:
+      - EloquentPostRepository metod findBySlug
+      - Entity Post Mutator Mainimage
+      - Entity Category Mutator Mainimage
+      - Admin PosController list user Editor
+    removed:
+      - routes save gallery
+      - unique slug-locale restiction  for Category and Post
   "4.0.1":
     changed:
       - Migrate Command Metadescription field

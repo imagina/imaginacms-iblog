@@ -27,7 +27,6 @@ class CreateIblogPostTranslationsTable extends Migration
             $table->integer('post_id')->unsigned();
             $table->string('locale')->index();
             $table->unique(['post_id', 'locale']);
-            $table->unique(['slug', 'locale']);
             $table->foreign('post_id')->references('id')->on('iblog__posts')->onDelete('cascade');
         });
 
