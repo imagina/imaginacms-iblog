@@ -352,12 +352,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         if (isset($filters->search)) { //si hay que filtrar por rango de precio
             $criterion = $filters->search;
             $param = explode(' ', $criterion);
-            $query->where(function ($query) use ($param) {
+            $query->where(function ($query) use ($param, $criterion ) {
                 foreach ($param as $index => $word) {
+                    $query->where('title', 'like', "%" . $criterion  . "%")->orWhere('id', 'like', "%" . $criterion  . "%");
                     if ($index == 0) {
-                        $query->where('title', 'like', "%" . $word . "%")->orWhere('description', 'like', "%" . $word . "%");
+                        $query->where('title', 'like', "%" . $word . "%")->orWhere('id', 'like', "%" . $word . "%");
                     } else {
-                        $query->orWhere('title', 'like', "%" . $word . "%")->orWhere('description', 'like', "%" . $word . "%");
+                        $query->orWhere('title', 'like', "%" . $word . "%")->orWhere('id', 'like', "%" . $word . "%");
                     }
                 }
 

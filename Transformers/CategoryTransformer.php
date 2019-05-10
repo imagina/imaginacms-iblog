@@ -26,7 +26,7 @@ class CategoryTransformer extends Resource
 
     public function toArray($request)
     {
-        return [
+        $data =[
             'id' => $this->when($this->id, $this->id),
             'title' => $this->when($this->title, $this->title),
             'slug' => $this->when($this->slug, $this->slug),
@@ -41,8 +41,15 @@ class CategoryTransformer extends Resource
             'created_at' => $this->when($this->created_at, $this->created_at),
             'options' => $this->when($this->options, json_decode($this->option)),
             'parent' => new CategoryTransformer($this->whenLoaded('parent')),
-            'translatable' => $this->whenLoaded('translations')->groupBy('locale'),
             'children' => CategoryTransformer::collection($this->whenLoaded('children')),
         ];
+
+        $translatables=$this->whenLoaded('translations')->groupBy('locale');
+        dd($translatables);
+        foreach ($translatables as $locale => $items) {
+            $data[$locale]=$items;
+        }
+
+        return $data;
     }
 }
