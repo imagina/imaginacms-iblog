@@ -20,10 +20,10 @@ class CreateIblogPostTranslationsTable extends Migration
             $table->string('slug')->index();
             $table->text('description');
             $table->text('summary');
-            $table->text('metatitle')->nullable();
-            $table->text('metadescription')->nullable();
-            $table->text('metakeywords')->nullable();
-            $table->text('translatableoptions')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->text('meta_keywords')->nullable();
+            $table->text('translatable_options')->nullable();
             $table->integer('post_id')->unsigned();
             $table->string('locale')->index();
             $table->unique(['post_id', 'locale']);

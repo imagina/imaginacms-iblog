@@ -20,8 +20,8 @@ class Post extends Model implements TaggableInterface
 
     protected $table = 'iblog__posts';
 
-    protected $fillable = ['title','description','slug','summary','metatitle','metadescription','metakeywords','translatableoption','options','category_id','user_id','status','created_at'];
-    public $translatedAttributes = ['title','description','slug','summary','metatitle','metadescription','metakeywords','translatableoption'];
+    protected $fillable = ['title','description','slug','summary','meta_title','meta_description','meta_keywords','translatable_option','options','category_id','user_id','status','created_at'];
+    public $translatedAttributes = ['title','description','slug','summary','meta_title','meta_description','meta_keywords','translatable_option'];
     protected $presenter = PostPresenter::class;
     protected $fakeColumns = ['options'];
 
@@ -58,9 +58,9 @@ class Post extends Model implements TaggableInterface
 
     }
 
-    public function getSecundaryimageAttribute()
+    public function getSecondaryImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secundaryimage')->first();
+        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
 
         if ($thumbnail === null) {
             $thumbnail=(object)['path'=>null,'main-type'=>'image/jpeg'];
@@ -69,7 +69,7 @@ class Post extends Model implements TaggableInterface
 
         return $thumbnail;
     }
-    public function getMainimageAttribute()
+    public function getMainImageAttribute()
     {
         $thumbnail = $this->files()->where('zone', 'mainimage')->first();
         if($thumbnail->mimetype =='image/jpeg') {

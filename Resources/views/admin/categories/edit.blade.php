@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                @if(config('asgard.iblog.config.fields.category.secondaryimage'))
+                @if(config('asgard.iblog.config.fields.category.secondaryImage'))
                     <div class="col-xs-12 ">
                         <div class="box box-primary">
                             <div class="box-header">

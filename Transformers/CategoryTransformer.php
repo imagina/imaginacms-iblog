@@ -31,24 +31,25 @@ class CategoryTransformer extends Resource
             'title' => $this->when($this->title, $this->title),
             'slug' => $this->when($this->slug, $this->slug),
             'description' => $this->when($this->description, $this->description),
-            'metatitle' => $this->when($this->metatitle, $this->metatitle),
-            'metadescription' => $this->when($this->metadescription, $this->metadescription),
-            'metakeywords' => $this->when($this->metakeywords, $this->metakeywords),
-            'main_image' => $this->mainimage,
+            'metaTitle' => $this->when($this->meta_title, $this->meta_title),
+            'metaDescription' => $this->when($this->meta_description, $this->meta_description),
+            'metaKeywords' => $this->when($this->meta_keywords, $this->meta_keywords),
+            'mainImage' => $this->main_image,
             //'small_thumb' => $this->imagy->getThumbnail($this->mainimage, 'smallThumb'),
             //'medium_thumb' => $this->imagy->getThumbnail($this->mainimage, 'mediumThumb'),
-            'secondaryimage' => $this->when($this->secondaryimage, $this->secondaryimage),
-            'created_at' => $this->when($this->created_at, $this->created_at),
+            'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
+            'createdAt' => $this->when($this->created_at, $this->created_at),
             'options' => $this->when($this->options, json_decode($this->option)),
             'parent' => new CategoryTransformer($this->whenLoaded('parent')),
             'children' => CategoryTransformer::collection($this->whenLoaded('children')),
         ];
 
-        $translatables=$this->whenLoaded('translations')->groupBy('locale');
-        dd($translatables);
-        foreach ($translatables as $locale => $items) {
-            $data[$locale]=$items;
+        $locales = $this->whenLoaded('translations')->groupBy('locale');
+      if(isset($locales) && !empty($locales)) {
+        foreach ($locales as $locale => $items) {
+          $data[$locale] = $items;
         }
+      }
 
         return $data;
     }

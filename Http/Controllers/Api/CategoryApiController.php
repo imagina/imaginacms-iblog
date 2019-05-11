@@ -16,7 +16,7 @@ use Route;
 
 //Base API
 
-class CategoryController extends BaseApiController
+class CategoryApiController extends BaseApiController
 {
     /**
      *
@@ -46,13 +46,13 @@ class CategoryController extends BaseApiController
             $params = $this->getParamsRequest($request);
 
             //Request to Repository
-            $dataEntity = $this->category->getItemsBy($params);
+            $categories = $this->category->getItemsBy($params);
 
             //Response
-            $response = ["data" => CategoryTransformer::collection($dataEntity)];
+            $response = ["data" => CategoryTransformer::collection($categories)];
 
             //If request pagination add meta-page
-            $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
+            $params->page ? $response["meta"] = ["page" => $this->pageTransformer($categories)] : false;
         } catch (\Exception $e) {
             Log::Error($e);
             $status = $this->getStatusError($e->getCode());
@@ -62,41 +62,37 @@ class CategoryController extends BaseApiController
         //Return response
         return response()->json($response ?? ["data" => "Request successful"], $status ?? 200);
     }
-
 
     /**
-     * Get Data from Category
-     *
-     * @param $criteria
-     * @param $request
-     * @return mixed
-     */
-    public function show($criteria, Request $request)
-    {
+       * GET A ITEM
+       *
+       * @param $criteria
+       * @return mixed
+       */
+      public function show($criteria,Request $request)
+      {
         try {
-            //Get Parameters from URL.
-            $params = $this->getParamsRequest($request);
-
-            //Request to Repository
-            $dataEntity = $this->category->getItem($criteria, $params);
-
-            //Break if no found item
-            if (!$dataEntity) throw new Exception('Item not found', 204);
-
-            //Response
-            $response = ["data" => new CategoryTransformer($dataEntity)];
-
-            //If request pagination add meta-page
-            $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
+          //Get Parameters from URL.
+          $params = $this->getParamsRequest($request);
+    
+          //Request to Repository
+          $category = $this->repoEntity->getItem($criteria, $params);
+    
+          //Break if no found item
+          if(!$category) throw new Exception('Item not found',404);
+          
+          //Response
+          $response = ["data" => new CategoryTransformer($category)];
+    
         } catch (\Exception $e) {
-            Log::Error($e);
-            $status = $this->getStatusError($e->getCode());
-            $response = ["errors" => $e->getMessage()];
+          $status = $this->getStatusError($e->getCode());
+          $response = ["errors" => $e->getMessage()];
         }
-
+    
         //Return response
-        return response()->json($response ?? ["data" => "Request successful"], $status ?? 200);
-    }
+        return response()->json($response, $status ?? 200);
+      }
+      
 
     /**
      * Create a Category
@@ -113,10 +109,10 @@ class CategoryController extends BaseApiController
             $this->validateRequestApi(new CreateCategoryRequest($data));
 
             //Create item
-            $dataEntity = $this->category->create($data);
+            $category = $this->category->create($data);
 
             //Response
-            $response = ["data" => new CategoryTransformer($dataEntity)];
+            $response = ["data" => new CategoryTransformer($category)];
             \DB::commit(); //Commit to Data Base
         } catch (\Exception $e) {
             \DB::rollback();//Rollback to Data Base

@@ -28,20 +28,20 @@
             </div>
             <div class="panel-collapse collapse" id="aditional{{$lang}}">
                 <div class="box-body">
-                    <div class='form-group{{ $errors->has("{$lang}.metatitle") ? ' has-error' : '' }}'>
-                        {!! Form::label("{$lang}[metatitle]", trans('iblog::post.form.metatitle')) !!}
-                        {!! Form::text("{$lang}[metatitle]", old("{$lang}.metatitle"), ['class' => 'form-control', 'data-slug' => 'source', 'placeholder' => trans('iblog::post.form.metatitle')]) !!}
-                        {!! $errors->first("{$lang}.metatitle", '<span class="help-block">:message</span>') !!}
+                    <div class='form-group{{ $errors->has("{$lang}.meta_title") ? ' has-error' : '' }}'>
+                        {!! Form::label("{$lang}[meta_title]", trans('iblog::post.form.meta_title')) !!}
+                        {!! Form::text("{$lang}[meta_title]", old("{$lang}.meta_title"), ['class' => 'form-control', 'data-slug' => 'source', 'placeholder' => trans('iblog::post.form.meta_title')]) !!}
+                        {!! $errors->first("{$lang}.meta_title", '<span class="help-block">:message</span>') !!}
                     </div>
 
-                    <div class='form-group{{ $errors->has("{$lang}.metakeywords") ? ' has-error' : '' }}'>
-                        {!! Form::label("{$lang}[metakeywords]", trans('iblog::post.form.metakeywords')) !!}
-                        {!! Form::text("{$lang}[metakeywords]", old("{$lang}.metakeywords"), ['class' => 'form-control', 'data-slug' => 'source', 'placeholder' => trans('iblog::post.form.metakeywords')]) !!}
-                        {!! $errors->first("{$lang}.metakeywords", '<span class="help-block">:message</span>') !!}
+                    <div class='form-group{{ $errors->has("{$lang}.meta_keywords") ? ' has-error' : '' }}'>
+                        {!! Form::label("{$lang}[meta_keywords]", trans('iblog::post.form.meta_keywords')) !!}
+                        {!! Form::text("{$lang}[meta_keywords]", old("{$lang}.meta_keywords"), ['class' => 'form-control', 'data-slug' => 'source', 'placeholder' => trans('iblog::post.form.meta_keywords')]) !!}
+                        {!! $errors->first("{$lang}.meta_keywords", '<span class="help-block">:message</span>') !!}
                     </div>
 
-                    @editor('metadescription', trans('iblog::post.form.metadescription'),
-                    old("{$lang}.metadescription"), $lang)
+                    @editor('meta_description', trans('iblog::post.form.meta_description'),
+                    old("{$lang}.meta_description"), $lang)
                 </div>
             </div>
         </div>

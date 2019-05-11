@@ -16,9 +16,9 @@ class Category extends Model
     protected $table = 'iblog__categories';
     protected static $entityNamespace = 'iblog/category';
 
-    protected $fillable = ['title', 'description', 'slug', 'parent_id', 'options', 'translatableoption'];
+    protected $fillable = ['title', 'description', 'slug', 'parent_id', 'options', 'translatable_option'];
 
-    public $translatedAttributes = ['title', 'description', 'slug', 'metatitle', 'metadescription', 'metakeywords', 'translatableoption'];
+    public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_option'];
 
     protected $fakeColumns = ['options'];
     /**
@@ -56,9 +56,9 @@ class Category extends Model
         return json_decode(json_decode($value));
     }
 
-    public function getSecundaryimageAttribute()
+    public function getSecondaryImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secundaryimage')->first()->path??null;
+        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first()->path??null;
 
         if ($thumbnail === null) {
             return 'modules/iblog/img/post/default.jpg';
@@ -66,7 +66,7 @@ class Category extends Model
 
         return $thumbnail;
     }
-    public function getMainimageAttribute()
+    public function getMainImageAttribute()
     {
         $thumbnail = $this->files()->where('zone', 'mainimage')->first()->path??null;
 

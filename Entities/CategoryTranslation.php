@@ -11,7 +11,7 @@ class CategoryTranslation extends Model
 
     public $timestamps = false;
     protected $table = 'iblog__category_translations';
-    protected $fillable = ['title', 'description', 'slug', 'metatitle', 'metadescription', 'metakeywords', 'translatableoption'];
+    protected $fillable = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_option'];
 
 
 
@@ -28,17 +28,17 @@ class CategoryTranslation extends Model
                ]
         ];
        }
-    public function getMetadescriptionAttribute(){
+    public function getMetaDescriptionAttribute(){
 
-        return $this->metadescription ?? substr(strip_tags($this->description??''),0,150);
+        return $this->meta_description ?? substr(strip_tags($this->description??''),0,150);
     }
 
     /**
      * @return mixed
      */
-    public function getMetatitleAttribute(){
+    public function getMetaTitleAttribute(){
 
-        return $this->metatitle ?? $this->title;
+        return $this->meta_title ?? $this->title;
     }
 
     public function getUrlAttribute() {

@@ -191,7 +191,7 @@ if (!function_exists('postgallery')) {
 }
 
 date_default_timezone_set(config('asgard.iblog.config.timezone', 'America/Bogota'));
-setlocale(LC_TIME, config('asgard.iblog.config.localetime', 'en_US.UTF-8'));
+setlocale(LC_TIME, config('asgard.iblog.config.localeTime', 'en_US.UTF-8'));
 
 
 if(!function_exists('get_status')){
@@ -230,12 +230,12 @@ if (!function_exists('saveImage')) {
                 'height' => 768,
                 'quality'=>80
             ],
-            'mediumthumbsize' => [
+            'mediumThumbSize' => [
                 'width' => 400,
                 'height' => 300,
                 'quality'=>80
             ],
-            'smallthumbsize' => [
+            'smallThumbSize' => [
                 'width' => 100,
                 'height' => 80,
                 'quality'=>80
@@ -276,12 +276,12 @@ if (!function_exists('saveImage')) {
             // Save Thumbs
             \Storage::disk($disk)->put(
                 str_replace('.jpg', '_mediumThumb.jpg', $destination_path),
-                $image->fit($size->mediumthumbsize->width, $size->mediumthumbsize->height)->stream('jpg', $size->mediumthumbsize->quality)
+                $image->fit($size->mediumThumbSize->width, $size->mediumThumbSize->height)->stream('jpg', $size->mediumThumbSize->quality)
             );
 
             \Storage::disk($disk)->put(
                 str_replace('.jpg', '_smallThumb.jpg', $destination_path),
-                $image->fit($size->smallthumbsize->width, $size->smallthumbsize->height)->stream('jpg', $size->smallthumbsize->quality)
+                $image->fit($size->smallThumbSize->width, $size->smallThumbSize->height)->stream('jpg', $size->smallThumbSize->quality)
             );
 
             // 3. Return the path

@@ -16,370 +16,431 @@ use Modules\Iblog\Repositories\PostRepository;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
+  
 
-    /**
-     * @param bool $params
-     * @return mixed
-     */
-    public function getItemsBy($params = false)
-    {
-        /*== initialize query ==*/
-        $query = $this->model->query();
-
-        /*== RELATIONSHIPS ==*/
-        if (in_array('*', $params->include)) {//If Request all relationships
-            $query->with([]);
-        } else {//Especific relationships
-            $includeDefault = ['translations'];//Default relationships
-            if (isset($params->include))//merge relations with default relationships
-                $includeDefault = array_merge($includeDefault, $params->include);
-            $query->with($includeDefault);//Add Relationships to query
-        }
-
-        /*== FILTERS ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;//Short filter
-
-
-            if (isset($filter->search)) { //si hay que filtrar por rango de precio
-                $criterion = $filter->search;
-                $param = explode(' ', $criterion);
-                $query->where(function ($query) use ($param) {
-                    foreach ($param as $index => $word) {
-                        if ($index == 0) {
-                            $query->where('title', 'like', "%" . $word . "%");
-                            $query->orWhere('sku', 'like', "%" . $word . "%");
-                        } else {
-                            $query->orWhere('title', 'like', "%" . $word . "%");
-                            $query->orWhere('sku', 'like', "%" . $word . "%");
-                        }
-                    }
-
-                });
-            }
-
-            //Filter by date
-            if (isset($filter->date)) {
-                $date = $filter->date;//Short filter date
-                $date->field = $date->field ?? 'created_at';
-                if (isset($date->from))//From a date
-                    $query->whereDate($date->field, '>=', $date->from);
-                if (isset($date->to))//to a date
-                    $query->whereDate($date->field, '<=', $date->to);
-            }
-
-            //Order by
-            if (isset($filter->order)) {
-                $orderByField = $filter->order->field ?? 'created_at';//Default field
-                $orderWay = $filter->order->way ?? 'desc';//Default way
-                $query->orderBy($orderByField, $orderWay);//Add order to query
-            }
-        }
-
-        /*== FIELDS ==*/
-        if (isset($params->fields) && count($params->fields))
-            $query->select($params->fields);
-
-        /*== REQUEST ==*/
-        if (isset($params->page) && $params->page) {
-            return $query->paginate($params->take);
-        } else {
-            $params->take ? $query->take($params->take) : false;//Take
-            return $query->get();
-        }
-    }
-
-    public function getItem($criteria, $params = false)
-    {
-        //Initialize query
-        $query = $this->model->query();
-
-        /*== RELATIONSHIPS ==*/
-        if (in_array('*', $params->include)) {//If Request all relationships
-            $query->with([]);
-        } else {//Especific relationships
-            $includeDefault = [];//Default relationships
-            if (isset($params->include))//merge relations with default relationships
-                $includeDefault = array_merge($includeDefault, $params->include);
-            $query->with($includeDefault);//Add Relationships to query
-        }
-
-        /*== FILTER ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;
-
-            if (isset($filter->field))//Filter by specific field
-                $field = $filter->field;
-        }
-
-        /*== FIELDS ==*/
-        if (isset($params->fields) && count($params->fields))
-            $query->select($params->fields);
-
-        /*== REQUEST ==*/
-        return $query->where($field ?? 'id', $criteria)->first();
-    }
-
-
-    /**
-     * @param  int $id
-     * @return object
-     */
-    public function find($id)
-    {
-        return $this->model->with('category', 'categories', 'tags', 'user')->find($id);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function all()
-    {
-        return $this->model->with('tags')->orderBy('created_at', 'DESC')->get();
-    }
-
-
-    /**
-     * @param $param
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function search($keys)
-    {
-        $query = $this->model->query();
-        $criterion = $keys;
-        $param = explode(' ', $criterion);
-        $query->where(function ($query) use ($param,$keys) {
-            foreach ($param as $index => $word) {
-                if ($index == 0) {
-                    $query->Where('title', 'like', "%" . $word . "%");
-                    $query->orWhere('id', $word );
-                } else {
-                    $query->orWhere('title', 'like', "%" . $word . "%");
-                    $query->orWhere('id', $word );
-                }
-            }
-
-        });
-        return $query->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-
-    /**
-     * Update a resource
-     * @param $post
-     * @param  array $data
-     * @return mixed
-     */
-    public function update($post, $data)
-    {
-        $post->update($data);
-
-        $post->categories()->sync(array_get($data, 'categories', []));
-
-        event(new PostWasUpdated($post, $data));
-        $post->setTags(array_get($data, 'tags', []));
-
-        return $post;
-    }
-
-    /**
-     * Create a iblog post
-     * @param  array $data
-     * @return Post
-     */
-    public function create($data)
-    {
-        $post = $this->model->create($data);
-        $post->categories()->sync(array_get($data, 'categories', []));
-        event(new PostWasCreated($post, $data));
-        $post->setTags(array_get($data, 'tags', []));
-        return $post;
-    }
-
-    public function destroy($model)
-    {
-        $model->untag();
-        event(new PostWasDeleted($model->id, get_class($model)));
-
-        return $model->delete();
-    }
-
-
-    /**
-     * Return the latest x iblog posts
-     * @param int $amount
-     * @return Collection
-     */
-    public function latest($amount = 5)
-    {
-        return $this->model->whereStatus(Status::PUBLISHED)->orderBy('created_at', 'desc')->take($amount)->get();
-    }
-
-    /**
-     * Get the previous post of the given post
-     * @param object $post
-     * @return object
-     */
-    public function getPreviousOf($post)
-    {
-        return $this->model->where('created_at', '<', $post->created_at)
-            ->whereStatus(Status::PUBLISHED)->orderBy('created_at', 'desc')->first();
-    }
-
-    /**
-     * Get the next post of the given post
-     * @param object $post
-     * @return object
-     */
-    public function getNextOf($post)
-    {
-        return $this->model->where('created_at', '>', $post->created_at)
-            ->whereStatus(Status::PUBLISHED)->first();
-    }
-
-    /**
-     * Find a resource by the given slug
-     *
-     * @param  string $slug
-     * @return object
-
-    public function findBySlug($slug)
-    {
-        return $this->model->with('category', 'categories', 'tags', 'user')->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
-    }
-*/
-    /*
-       public function whereCategory($id)
-       {
-           dd($id);
-           $post= $this->model->whereHas('categories', function (Builder $q) use ($id) {
-               $q->where('category_id', $id);
-           })->with('translations','category', 'categories', 'tags', 'user')->paginate);
-
-
-       }
+  
+  /**
+   * @param  int $id
+   * @return object
    */
-
-
-    /**
-     * @inheritdoc
-     */
-    public function findBySlug($slug)
-    {
-        if (method_exists($this->model, 'translations')) {
-            return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
-                $q->where('slug', $slug);
-            })->with('translations','category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();
-        }
-
-        return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();;
-    }
-
-    public function whereCategory($id)
-    {
-
-        return $this->model->select('*', 'iblog__posts.id as id')
-            ->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id')
-            ->where('iblog__post__category.category_id', $id)
-            ->with('category', 'categories', 'tags', 'user', 'translations')
-            ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
-
-    }
-
-    public function whereTag($id)
-    {
-
-        return $this->model->leftJoin('iblog__post__tag', 'iblog__post__tag.post_id', '=', 'iblog__posts.id')
-            ->whereIn('iblog__post__tag.tag_id', [$id])
-            ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
-
-    }
-
-    public function whereFilters($filters, $includes = array())
-    {
-
-        $query = count($includes) !== 0 ? $this->model->with($includes) : $this->model->with('user');
-
-        if (!empty($filters->categories) || isset($filters->exclude_categories)) {
-
-            $query->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id');
-        }
-
-        if (!empty($filters->categories)) {
-            is_array($filters->categories) ? true : $filters->categories = [$filters->categories];
-
-            $query->whereIn('iblog__post__category.category_id', $filters->categories);
-
-        }
-        if (isset($filters->exclude_categories)) {
-
-            $query->whereNotIn('iblog__post__category.category_id', $filters->exclude_categories);
-        }
-
-        if (!empty($filters->users)) {
-            $query->whereHas('user', function ($query) use ($filters) {
-                $query->whereIn('user_id', $filters->users);
-            });
-        }
-        if (!empty($filters->exclude)) {
-            $query->whereNotIn('iblog__posts.id', $filters->exclude);
-        }
-
-        if (isset($filters->exclude_users)) {
-            $query->whereHas('user', function ($query) use ($filters) {
-                $query->whereNotIn('user_id', $filters->exclude_users);
-            });
-        }
-        if (isset($filters->created_at)) {
-            $query->where('created_at', $filters->created_at['operator'], $filters->created_at['date']);
-        }
-
-        if (isset($filters->order)) { //si hay que filtrar por rango de precio
-
-            $orderby = $filters->order->by ?? 'created_at';
-            $ordertype = $filters->order->type ?? 'desc';
+  public function find($id)
+  {
+    return $this->model->with('category', 'categories', 'tags', 'user')->find($id);
+  }
+  
+  /**
+   * @return \Illuminate\Database\Eloquent\Collection
+   */
+  public function all()
+  {
+    return $this->model->with('tags')->orderBy('created_at', 'DESC')->get();
+  }
+  
+  
+  /**
+   * @param $param
+   * @return \Illuminate\Database\Eloquent\Collection
+   */
+  public function search($keys)
+  {
+    $query = $this->model->query();
+    $criterion = $keys;
+    $param = explode(' ', $criterion);
+    $query->where(function ($query) use ($param, $keys) {
+      foreach ($param as $index => $word) {
+        if ($index == 0) {
+          $query->Where('title', 'like', "%" . $word . "%");
+          $query->orWhere('id', $word);
         } else {
-            $orderby = 'created_at';
-            $ordertype = 'desc';
+          $query->orWhere('title', 'like', "%" . $word . "%");
+          $query->orWhere('id', $word);
         }
-        if (!empty($filters->include)) {
-            $query->orWhere(function ($query) use ($filters) {
-                $query->whereIn('iblog__posts.id', $filters->include);
-            });
+      }
+      
+    });
+    return $query->orderBy('created_at', 'desc')->paginate(20);
+  }
+  
+  
+  /**
+   * Update a resource
+   * @param $post
+   * @param  array $data
+   * @return mixed
+   */
+  public function update($post, $data)
+  {
+    $post->update($data);
+    
+    $post->categories()->sync(array_get($data, 'categories', []));
+    
+    event(new PostWasUpdated($post, $data));
+    $post->setTags(array_get($data, 'tags', []));
+    
+    return $post;
+  }
+  
 
-        }
+  
+  public function destroy($model)
+  {
+    $model->untag();
+    event(new PostWasDeleted($model->id, get_class($model)));
+    
+    return $model->delete();
+  }
+  
+  
+  /**
+   * Return the latest x iblog posts
+   * @param int $amount
+   * @return Collection
+   */
+  public function latest($amount = 5)
+  {
+    return $this->model->whereStatus(Status::PUBLISHED)->orderBy('created_at', 'desc')->take($amount)->get();
+  }
+  
+  /**
+   * Get the previous post of the given post
+   * @param object $post
+   * @return object
+   */
+  public function getPreviousOf($post)
+  {
+    return $this->model->where('created_at', '<', $post->created_at)
+      ->whereStatus(Status::PUBLISHED)->orderBy('created_at', 'desc')->first();
+  }
+  
+  /**
+   * Get the next post of the given post
+   * @param object $post
+   * @return object
+   */
+  public function getNextOf($post)
+  {
+    return $this->model->where('created_at', '>', $post->created_at)
+      ->whereStatus(Status::PUBLISHED)->first();
+  }
+  
+  /**
+   * Find a resource by the given slug
+   *
+   * @param  string $slug
+   * @return object
+   *
+   * public function findBySlug($slug)
+   * {
+   * return $this->model->with('category', 'categories', 'tags', 'user')->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
+   * }
+   */
+  /*
+     public function whereCategory($id)
+     {
+         dd($id);
+         $post= $this->model->whereHas('categories', function (Builder $q) use ($id) {
+             $q->where('category_id', $id);
+         })->with('translations','category', 'categories', 'tags', 'user')->paginate);
 
-        if (isset($filters->search)) { //si hay que filtrar por rango de precio
-            $criterion = $filters->search;
-            $param = explode(' ', $criterion);
-            $query->where(function ($query) use ($param, $criterion ) {
-                foreach ($param as $index => $word) {
-                    $query->where('title', 'like', "%" . $criterion  . "%")->orWhere('id', 'like', "%" . $criterion  . "%");
-                    if ($index == 0) {
-                        $query->where('title', 'like', "%" . $word . "%")->orWhere('id', 'like', "%" . $word . "%");
-                    } else {
-                        $query->orWhere('title', 'like', "%" . $word . "%")->orWhere('id', 'like', "%" . $word . "%");
-                    }
-                }
 
-            });
-        }
-        $query->whereStatus(get_status($filters->status ?? '1'))
-            ->skip($filters->skip ?? 0);
-        $query->orderBy($orderby, $ordertype);
-        if (isset($filters->take)) {
-            $query->take($filter->take ?? 5);
-            return $query->get();
-        } elseif (isset($filters->paginate) && is_integer($filters->paginate)) {
-            return $query->paginate($filters->paginate);
-        } else {
-            return $query->paginate(12);
-        }
+     }
+ */
+  
+  
+  /**
+   * @inheritdoc
+   */
+  public function findBySlug($slug)
+  {
+    if (method_exists($this->model, 'translations')) {
+      return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
+        $q->where('slug', $slug);
+      })->with('translations', 'category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
-
-    public function category($id)
-    {
-        return $this->model->where('category_id', $id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
+    
+    return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();;
+  }
+  
+  public function whereCategory($id)
+  {
+    
+    return $this->model->select('*', 'iblog__posts.id as id')
+      ->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id')
+      ->where('iblog__post__category.category_id', $id)
+      ->with('category', 'categories', 'tags', 'user', 'translations')
+      ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
+    
+  }
+  
+  public function whereTag($id)
+  {
+    
+    return $this->model->leftJoin('iblog__post__tag', 'iblog__post__tag.post_id', '=', 'iblog__posts.id')
+      ->whereIn('iblog__post__tag.tag_id', [$id])
+      ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
+    
+  }
+  
+  public function whereFilters($filters, $includes = array())
+  {
+    
+    $query = count($includes) !== 0 ? $this->model->with($includes) : $this->model->with('user');
+    
+    if (!empty($filters->categories) || isset($filters->exclude_categories)) {
+      
+      $query->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id');
     }
-
+    
+    if (!empty($filters->categories)) {
+      is_array($filters->categories) ? true : $filters->categories = [$filters->categories];
+      
+      $query->whereIn('iblog__post__category.category_id', $filters->categories);
+      
+    }
+    if (isset($filters->exclude_categories)) {
+      
+      $query->whereNotIn('iblog__post__category.category_id', $filters->exclude_categories);
+    }
+    
+    if (!empty($filters->users)) {
+      $query->whereHas('user', function ($query) use ($filters) {
+        $query->whereIn('user_id', $filters->users);
+      });
+    }
+    if (!empty($filters->exclude)) {
+      $query->whereNotIn('iblog__posts.id', $filters->exclude);
+    }
+    
+    if (isset($filters->exclude_users)) {
+      $query->whereHas('user', function ($query) use ($filters) {
+        $query->whereNotIn('user_id', $filters->exclude_users);
+      });
+    }
+    if (isset($filters->created_at)) {
+      $query->where('created_at', $filters->created_at['operator'], $filters->created_at['date']);
+    }
+    
+    if (isset($filters->order)) { //si hay que filtrar por rango de precio
+      
+      $orderby = $filters->order->by ?? 'created_at';
+      $ordertype = $filters->order->type ?? 'desc';
+    } else {
+      $orderby = 'created_at';
+      $ordertype = 'desc';
+    }
+    if (!empty($filters->include)) {
+      $query->orWhere(function ($query) use ($filters) {
+        $query->whereIn('iblog__posts.id', $filters->include);
+      });
+      
+    }
+    
+    if (isset($filters->search)) { //si hay que filtrar por rango de precio
+      $criterion = $filters->search;
+      $param = explode(' ', $criterion);
+      $query->where(function ($query) use ($param, $criterion) {
+        foreach ($param as $index => $word) {
+          $query->where('title', 'like', "%" . $criterion . "%")->orWhere('id', 'like', "%" . $criterion . "%");
+          if ($index == 0) {
+            $query->where('title', 'like', "%" . $word . "%")->orWhere('id', 'like', "%" . $word . "%");
+          } else {
+            $query->orWhere('title', 'like', "%" . $word . "%")->orWhere('id', 'like', "%" . $word . "%");
+          }
+        }
+        
+      });
+    }
+    $query->whereStatus(get_status($filters->status ?? '1'))
+      ->skip($filters->skip ?? 0);
+    $query->orderBy($orderby, $ordertype);
+    if (isset($filters->take)) {
+      $query->take($filter->take ?? 5);
+      return $query->get();
+    } elseif (isset($filters->paginate) && is_integer($filters->paginate)) {
+      return $query->paginate($filters->paginate);
+    } else {
+      return $query->paginate(12);
+    }
+  }
+  
+  public function category($id)
+  {
+    return $this->model->where('category_id', $id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
+  }
+  
+  
+  /**
+   * Standard Api Method
+   * @param bool $params
+   * @return mixed
+   */
+  public function getItemsBy($params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== RELATIONSHIPS ==*/
+    if (in_array('*', $params->include)) {//If Request all relationships
+      $query->with(['translations']);
+    } else {//Especific relationships
+      $includeDefault = ['translations'];//Default relationships
+      if (isset($params->include))//merge relations with default relationships
+        $includeDefault = array_merge($includeDefault, $params->include);
+      $query->with($includeDefault);//Add Relationships to query
+    }
+    
+    /*== FILTERS ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;//Short filter
+      
+      
+      if (isset($filter->search)) { //si hay que filtrar por rango de precio
+        $criterion = $filter->search;
+        $param = explode(' ', $criterion);
+        $query->where(function ($query) use ($param) {
+          foreach ($param as $index => $word) {
+            if ($index == 0) {
+              $query->where('title', 'like', "%" . $word . "%");
+              $query->orWhere('sku', 'like', "%" . $word . "%");
+            } else {
+              $query->orWhere('title', 'like', "%" . $word . "%");
+              $query->orWhere('sku', 'like', "%" . $word . "%");
+            }
+          }
+          
+        });
+      }
+      
+      //Filter by date
+      if (isset($filter->date)) {
+        $date = $filter->date;//Short filter date
+        $date->field = $date->field ?? 'created_at';
+        if (isset($date->from))//From a date
+          $query->whereDate($date->field, '>=', $date->from);
+        if (isset($date->to))//to a date
+          $query->whereDate($date->field, '<=', $date->to);
+      }
+      
+      //Order by
+      if (isset($filter->order)) {
+        $orderByField = $filter->order->field ?? 'created_at';//Default field
+        $orderWay = $filter->order->way ?? 'desc';//Default way
+        $query->orderBy($orderByField, $orderWay);//Add order to query
+      }
+    }
+    
+    /*== FIELDS ==*/
+    if (isset($params->fields) && count($params->fields))
+      $query->select($params->fields);
+    
+    /*== REQUEST ==*/
+    if (isset($params->page) && $params->page) {
+      return $query->paginate($params->take);
+    } else {
+      $params->take ? $query->take($params->take) : false;//Take
+      return $query->get();
+    }
+  }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param bool $params
+   * @return mixed
+   */
+  public function getItem($criteria, $params = false)
+  {
+    //Initialize query
+    $query = $this->model->query();
+    
+    /*== RELATIONSHIPS ==*/
+    if (in_array('*', $params->include)) {//If Request all relationships
+      $query->with(['translations']);
+    } else {//Especific relationships
+      $includeDefault = [];//Default relationships
+      if (isset($params->include))//merge relations with default relationships
+        $includeDefault = array_merge($includeDefault, $params->include);
+      $query->with($includeDefault);//Add Relationships to query
+    }
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      if (isset($filter->field))//Filter by specific field
+        $field = $filter->field;
+    }
+    
+    /*== FIELDS ==*/
+    if (isset($params->fields) && count($params->fields))
+      $query->select($params->fields);
+    
+    /*== REQUEST ==*/
+    return $query->where($field ?? 'id', $criteria)->first();
+  }
+  
+  /**
+   * Standard Api Method
+   * Create a iblog post
+   * @param  array $data
+   * @return Post
+   */
+  public function create($data)
+  {
+    $post = $this->model->create($data);
+    $post->categories()->sync(array_get($data, 'categories', []));
+    event(new PostWasCreated($post, $data));
+    $post->setTags(array_get($data, 'tags', []));
+    return $post;
+  }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param $data
+   * @param bool $params
+   * @return bool
+   */
+  public function updateBy($criteria, $data, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      //Update by field
+      if (isset($filter->field))
+        $field = $filter->field;
+    }
+    
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+    return $model ? $model->update((array)$data) : false;
+  }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param bool $params
+   */
+  public function deleteBy($criteria, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      if (isset($filter->field))//Where field
+        $field = $filter->field;
+    }
+    
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+    $model ? $model->delete() : false;
+  }
+  
 }

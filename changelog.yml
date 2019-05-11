@@ -1,5 +1,19 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.3":
+    added:
+      - abstract methods in repositories
+    changed:
+      - config variables changed to camelCase standard
+      - database columns changed to snake_case standard
+      - entities attributes changed to snake_case standard
+      - transformers changed to camelCase standard
+      - api routes reorganized
+      - api controllers renamed
+      - api controller show method refactored
+      - repositories reorganized
+      - replace new variable names in all repo
+
   "4.0.2":
     added:
       - lang 'es'
@@ -39,9 +53,9 @@ versions:
       - Uses BaseApiComtroller in Post, Category and Tag Api Controllers
   "3.1.0":
     added:
-      - Config dateformat
+      - Config dateFormat
       - Method get mainimage and url in Category entity
-      - Method get mainimage,url, metatitle and metadescription in Post entity
+      - Method get mainimage,url, meta_title and meta_description in Post entity
       - Method get url en Tag entity
       - New PostWasCreated, PostWasDeleted, PostWasUpdate in Events
       - Controller Category, Post, Tag in Api

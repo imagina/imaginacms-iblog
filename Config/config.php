@@ -5,11 +5,11 @@ return [
 
     'middleware' => [],
 
-    'imagesize' => ['width' => 1024, 'height' => 768, 'quality' => 80],
-    'mediumthumbsize' => ['width' => 400, 'height' => 300, 'quality' => 80],
-    'smallthumbsize' => ['width' => 100, 'height' => 80, 'quality' => 80],
-    'roles'=>[
-        'editor'=>'admin'
+    'imageSize' => ['width' => 1024, 'height' => 768, 'quality' => 80],
+    'mediumThumbSize' => ['width' => 400, 'height' => 300, 'quality' => 80],
+    'smallThumbSize' => ['width' => 100, 'height' => 80, 'quality' => 80],
+    'roles' => [
+        'editor' => 'admin'
     ],
     /*
      |--------------------------------------------------------------------------
@@ -20,7 +20,7 @@ return [
      */
     'fields' => [
         'category' => [
-            'secondaryimage' => true,
+            'secondaryImage' => true,
             'partials' => [
                 'translatable' => [
                     'create' => [],
@@ -33,7 +33,7 @@ return [
             ],
         ],
         'post' => [
-            'secondaryimage' => false,
+            'secondaryImage' => false,
             'partials' => [
                 'translatable' => [
                     'create' => [],
@@ -69,7 +69,7 @@ return [
    |
    */
 
-    'localetime' => 'es_CO.UTF-8',
+    'localeTime' => 'es_CO.UTF-8',
 
     /*
   |--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ return [
   |
   */
 
-    'datetimezone' => 'America/Bogota',
+    'dateTimezone' => 'America/Bogota',
 
     /*
   |--------------------------------------------------------------------------
@@ -114,7 +114,7 @@ return [
         'y' => 10,
     ],
 
-    'dateformat' => '%A, %B %d, %Y',
+    'dateFormat' => '%A, %B %d, %Y',
 
     /*
        |--------------------------------------------------------------------------
@@ -127,7 +127,7 @@ return [
 
     'feed' => [
         'activated' => true,
-        'posts_per_feed' => 20,
+        'postPerFeed' => 20,
         'logo' => ''
     ],
 

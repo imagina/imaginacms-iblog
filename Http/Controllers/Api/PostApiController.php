@@ -12,7 +12,7 @@ use Modules\Ihelpers\Http\Controllers\Api\BaseApiController;
 use Modules\User\Transformers\UserProfileTransformer;
 use Route;
 
-class PostController extends BaseApiController
+class PostApiController extends BaseApiController
 {
     /**
      * @var PostRepository
@@ -37,13 +37,13 @@ class PostController extends BaseApiController
             $params = $this->getParamsRequest($request);
 
             //Request to Repository
-            $dataEntity = $this->post->getItemsBy($params);
+            $posts = $this->post->getItemsBy($params);
 
             //Response
-            $response = ["data" => PostTransformer::collection($dataEntity)];
+            $response = ["data" => PostTransformer::collection($posts)];
 
             //If request pagination add meta-page
-            $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
+            $params->page ? $response["meta"] = ["page" => $this->pageTransformer($posts)] : false;
         } catch (\Exception $e) {
             Log::Error($e);
             $status = $this->getStatusError($e->getCode());
@@ -54,37 +54,34 @@ class PostController extends BaseApiController
         return response()->json($response ?? ["data" => "Request successful"], $status ?? 200);
     }
 
-    /**
+  /**
      * GET A ITEM
      *
      * @param $criteria
      * @return mixed
      */
-    public function show($criteria, Request $request)
+    public function show($criteria,Request $request)
     {
-        try {
-            //Get Parameters from URL.
-            $params = $this->getParamsRequest($request);
-
-            //Request to Repository
-            $dataEntity = $this->post->getItem($criteria, $params);
-
-            //Break if no found item
-            if (!$dataEntity) throw new Exception('Item not found', 204);
-
-            //Response
-            $response = ["data" => new PostTransformer($dataEntity)];
-
-            //If request pagination add meta-page
-            $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
-        } catch (\Exception $e) {
-            Log::Error($e);
-            $status = $this->getStatusError($e->getCode());
-            $response = ["errors" => $e->getMessage()];
-        }
-
-        //Return response
-        return response()->json($response ?? ["data" => "Request successful"], $status ?? 200);
+      try {
+        //Get Parameters from URL.
+        $params = $this->getParamsRequest($request);
+  
+        //Request to Repository
+        $post = $this->repoEntity->getItem($criteria, $params);
+  
+        //Break if no found item
+        if(!$post) throw new Exception('Item not found',404);
+        
+        //Response
+        $response = ["data" => new EntityTransformer($post)];
+  
+      } catch (\Exception $e) {
+        $status = $this->getStatusError($e->getCode());
+        $response = ["errors" => $e->getMessage()];
+      }
+  
+      //Return response
+      return response()->json($response, $status ?? 200);
     }
 
     /**
@@ -102,10 +99,10 @@ class PostController extends BaseApiController
             $this->validateRequestApi(new CreatePostRequest($data));
 
             //Create item
-            $dataEntity = $this->post->create($data);
+            $post = $this->post->create($data);
 
             //Response
-            $response = ["data" => new PostTransformer($dataEntity)];
+            $response = ["data" => new PostTransformer($post)];
             \DB::commit(); //Commit to Data Base
         } catch (\Exception $e) {
             Log::Error($e);

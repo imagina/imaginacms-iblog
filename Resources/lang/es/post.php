@@ -37,9 +37,9 @@ return [
         'Principal Category'=> 'Categoria Principal',
         'Categories'=>'Categorias',
         'metadata'=> 'SEO',
-        'metatitle'=>'Meta Titulo',
-        'metadescription'=>'Meta Descripción',
-        'metakeywords'=>'Palabras Clave',
+        'meta_title'=>'Meta Titulo',
+        'meta_description'=>'Meta Descripción',
+        'meta_keywords'=>'Palabras Clave',
         'editor'=>'Nombre eel Editor',
         'tags'=> 'Etiquetas',
         'summary'=>'Descripcion Corta'

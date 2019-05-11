@@ -107,8 +107,8 @@ class PublicController extends BasePublicController
 
     public function feed($format)
     {
-        $posts_per_feed = config('asgard.iblog.config.posts_per_feed');
-        $posts = $this->post->whereFilters((object)['status' => 'publicado', 'take' => $posts_per_feed]);
+        $postPerFeed = config('asgard.iblog.config.postPerFeed');
+        $posts = $this->post->whereFilters((object)['status' => 'publicado', 'take' => $postPerFeed]);
         $feed = new SupportFeed($format, $posts);
         $feed_logo = config('asgard.iblog.config.logo');
         return $feed->feed($feed_logo);

@@ -61,13 +61,13 @@ class MigrateIblog extends Command
             DB::table('media__files')->where('id', $media )->update(['folder_id' => 0]);
 
             DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'iblog', '/assets/iblog', 0]);
-            DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'post', '/assets/iblog/post', $folder_blog]);
-            DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'category', '/assets/iblog/category', $folder_blog]);
+            DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'post', '/assets/iblog/post', $folderBlog]);
+            DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [1, 'category', '/assets/iblog/category', $folderBlog]);
             DB::insert('insert into media__files ( is_folder, filename, path, folder_id) values (?, ?, ?, ?)', [0, 'default', 'modules/iblog/img/post/default.jpg', 0]);
-            $folder_blog = DB::table('media__files')->select('id')->where('filename', 'iblog')->first()->id;
-            $folder_post = DB::table('media__files')->select('id')->where('filename', 'post')->first()->id;
-            $folder_category = DB::table('media__files')->select('id')->where('filename', 'category')->first()->id;
-            $defaulimage = DB::table('media__files')->select('id')->where('filename', 'default')->first()->id;
+            $folderBlog = DB::table('media__files')->select('id')->where('filename', 'iblog')->first()->id;
+            $folderPost = DB::table('media__files')->select('id')->where('filename', 'post')->first()->id;
+            $folderCategory = DB::table('media__files')->select('id')->where('filename', 'category')->first()->id;
+            $defaultImage = DB::table('media__files')->select('id')->where('filename', 'default')->first()->id;
             $posts = $this->post->all();
             $locale = $this->ask("locale");
             foreach ($posts as $post) {
@@ -110,21 +110,21 @@ class MigrateIblog extends Command
                     $titlep = $post->slug;
                 }
 
-                if (isset($post->options->mainimage) && !strpos($post->options->mainimage, 'default.jpg')) {
+                if (isset($post->main_image) && !strpos($post->main_image, 'default.jpg')) {
                     $image = '/assets/iblog/post/' . $post->id . '.jpg';
-                    DB::insert('insert into media__files ( is_folder, filename, path, extension, mimetype, folder_id) values (?, ?, ?,?,?,?)', [0, $titlep, $image, 'jpg', 'image/jpeg', $folder_post]);
+                    DB::insert('insert into media__files ( is_folder, filename, path, extension, mimetype, folder_id) values (?, ?, ?,?,?,?)', [0, $titlep, $image, 'jpg', 'image/jpeg', $folderPost]);
                     $img = DB::table('media__files')->select('id')->where('filename', $titlep)->first();
-                    $imgId = $img->id ?? $defaulimage;
+                    $imgId = $img->id ?? $defaultImage;
                 } else {
-                    $imgId = $defaulimage;
+                    $imgId = $defaultImage;
                 };
                 DB::insert('insert into media__imageables (file_id, imageable_id, imageable_type, zone) values (?, ?, ?, ?)', [$imgId, $post->id, 'Modules\Iblog\Entities\Post', 'mainimage']);
 
-                if (isset($post->options->metatitle)) {
-                    $data[$locale]['metatitle'] = $post->options->metatitle;
+                if (isset($post->meta_title)) {
+                    $data[$locale]['meta_title'] = $post->meta_title;
                 }
-                if (isset($post->options->metadescrition)) {
-                    $data[$locale]['metadescription'] = $post->options->metadescription;
+                if (isset($post->meta_descrition)) {
+                    $data[$locale]['meta_description'] = $post->options->meta_description;
                 }
                 $cats = $post->categories;
                 $categoriesPost = array();
@@ -176,12 +176,12 @@ class MigrateIblog extends Command
                     $titlec = $category->slug;
                 }
 
-                if (isset($category->options->mainimage) && !strpos($category->options->mainimage, 'default.jpg')) {
+                if (isset($category->main_image) && !strpos($category->main_image, 'default.jpg')) {
                     $image = '/assets/iblog/category/' . $category->id . '.jpg';
-                    DB::insert('insert into media__files ( is_folder, filename, path, extension, mimetype, folder_id) values (?, ?, ?,?, ?, ?)', [0, $titlec, $image, 'jpg', 'image/jpeg', $folder_category]);
+                    DB::insert('insert into media__files ( is_folder, filename, path, extension, mimetype, folder_id) values (?, ?, ?,?, ?, ?)', [0, $titlec, $image, 'jpg', 'image/jpeg', $folderCategory]);
                     $imgId = DB::table('media__files')->select('id')->where('filename', $titlec)->first();
                 } else {
-                    $imgId = $defaulimage;
+                    $imgId = $defaultImage;
                 };
                 DB::insert('insert into media__imageables (file_id, imageable_id, imageable_type, zone) values (?, ?, ?, ?)', [$imgId, $category->id, 'Modules\Iblog\Entities\Category', 'mainimage']);
                 $resd = $this->category->update($category, $data);
