@@ -1,5 +1,12 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.4":
+    added:
+      - Presentrer post
+      - Method Tag in PublicController for Taggeable Entity
+    changed:
+      - Revert image old in MigratedIblog Comand Console
+      - Method MainImage and SecondaryImage in entity Category and Post
   "4.0.3":
     added:
       - abstract methods in repositories

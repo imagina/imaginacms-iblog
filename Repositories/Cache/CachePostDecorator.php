@@ -66,4 +66,64 @@ class CachePostDecorator extends BaseCacheDecorator implements PostRepository
                 }
             );
     }
+
+    /**
+     * Get the next post of the given post
+     * @param object $id
+     * @return object
+     */
+    public function find($id)
+    {
+        return $this->remember(function () use ($id) {
+            return $this->repository->find($id);
+        });
+    }
+
+    /**
+     * Get the next post of the given post
+     * @param object $id
+     * @return object
+     */
+    public function category($id)
+    {
+        return $this->remember(function () use ($id) {
+            return $this->repository->category($id);
+        });
+    }
+
+    public function search($param)
+    {
+        return $this->remember(function () use ($param) {
+            return $this->repository->search($param);
+        });
+    }
+
+    public function getItemsBy($params)
+    {
+        return $this->remember(function () use ($params) {
+            return $this->repository->getItemsBy($params);
+        });
+    }
+
+    public function getItem($criteria, $params)
+    {
+        return $this->remember(function () use ($criteria, $params) {
+            return $this->repository->getItem($criteria, $params);
+        });
+    }
+
+
+    public function updateBy($criteria, $data, $params)
+    {
+        return $this->remember(function () use ($criteria, $data, $params) {
+            return $this->repository->updateBy($criteria, $data, $params);
+        });
+    }
+
+    public function deleteBy($criteria, $params)
+    {
+        return $this->remember(function () use ($criteria, $params) {
+            return $this->repository->deleteBy($criteria, $params);
+        });
+    }
 }

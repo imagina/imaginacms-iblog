@@ -58,22 +58,26 @@ class Category extends Model
 
     public function getSecondaryImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first()->path??null;
-
+        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first()??null;
         if ($thumbnail === null) {
-            return 'modules/iblog/img/post/default.jpg';
+            $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
+            if (isset($this->options->mainimage)) {
+                return $thumbnail->path = $this->options->mainimage;
+            }
+            return $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
-
         return $thumbnail;
     }
     public function getMainImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'mainimage')->first()->path??null;
-
+        $thumbnail = $this->files()->where('zone', 'mainimage')->first()??null;
         if ($thumbnail === null) {
-            return 'modules/iblog/img/post/default.jpg';
+            $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
+            if (isset($this->options->mainimage)) {
+                return $thumbnail->path = $this->options->mainimage;
+            }
+            return $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
-
         return $thumbnail;
     }
 

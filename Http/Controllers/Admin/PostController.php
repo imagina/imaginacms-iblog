@@ -36,13 +36,20 @@ class PostController extends AdminBaseController
      */
     private $role;
 
-    public function __construct(PostRepository $post, CategoryRepository $category, Status $status, RoleRepository $role)
+    /**
+     * @var Role
+     */
+    private $user;
+
+
+    public function __construct(PostRepository $post, CategoryRepository $category, Status $status, RoleRepository $role, UserRepository $user)
     {
         parent::__construct();
         $this->post = $post;
         $this->category = $category;
         $this->status = $status;
         $this->role = $role;
+        $this->user=$user;
     }
 
     /**
@@ -53,11 +60,16 @@ class PostController extends AdminBaseController
      */
     public function index(Request $request)
     {
-        $posts = $this->post->paginate(20);
 
+        if($request->input('q')){
+            $param=$request->input('q');
+           $posts=$this->post->search($param);
+        }else{
+            $posts = $this->post->paginate(20);
+        }
         return view('iblog::admin.posts.index', compact('posts'));
     }
-
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -65,7 +77,7 @@ class PostController extends AdminBaseController
      */
     public function create()
     {
-        $users= $this->role->findByName(config('asgard.iblog.config.roles.editor', 'superadmin'))->users;
+        $users= $this->user->all();
         $status = $this->status->lists();
         $categories = $this->category->all();
         return view('iblog::admin.posts.create', compact('categories','status', 'users'));
@@ -104,7 +116,7 @@ class PostController extends AdminBaseController
      */
     public function edit(Post $post)
     {
-        $users= $this->role->findByName(config('asgard.iblog.config.roles.editor', 'superadmin'))->users;
+        $users= $this->user->all();
         $status = $this->status->lists();
         $categories = $this->category->all();
         return view('iblog::admin.posts.edit', compact('post', 'categories','status', 'users'));

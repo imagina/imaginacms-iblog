@@ -7,8 +7,8 @@ use Mockery\CountValidator\Exception;
 use Modules\Core\Http\Controllers\BasePublicController;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\PostRepository;
-use Modules\Iblog\Repositories\TagRepository;
 use Modules\Ifeeds\Support\SupportFeed;
+use Modules\Tag\Repositories\TagRepository;
 use Request;
 use Route;
 
@@ -90,12 +90,10 @@ class PublicController extends BasePublicController
         //Default Template
         $tpl = 'iblog::frontend.tag';
         $ttpl = 'iblog.tag';
-
+        $tag= $this->tag->findBySlug($slug);
         if (view()->exists($ttpl)) $tpl = $ttpl;
 
-        $tag = $this->tag->findBySlug($slug);
-        $posts = $this->post->whereTag($tag->id);
-
+        $posts = $this->post->whereTag($slug);
         //Get Custom Template.
         $ctpl = "iblog.tag.{$tag->id}";
         if (view()->exists($ctpl)) $tpl = $ctpl;

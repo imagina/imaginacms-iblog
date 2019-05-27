@@ -110,7 +110,7 @@ class MigrateIblog extends Command
                     $titlep = $post->slug;
                 }
 
-                if (isset($post->main_image) && !strpos($post->main_image, 'default.jpg')) {
+                if (isset($post->options->mainimage) && !strpos($post->options->mainimage, 'default.jpg')) {
                     $image = '/assets/iblog/post/' . $post->id . '.jpg';
                     DB::insert('insert into media__files ( is_folder, filename, path, extension, mimetype, folder_id) values (?, ?, ?,?,?,?)', [0, $titlep, $image, 'jpg', 'image/jpeg', $folderPost]);
                     $img = DB::table('media__files')->select('id')->where('filename', $titlep)->first();
@@ -120,11 +120,11 @@ class MigrateIblog extends Command
                 };
                 DB::insert('insert into media__imageables (file_id, imageable_id, imageable_type, zone) values (?, ?, ?, ?)', [$imgId, $post->id, 'Modules\Iblog\Entities\Post', 'mainimage']);
 
-                if (isset($post->meta_title)) {
-                    $data[$locale]['meta_title'] = $post->meta_title;
+                if (isset($post->metatitle)) {
+                    $data[$locale]['meta_title'] = $post->metatitle;
                 }
-                if (isset($post->meta_descrition)) {
-                    $data[$locale]['meta_description'] = $post->options->meta_description;
+                if (isset($post->metadescrition)) {
+                    $data[$locale]['meta_description'] = $post->options->metadescription;
                 }
                 $cats = $post->categories;
                 $categoriesPost = array();
@@ -176,7 +176,7 @@ class MigrateIblog extends Command
                     $titlec = $category->slug;
                 }
 
-                if (isset($category->main_image) && !strpos($category->main_image, 'default.jpg')) {
+                if (isset($category->options->mainimage) && !strpos($category->options->mainimage, 'default.jpg')) {
                     $image = '/assets/iblog/category/' . $category->id . '.jpg';
                     DB::insert('insert into media__files ( is_folder, filename, path, extension, mimetype, folder_id) values (?, ?, ?,?, ?, ?)', [0, $titlec, $image, 'jpg', 'image/jpeg', $folderCategory]);
                     $imgId = DB::table('media__files')->select('id')->where('filename', $titlec)->first();

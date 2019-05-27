@@ -9,17 +9,13 @@ use Modules\Core\Events\LoadingBackendTranslations;
 use Modules\Iblog\Console\MigrateIblog;
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Entities\Post;
-use Modules\Iblog\Entities\Tag;
 use Modules\Iblog\Events\Handlers\RegisterIblogSidebar;
 use Modules\Iblog\Repositories\Cache\CacheCategoryDecorator;
 use Modules\Iblog\Repositories\Cache\CachePostDecorator;
-use Modules\Iblog\Repositories\Cache\CacheTagDecorator;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\Eloquent\EloquentCategoryRepository;
 use Modules\Iblog\Repositories\Eloquent\EloquentPostRepository;
-use Modules\Iblog\Repositories\Eloquent\EloquentTagRepository;
 use Modules\Iblog\Repositories\PostRepository;
-use Modules\Iblog\Repositories\TagRepository;
 use Modules\Tag\Repositories\TagManager;
 
 class IblogServiceProvider extends ServiceProvider
@@ -90,16 +86,6 @@ class IblogServiceProvider extends ServiceProvider
             }
 
             return new CacheCategoryDecorator($repository);
-        });
-
-        $this->app->bind(TagRepository::class, function () {
-            $repository = new EloquentTagRepository(new Tag());
-
-            if (config('app.cache') === false) {
-                return $repository;
-            }
-
-            return new CacheTagDecorator($repository);
         });
 
     }

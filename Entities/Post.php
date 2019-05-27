@@ -60,20 +60,19 @@ class Post extends Model implements TaggableInterface
 
     public function getSecondaryImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
-
+        $thumbnail = $this->files()->where('zone', 'mainimage')->first();
         if ($thumbnail === null) {
-            $thumbnail=(object)['path'=>null,'main-type'=>'image/jpeg'];
-            return $thumbnail->path='modules/iblog/img/post/default.jpg';
+            $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
+            if (isset($this->options->mainimage)) {
+                return $thumbnail->path = $this->options->mainimage;
+            }
+            return $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
-
         return $thumbnail;
     }
     public function getMainImageAttribute()
     {
         $thumbnail = $this->files()->where('zone', 'mainimage')->first();
-        if($thumbnail->mimetype =='image/jpeg') {
-            $thumbnail->path??null;
             if ($thumbnail === null) {
                 $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
                 if (isset($this->options->mainimage)) {
@@ -81,8 +80,6 @@ class Post extends Model implements TaggableInterface
                 }
                 return $thumbnail->path = 'modules/iblog/img/post/default.jpg';
             }
-        }
-
         return $thumbnail;
     }
     public function getGalleryAttibute(){

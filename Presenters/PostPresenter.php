@@ -74,4 +74,44 @@ class PostPresenter extends Presenter
                 break;
         }
     }
+
+    public function mainImage($post,$thumbnail=null)
+    {
+        $item=$post->mainimage2;
+        $path=$thumbnail?:$post->path;
+        switch ($item->mimetype) {
+            case 'image/jpg':
+            case 'image/png':
+            case 'image/jpeg':
+            case 'image/gif':
+            case 'image/bmp':
+                return "<img class='img-fluid w-100'
+                             src='$item->path'
+                             alt='$this->title'/>";
+                break;
+            case 'aplication/pdf':
+                return "<a class='btn btn-primary '
+                             href='$item->path'
+                             title='$this->title'/>";
+                break;
+            case 'audio/mp3':
+                return "<div class='frame-audio'>
+                            <audio class='w-100' controls='' preload='none' src=$item->path>
+                Tú navegador no soporta este reproductor, actualízalo.
+                            </audio>
+                        </div>";
+                break;
+            case 'video/mp4':
+                return "<video width='320' height='240' controls>
+                        <source src='$item->path' type='$item->maintype'>
+                        Tú navegador no soporta este reproductor, actualízalo.
+                        </video>";
+                break;
+            default:
+                return "<a class='btn btn-primary '
+                             href='$item->path'
+                             title='$this->title'/>";
+                break;
+        }
+    }
 }
