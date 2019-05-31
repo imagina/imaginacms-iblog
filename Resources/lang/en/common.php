@@ -13,8 +13,10 @@ return [
     'messages' => [
         'title is required'=>'The title is required',
         'title min 2'=>'Title must contain at least two characters',
-        'description is required'=>'Description is required',
+        'description is required'=>'The Description is required',
         'description min 2'=>'The description must contain at least two characters',
+        'summary is required'=>'The summary is required',
+        'summary min 2'=>'The summary must contain at least two characters',
     ],
     'validation' => [
     ],

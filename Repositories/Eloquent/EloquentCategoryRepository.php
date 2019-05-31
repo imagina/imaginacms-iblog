@@ -5,6 +5,7 @@ namespace Modules\Iblog\Repositories\Eloquent;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Modules\Iblog\Events\CategoryWasCreated;
 use Modules\Iblog\Repositories\CategoryRepository;
+use Illuminate\Database\Eloquent\Builder;
 
 class EloquentCategoryRepository extends EloquentBaseRepository implements CategoryRepository
 {
@@ -27,10 +28,16 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
    * @param  string $slug
    * @return object
    */
-  public function findBySlug($slug)
-  {
-    return $this->model->where('slug', $slug)->firstOrFail();
-  }
+    public function findBySlug($slug)
+    {
+        if (method_exists($this->model, 'translations')) {
+            return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
+                $q->where('slug', $slug);
+            })->with('translations', 'parent', 'children','posts')->firstOrFail();
+        }
+
+        return $this->model->where('slug', $slug)->with('translations', 'parent', 'children','posts')->firstOrFail();;
+    }
   
   
   

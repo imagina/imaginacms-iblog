@@ -30,15 +30,6 @@ class PostTranslation extends Model
         ];
        }
 
-
-    /**
-     * @param $value
-     * @return
-     */
-    public function setSummaryAttribute($value)
-    {
-        $this->attributes['summary']= $value??isubstr(strip_tags($this->attributes['description']),150);
-    }
     /**
      * @return mixed
      */

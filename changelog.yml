@@ -1,5 +1,12 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.5":
+    added:
+      - Lang summery error Message
+      - Summary required for creation and edition of Post
+    changed:
+      - EloquentCategoryRepository Modify method WereSlug
+      - Method GetMainImageAtributes and GetSecondaryImageAtributes  in entities of Category and Product
   "4.0.4":
     added:
       - Presentrer post

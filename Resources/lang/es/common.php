@@ -15,6 +15,8 @@ return [
         'title min 2'=>'El título debe contener mínimo dos caracteres',
         'description is required'=>'La descripción es requerida',
         'description min 2'=>'La descripción debe contener mínimo dos caracteres',
+        'summary is required'=>'La Descripciòn Corta requerida',
+        'summary min 2'=>'La Descripciòn Corta debe contener mÃ­nimo dos caracteres',
     ],
     'validation' => [
     ],

@@ -62,9 +62,9 @@ class Category extends Model
         if ($thumbnail === null) {
             $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
             if (isset($this->options->mainimage)) {
-                return $thumbnail->path = $this->options->mainimage;
+                $thumbnail->path = $this->options->mainimage;
             }
-            return $thumbnail->path = 'modules/iblog/img/post/default.jpg';
+           $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
         return $thumbnail;
     }
@@ -74,9 +74,9 @@ class Category extends Model
         if ($thumbnail === null) {
             $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
             if (isset($this->options->mainimage)) {
-                return $thumbnail->path = $this->options->mainimage;
+                 $thumbnail->path = $this->options->mainimage;
             }
-            return $thumbnail->path = 'modules/iblog/img/post/default.jpg';
+             $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
         return $thumbnail;
     }

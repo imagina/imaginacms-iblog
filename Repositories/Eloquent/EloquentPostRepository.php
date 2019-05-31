@@ -43,21 +43,15 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
    */
   public function search($keys)
   {
-    $query = $this->model->query();
-    $criterion = $keys;
-    $param = explode(' ', $criterion);
-    $query->where(function ($query) use ($param, $keys) {
-      foreach ($param as $index => $word) {
-        if ($index == 0) {
-          $query->Where('title', 'like', "%" . $word . "%");
-          $query->orWhere('id', $word);
-        } else {
-          $query->orWhere('title', 'like', "%" . $word . "%");
-          $query->orWhere('id', $word);
-        }
-      }
-      
-    });
+      $query = $this->model->query();
+      $criterion = $keys;
+      $param = explode(' ', $criterion);
+      $query->whereHas('translations', function (Builder $q) use ($criterion) {
+          $q->where('title', 'like', "%{$criterion}%");
+      });
+      //$query->orWhere('title', 'like', "%{$criterion}%");
+      $query->orWhere('id', $criterion);
+
     return $query->orderBy('created_at', 'desc')->paginate(20);
   }
   
