@@ -5,7 +5,9 @@ namespace Modules\Iblog\Repositories\Eloquent;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Modules\Iblog\Events\CategoryWasCreated;
 use Modules\Iblog\Repositories\CategoryRepository;
-use Illuminate\Database\Eloquent\Builder;
+use Modules\Ihelpers\Events\CreateMedia;
+use Modules\Ihelpers\Events\DeleteMedia;
+use Modules\Ihelpers\Events\UpdateMedia;
 
 class EloquentCategoryRepository extends EloquentBaseRepository implements CategoryRepository
 {
@@ -223,8 +225,33 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     
     return $this->find($category->id);
   }
-  
-  /**
+
+    /**
+     * Update a resource
+     * @param $category
+     * @param  array $data
+     * @return mixed
+     */
+    public function update($category, $data)
+    {
+        $category->update($data);
+
+        event(new CategoryWasUpdated($category, $data));
+
+        return $category;
+    }
+
+
+
+    public function destroy($model)
+    {
+        event(new CategoryWasDeleted($model->id, get_class($model)));
+
+        return $model->delete();
+    }
+
+
+    /**
    * Standard Api Method
    * @param $criteria
    * @param $data
@@ -247,7 +274,8 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
-    return $model ? $model->update((array)$data) : false;
+    $model ? $model->update((array)$data) : false;
+    event(new UpdateMedia($model,$data));
   }
   
   /**
@@ -271,5 +299,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
     $model ? $model->delete() : false;
+    event(new DeleteMedia($model->id, get_class($model)));
   }
 }

@@ -67,13 +67,13 @@ class PostApiController extends BaseApiController
         $params = $this->getParamsRequest($request);
   
         //Request to Repository
-        $post = $this->repoEntity->getItem($criteria, $params);
+        $post = $this->post->getItem($criteria, $params);
   
         //Break if no found item
         if(!$post) throw new Exception('Item not found',404);
         
         //Response
-        $response = ["data" => new EntityTransformer($post)];
+        $response = ["data" => new PostTransformer($post)];
   
       } catch (\Exception $e) {
         $status = $this->getStatusError($e->getCode());

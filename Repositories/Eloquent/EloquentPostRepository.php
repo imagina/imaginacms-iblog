@@ -11,8 +11,10 @@ use Modules\Iblog\Entities\Status;
 use Modules\Iblog\Events\PostWasCreated;
 use Modules\Iblog\Events\PostWasUpdated;
 use Modules\Iblog\Events\PostWasDeleted;
-use Modules\Iblog\Repositories\Collection;
 use Modules\Iblog\Repositories\PostRepository;
+use Modules\Ihelpers\Events\CreateMedia;
+use Modules\Ihelpers\Events\DeleteMedia;
+use Modules\Ihelpers\Events\UpdateMedia;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
@@ -287,7 +289,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     if (isset($params->filter)) {
       $filter = $params->filter;//Short filter
       
-      
+      if(isset($filter->categories)){
+
+          $categories=is_array($filter->categories)?$filter->categories:[$filter->categories];
+          $query->whereHas('categories',function ($q) use($categories){
+              $q->whereIn('category_id',$categories);
+          });
+      }
       if (isset($filter->search)) { //si hay que filtrar por rango de precio
         $criterion = $filter->search;
         $param = explode(' ', $criterion);
@@ -411,7 +419,14 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
-    return $model ? $model->update((array)$data) : false;
+
+     if($model) {
+       $model->update((array)$data);
+       $model->categories()->sync(array_get($data, 'categories', []));
+       $model->setTags(array_get($data, 'tags', []));
+       event(new UpdateMedia($model,$data));
+      }
+
   }
   
   /**
@@ -434,7 +449,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
-    $model ? $model->delete() : false;
+    if($model) {
+      $model->untag();
+      $model->delete();
+      event(new DeleteMedia($model->id, get_class($model)));
+    }
+
   }
   
 }

@@ -50,9 +50,9 @@ class Post extends Model implements TaggableInterface
     public function getOptionsAttribute($value) {
 
         $options=json_decode($value);
-        if(validateJson($options)){
+        /*if(validateJson($options)){
             $options=json_decode($options);
-        }
+        }*/
         return $options;
 
 

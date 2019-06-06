@@ -11,7 +11,7 @@ class CategoryTranslation extends Model
 
     public $timestamps = false;
     protected $table = 'iblog__category_translations';
-    protected $fillable = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_option'];
+    protected $fillable = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 
 
 
@@ -31,6 +31,13 @@ class CategoryTranslation extends Model
     public function getMetaDescriptionAttribute(){
 
         return $this->meta_description ?? substr(strip_tags($this->description??''),0,150);
+    }
+    public function getTranslatableOptionAttribute($value) {
+
+        $options=json_decode($value);
+        return $options;
+
+
     }
 
     /**

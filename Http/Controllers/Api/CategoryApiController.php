@@ -76,7 +76,7 @@ class CategoryApiController extends BaseApiController
           $params = $this->getParamsRequest($request);
     
           //Request to Repository
-          $category = $this->repoEntity->getItem($criteria, $params);
+          $category = $this->category->getItem($criteria, $params);
     
           //Break if no found item
           if(!$category) throw new Exception('Item not found',404);

@@ -1,5 +1,17 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.6":
+    added:
+      - Example of false field views
+      - CategoryWasUpdate
+      - Methods update and destroy in EloquenCategoryRepository
+      - Routes API version
+    changed:
+      - Entity CategoryTranslation added trasnlated_options method get and cash
+      - Entity PostTranslation added trasnlated_options method get and cash
+      - Entity Post delete validate double decode GetOptionAttributes
+      - EloquentPostRepository im method GetItemsBy added filter categories
+      - EloquentPostRepository and EloquentCategoryRepository
   "4.0.5":
     added:
       - Lang summery error Message

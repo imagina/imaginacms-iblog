@@ -12,9 +12,11 @@ class PostTranslation extends Model
 
     public $timestamps = false;
     protected $table = 'iblog__post_translations';
-    protected $fillable = ['title','description','slug','summary','meta_title','meta_description','meta_keywords','translatable_option'];
+    protected $fillable = ['title','description','slug','summary','meta_title','meta_description','meta_keywords','translatable_options'];
 
-
+    protected $casts = [
+        'translatable_options' => 'array'
+    ];
 
     /**
      * Return the sluggable configuration array for this model.
@@ -30,6 +32,13 @@ class PostTranslation extends Model
         ];
        }
 
+    public function getTranslatableOptionAttribute($value) {
+
+        $options=json_decode($value);
+        return $options;
+
+
+    }
     /**
      * @return mixed
      */
