@@ -4,6 +4,8 @@ namespace Modules\Iblog\Repositories\Eloquent;
 
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Modules\Iblog\Events\CategoryWasCreated;
+use Modules\Iblog\Events\CategoryWasDeleted;
+use Modules\Iblog\Events\CategoryWasUpdated;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Ihelpers\Events\CreateMedia;
 use Modules\Ihelpers\Events\DeleteMedia;

@@ -53,30 +53,36 @@ class Category extends Model
 
     public function getOptionsAttribute($value)
     {
-        return json_decode(json_decode($value));
+        try {
+            return json_decode(json_decode($value));
+        } catch (\Exception $e) {
+            return json_decode($value);
+        }
+
     }
 
     public function getSecondaryImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first()??null;
+        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first() ?? null;
         if ($thumbnail === null) {
             $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
             if (isset($this->options->mainimage)) {
                 $thumbnail->path = $this->options->mainimage;
             }
-           $thumbnail->path = 'modules/iblog/img/post/default.jpg';
+            $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
         return $thumbnail;
     }
+
     public function getMainImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'mainimage')->first()??null;
+        $thumbnail = $this->files()->where('zone', 'mainimage')->first() ?? null;
         if ($thumbnail === null) {
             $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
             if (isset($this->options->mainimage)) {
-                 $thumbnail->path = $this->options->mainimage;
+                $thumbnail->path = $this->options->mainimage;
             }
-             $thumbnail->path = 'modules/iblog/img/post/default.jpg';
+            $thumbnail->path = 'modules/iblog/img/post/default.jpg';
         }
         return $thumbnail;
     }

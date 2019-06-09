@@ -1,5 +1,8 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.7":
+    added:
+      try Cachs for double decode options Post and Category Options
   "4.0.6":
     added:
       - Example of false field views
