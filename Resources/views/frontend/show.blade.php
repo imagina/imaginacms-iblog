@@ -1,26 +1,26 @@
 @extends('layouts.master')
 
 @section('meta')
-    <meta name="description" content="{!! $post->summary !!}">
+    <meta name="description" content="{{$post->summary}}">
     <!-- Schema.org para Google+ -->
     <meta itemprop="name" content="{{$post->title}}">
-    <meta itemprop="description" content="{!!$post->summary!!}">
-    <meta itemprop="image" content=" {{url($post->options->mainimage) }}">
+    <meta itemprop="description" content="{{$post->summary}}">
+    <meta itemprop="image" content=" {{url($post->mainimage->path) }}">
     <!-- Open Graph para Facebook-->
     <meta property="og:title" content="{{$post->title}}"/>
     <meta property="og:type" content="article"/>
     <meta property="og:url" content="{{url($post->slug)}}"/>
-    <meta property="og:image" content="{{url($post->options->mainimage)}}"/>
-    <meta property="og:description" content="{!!$post->summary!!}"/>
+    <meta property="og:image" content="{{url($post->mainimage->path)}}"/>
+    <meta property="og:description" content="{{$post->summary}}"/>
     <meta property="og:site_name" content="{{Setting::get('core::site-name') }}"/>
     <meta property="og:locale" content="{{config('asgard.iblog.config.oglocal')}}">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="{{ Setting::get('core::site-name') }}">
     <meta name="twitter:title" content="{{$post->title}}">
-    <meta name="twitter:description" content="{!! $post->summary !!}">
+    <meta name="twitter:description" content="{{$post->summary}}">
     <meta name="twitter:creator" content="">
-    <meta name="twitter:image:src" content="{{url($post->options->mainimage)}}">
+    <meta name="twitter:image:src" content="{{url($post->mainimage->path)}}">
 
 @stop
 
@@ -36,13 +36,8 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="bgimg">
-                                @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
-                                    <img class="image img-responsive" src="{{url($post->options->mainimage)}}"
+                                    <img class="image img-responsive" src="{{url($post->mainimage->path)}}"
                                          alt="{{$post->title}}"/>
-                                @else
-                                    <img class="image img-responsive"
-                                         src="{{url('modules/iblog/img/post/default.jpg')}}" alt="{{$post->title}}"/>
-                                @endif
                             </div>
                         </div>
                     </div>

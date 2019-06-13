@@ -19,6 +19,7 @@ class PostTransformer extends Resource
       'description' => $this->when($this->description, $this->description),
       'status' => $this->when($this->status, intval($this->status)),
       'statusName' => $this->when($this->status, $this->present()->status),
+        'url'=>$this->when($this->url, $this->url),
       'metaTitle' => $this->when($this->meta_title, $this->meta_title),
       'metaDescription' => $this->when($this->meta_description, $this->meta_description),
       'metaKeywords' => $this->when($this->meta_keywords, $this->meta_keywords),

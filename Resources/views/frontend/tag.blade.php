@@ -37,15 +37,9 @@
                                 <div class="col-xs-6 col-sm-3 contend post post{{$post->id}}">
                                     <div class="bg-imagen">
                                         <a href="{{ $post->url }}">
-                                            @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
-                                                <img class="image img-responsive"
-                                                     src="{{url(str_replace('.jpg','_mediumThumb.jpg',$post->options->mainimage))}}"
-                                                     alt="{{$post->title}}"/>
-                                            @else
-                                                <img class="image img-responsive"
-                                                     src="{{url('modules/iblog/img/post/default.jpg')}}"
-                                                     alt="{{$post->title}}"/>
-                                            @endif
+                                            <img class="image img-responsive"
+                                                 src="{{url(str_replace('.jpg','_mediumThumb.jpg',$post->mainimage->path))}}"
+                                                 alt="{{$post->title}}"/>
                                         </a>
                                     </div>
                                     <div class="content">

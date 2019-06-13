@@ -10,6 +10,7 @@ use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Ihelpers\Events\CreateMedia;
 use Modules\Ihelpers\Events\DeleteMedia;
 use Modules\Ihelpers\Events\UpdateMedia;
+use Illuminate\Database\Eloquent\Builder;
 
 class EloquentCategoryRepository extends EloquentBaseRepository implements CategoryRepository
 {
@@ -40,7 +41,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             })->with('translations', 'parent', 'children','posts')->firstOrFail();
         }
 
-        return $this->model->where('slug', $slug)->with('translations', 'parent', 'children','posts')->firstOrFail();;
+        return $this->model->where('slug', $slug)->with('translations', 'parent', 'children','posts')->first();;
     }
   
   

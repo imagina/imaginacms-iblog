@@ -6,7 +6,7 @@
     <meta itemprop="name" content="{{$category->title}}">
     <meta itemprop="description" content="@if(! empty($category->description)){!!$category->description!!} @endif">
     <meta itemprop="image"
-          content=" @if(! empty($category->options->mainimage)){{url($category->options->mainimage)}} @endif">
+          content=" @if(! empty($category->mainimage->path)){{url($category->mainimage->path)}} @endif">
 
 @stop
 @section('title')
@@ -32,15 +32,9 @@
                                 <div class="col-xs-6 col-sm-4 contend post post{{$post->id}}">
                                     <div class="bg-imagen">
                                         <a href="{{$post->url}}">
-                                            @if(isset($post->options->mainimage)&&!empty($post->options->mainimage))
-                                                <img class="image img-responsive"
-                                                     src="{{url(str_replace('.jpg','_mediumThumb.jpg',$post->options->mainimage))}}"
-                                                     alt="{{$post->title}}"/>
-                                            @else
-                                                <img class="image img-responsive"
-                                                     src="{{url('modules/iblog/img/post/default.jpg')}}"
-                                                     alt="{{$post->title}}"/>
-                                            @endif
+                                            <img class="image img-responsive"
+                                                 src="{{url(str_replace('.jpg','_mediumThumb.jpg',$post->mainimage->path))}}"
+                                                 alt="{{$post->title}}"/>
                                         </a>
                                     </div>
                                     @foreach($post->categories as $category)

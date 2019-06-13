@@ -296,6 +296,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
               $q->whereIn('category_id',$categories);
           });
       }
+        if(isset($filter->user)){
+            $query->where('user_id',$filter->user);
+        }
       if (isset($filter->search)) { //si hay que filtrar por rango de precio
         $criterion = $filter->search;
         $param = explode(' ', $criterion);
