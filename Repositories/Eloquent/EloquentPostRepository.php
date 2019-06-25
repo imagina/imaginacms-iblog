@@ -18,75 +18,7 @@ use Modules\Ihelpers\Events\UpdateMedia;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
-  
 
-  
-  /**
-   * @param  int $id
-   * @return object
-   */
-  public function find($id)
-  {
-    return $this->model->with('category', 'categories', 'tags', 'user')->find($id);
-  }
-  
-  /**
-   * @return \Illuminate\Database\Eloquent\Collection
-   */
-  public function all()
-  {
-    return $this->model->with('tags')->orderBy('created_at', 'DESC')->get();
-  }
-  
-  
-  /**
-   * @param $param
-   * @return \Illuminate\Database\Eloquent\Collection
-   */
-  public function search($keys)
-  {
-      $query = $this->model->query();
-      $criterion = $keys;
-      $param = explode(' ', $criterion);
-      $query->whereHas('translations', function (Builder $q) use ($criterion) {
-          $q->where('title', 'like', "%{$criterion}%");
-      });
-      //$query->orWhere('title', 'like', "%{$criterion}%");
-      $query->orWhere('id', $criterion);
-
-    return $query->orderBy('created_at', 'desc')->paginate(20);
-  }
-  
-  
-  /**
-   * Update a resource
-   * @param $post
-   * @param  array $data
-   * @return mixed
-   */
-  public function update($post, $data)
-  {
-    $post->update($data);
-    
-    $post->categories()->sync(array_get($data, 'categories', []));
-    
-    event(new PostWasUpdated($post, $data));
-    $post->setTags(array_get($data, 'tags', []));
-    
-    return $post;
-  }
-  
-
-  
-  public function destroy($model)
-  {
-    $model->untag();
-    event(new PostWasDeleted($model->id, get_class($model)));
-    
-    return $model->delete();
-  }
-  
-  
   /**
    * Return the latest x iblog posts
    * @param int $amount
@@ -118,30 +50,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     return $this->model->where('created_at', '>', $post->created_at)
       ->whereStatus(Status::PUBLISHED)->first();
   }
-  
-  /**
-   * Find a resource by the given slug
-   *
-   * @param  string $slug
-   * @return object
-   *
-   * public function findBySlug($slug)
-   * {
-   * return $this->model->with('category', 'categories', 'tags', 'user')->where('slug', $slug)->whereStatus(Status::PUBLISHED)->firstOrFail();
-   * }
-   */
-  /*
-     public function whereCategory($id)
-     {
-         dd($id);
-         $post= $this->model->whereHas('categories', function (Builder $q) use ($id) {
-             $q->where('category_id', $id);
-         })->with('translations','category', 'categories', 'tags', 'user')->paginate);
 
-
-     }
- */
-  
   
   /**
    * @inheritdoc
@@ -167,17 +76,17 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
     
   }
-  
+
   public function whereTag($id)
   {
-    
+
     return $this->model->leftJoin('iblog__post__tag', 'iblog__post__tag.post_id', '=', 'iblog__posts.id')
       ->whereIn('iblog__post__tag.tag_id', [$id])
       ->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->paginate(12);
-    
+
   }
-  
-  public function whereFilters($filters, $includes = array())
+
+/*  public function whereFilters($filters, $includes = array())
   {
     
     $query = count($includes) !== 0 ? $this->model->with($includes) : $this->model->with('user');
@@ -257,14 +166,95 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     } else {
       return $query->paginate(12);
     }
-  }
+  }*/
   
   public function category($id)
   {
     return $this->model->where('category_id', $id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
   }
-  
-  
+
+
+
+
+    /**
+     * @param  int $id
+     * @return object
+     */
+    public function find($id)
+    {
+        return $this->model->with('translations','category', 'categories', 'tags', 'user')->find($id);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function all()
+    {
+        return $this->model->with('tags','translations')->orderBy('created_at', 'DESC')->get();
+    }
+
+
+    /**
+     * @param $param
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function search($keys)
+    {
+        $query = $this->model->query();
+        $criterion = $keys;
+        $param = explode(' ', $criterion);
+        $query->whereHas('translations', function (Builder $q) use ($criterion) {
+            $q->where('title', 'like', "%{$criterion}%");
+        });
+        //$query->orWhere('title', 'like', "%{$criterion}%");
+        $query->orWhere('id', $criterion);
+
+        return $query->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+    /**
+     * Standard Api Method
+     * Create a iblog post
+     * @param  array $data
+     * @return Post
+     */
+    public function create($data)
+    {
+        $post = $this->model->create($data);
+        $post->categories()->sync(array_get($data, 'categories', []));
+        event(new PostWasCreated($post, $data));
+        $post->setTags(array_get($data, 'tags', []));
+        return $post;
+    }
+
+    /**
+     * Update a resource
+     * @param $post
+     * @param  array $data
+     * @return mixed
+     */
+    public function update($post, $data)
+    {
+        $post->update($data);
+
+        $post->categories()->sync(array_get($data, 'categories', []));
+
+        event(new PostWasUpdated($post, $data));
+        $post->setTags(array_get($data, 'tags', []));
+
+        return $post;
+    }
+
+
+
+    public function destroy($model)
+    {
+        $model->untag();
+        event(new PostWasDeleted($model->id, get_class($model)));
+
+        return $model->delete();
+    }
+
   /**
    * Standard Api Method
    * @param bool $params
@@ -304,13 +294,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $param = explode(' ', $criterion);
         $query->where(function ($query) use ($param) {
           foreach ($param as $index => $word) {
-            if ($index == 0) {
-              $query->where('title', 'like', "%" . $word . "%");
-              $query->orWhere('sku', 'like', "%" . $word . "%");
-            } else {
               $query->orWhere('title', 'like', "%" . $word . "%");
-              $query->orWhere('sku', 'like', "%" . $word . "%");
-            }
           }
           
         });
@@ -371,9 +355,22 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== FILTER ==*/
     if (isset($params->filter)) {
       $filter = $params->filter;
-      
+
       if (isset($filter->field))//Filter by specific field
         $field = $filter->field;
+
+        // find translatable attributes
+        $translatedAttributes = $this->model->translatedAttributes;
+
+        // filter by translatable attributes
+        if (isset($field) && in_array($field, $translatedAttributes))//Filter by slug
+            $query->whereHas('translations', function ($query) use ($criteria, $filter, $field) {
+                $query->where('locale', $filter->locale)
+                    ->where($field, $criteria);
+            });
+        else
+            // find by specific attribute or by id
+            $query->where($field ?? 'id', $criteria);
     }
     
     /*== FIELDS ==*/
@@ -381,23 +378,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       $query->select($params->fields);
     
     /*== REQUEST ==*/
-    return $query->where($field ?? 'id', $criteria)->first();
+    return $query->first();
+
   }
   
-  /**
-   * Standard Api Method
-   * Create a iblog post
-   * @param  array $data
-   * @return Post
-   */
-  public function create($data)
-  {
-    $post = $this->model->create($data);
-    $post->categories()->sync(array_get($data, 'categories', []));
-    event(new PostWasCreated($post, $data));
-    $post->setTags(array_get($data, 'tags', []));
-    return $post;
-  }
+
   
   /**
    * Standard Api Method

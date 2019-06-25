@@ -1,5 +1,17 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.9":
+    added:
+      - template-ignored-directories in config
+      - TemplateViewComposer Class Composer
+      - FinderService Class Service
+    changed:
+      - Timezone by  dateTimezone in helper date_default_timezone_set Method
+      - Method getItem of EloquentCategoryRepository and EloquentPostRepositopry
+
+    deleted:
+      - whereTag and whereFilte methods in PostEloquentRepository.
+      - find method of PostRepository and CachePostDecorator
   "4.0.8":
     added:
       - Filter by user in EloquentPostRepository method getItemsBy

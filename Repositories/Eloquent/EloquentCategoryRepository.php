@@ -197,21 +197,33 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
         $includeDefault = array_merge($includeDefault, $params->include);
       $query->with($includeDefault);//Add Relationships to query
     }
-    
-    /*== FILTER ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter;
-      
-      if (isset($filter->field))//Filter by specific field
-        $field = $filter->field;
-    }
-    
-    /*== FIELDS ==*/
-    if (isset($params->fields) && count($params->fields))
-      $query->select($params->fields);
-    
-    /*== REQUEST ==*/
-    return $query->where($field ?? 'id', $criteria)->first();
+      /*== FILTER ==*/
+      if (isset($params->filter)) {
+          $filter = $params->filter;
+
+          if (isset($filter->field))//Filter by specific field
+              $field = $filter->field;
+
+          // find translatable attributes
+          $translatedAttributes = $this->model->translatedAttributes;
+
+          // filter by translatable attributes
+          if (isset($field) && in_array($field, $translatedAttributes))//Filter by slug
+              $query->whereHas('translations', function ($query) use ($criteria, $filter, $field) {
+                  $query->where('locale', $filter->locale)
+                      ->where($field, $criteria);
+              });
+          else
+              // find by specific attribute or by id
+              $query->where($field ?? 'id', $criteria);
+      }
+
+      /*== FIELDS ==*/
+      if (isset($params->fields) && count($params->fields))
+          $query->select($params->fields);
+
+      /*== REQUEST ==*/
+      return $query->first();
   }
   
   /**

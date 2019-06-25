@@ -18,8 +18,6 @@
         {!! Form::textarea("{$lang}[summary]", old("$lang.summary", $old), ['class' => 'form-control','rows'=>2, 'placeholder' => trans('iblog::post.form.summary')]) !!}
         {!! $errors->first("$lang.summary", '<span class="help-block">:message</span>') !!}
     </div>
-
-
     <?php $old = $post->hasTranslation($lang) ? $post->translate($lang)->description : '' ?>
     <div class='form-group{{ $errors->has("{$lang}.description") ? ' has-error' : '' }}'>
         @editor('description', trans('iblog::post.form.description'), old("$lang.description", $old), $lang)

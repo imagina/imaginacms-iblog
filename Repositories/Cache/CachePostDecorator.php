@@ -72,18 +72,6 @@ class CachePostDecorator extends BaseCacheDecorator implements PostRepository
      * @param object $id
      * @return object
      */
-    public function find($id)
-    {
-        return $this->remember(function () use ($id) {
-            return $this->repository->find($id);
-        });
-    }
-
-    /**
-     * Get the next post of the given post
-     * @param object $id
-     * @return object
-     */
     public function category($id)
     {
         return $this->remember(function () use ($id) {
