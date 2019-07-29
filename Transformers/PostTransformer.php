@@ -19,7 +19,7 @@ class PostTransformer extends Resource
       'description' => $this->when($this->description, $this->description),
       'status' => $this->when($this->status, intval($this->status)),
       'statusName' => $this->when($this->status, $this->present()->status),
-        'url'=>$this->when($this->url, $this->url),
+      //'url' => $this->when($this->url, $this->url),
       'metaTitle' => $this->when($this->meta_title, $this->meta_title),
       'metaDescription' => $this->when($this->meta_description, $this->meta_description),
       'metaKeywords' => $this->when($this->meta_keywords, $this->meta_keywords),
@@ -27,12 +27,11 @@ class PostTransformer extends Resource
       'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
       'gallery' => $this->gallery,
       'createdAt' => $this->when($this->created_at, $this->created_at),
-      'options' => $this->when($this->options, $this->option),
+      'options' => $this->when($this->options, $this->options),
       'category' => new CategoryTransformer($this->whenLoaded('category')),
+      'categoryId' => $this->when($this->category_id, $this->category_id),
       'editor' => new UserProfileTransformer($this->whenLoaded('user')),
       'categories' => CategoryTransformer::collection($this->whenLoaded('categories')),
-      'tags' => TagTransformer::collection($this->whenLoaded('tags'))
-    
     ];
 
     foreach ($this->tags as $tag) {
@@ -48,21 +47,22 @@ class PostTransformer extends Resource
       foreach ($languages as $lang => $value) {
         $data[$lang]['title'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['title'] : '';
+        $data[$lang]['slug'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['slug'] : '';
         $data[$lang]['description'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['description'] ?? '' : '';
         $data[$lang]['summary'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['summary'] : '';
         $data[$lang]['metaTitle'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['meta_title'] : '';
-        $data[$lang]['metaDescription'] =$this->hasTranslation($lang) ?
+        $data[$lang]['metaDescription'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['meta_description'] : '';
-        $data[$lang]['metaKeywords'] =$this->hasTranslation($lang) ?
+        $data[$lang]['metaKeywords'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['meta_keywords'] : '';
-
       }
     }
 
     return $data;
-    
+
   }
 }
