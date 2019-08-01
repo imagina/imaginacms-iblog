@@ -95,14 +95,14 @@ class Post extends Model implements TaggableInterface
   public function getMainImageAttribute()
   {
     $thumbnail = $this->files()->where('zone', 'mainimage')->first();
-    if ($thumbnail === null) {
-      $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
-      if (isset($this->options->mainimage)) {
-        $thumbnail->path = $this->options->mainimage;
-      }
-      $thumbnail->path = 'modules/iblog/img/post/default.jpg';
-    }
-    return $thumbnail;
+    if(!$thumbnail) return [
+      'mimeType' => 'image/jpeg',
+      'path' =>url('modules/iblog/img/post/default.jpg')
+    ];
+    return [
+      'mimeType' => $thumbnail->mimetype,
+      'path' => $thumbnail->path_string
+    ];
   }
 
   public function getGalleryAttibute()
