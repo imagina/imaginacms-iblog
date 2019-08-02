@@ -21,6 +21,8 @@ class RoleTableSeeder extends Seeder
         'name' => 'Editor',
         'slug' => 'editor',
         'permissions' => json_encode([
+          'profile.api.login' => true,
+          'profile.user.index' => true,
           'iblog.categories.manage' => true,
           'iblog.categories.index' => true,
           'iblog.categories.create' => true,
@@ -37,6 +39,10 @@ class RoleTableSeeder extends Seeder
         'name' => 'Author',
         'slug' => 'author',
         'permissions' => json_encode([
+          'profile.api.login' => true,
+          'profile.user.index' => true,
+          'iblog.posts.manage' => true,
+          'iblog.posts.index' => true,
           'iblog.posts.create' => true,
           'iblog.posts.edit' => true,
         ])
