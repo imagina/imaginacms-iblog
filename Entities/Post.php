@@ -62,7 +62,6 @@ class Post extends Model implements TaggableInterface
     return $this->belongsTo(Category::class);
   }
 
-
   public function user()
   {
     $driver = config('asgard.user.config.driver');
@@ -105,10 +104,17 @@ class Post extends Model implements TaggableInterface
     ];
   }
 
-  public function getGalleryAttibute()
+  public function getGalleryAttribute()
   {
-
-    return $this->filesByZone('gallery')->get();
+    $gallery = $this->filesByZone('gallery')->get();
+    $response = [];
+    foreach ($gallery as $img){
+      array_push($response,[
+        'mimeType' => $img->mimetype,
+        'path' => $img->path_string
+      ]);
+    }
+    return $response;
   }
 
   /**
