@@ -278,7 +278,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== FILTERS ==*/
     if (isset($params->filter)) {
       $filter = $params->filter;//Short filter
-      
+
       if(isset($filter->categories)){
 
           $categories=is_array($filter->categories)?$filter->categories:[$filter->categories];
@@ -291,13 +291,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         }
       if (isset($filter->search)) { //si hay que filtrar por rango de precio
         $criterion = $filter->search;
-        $param = explode(' ', $criterion);
-        $query->where(function ($query) use ($param) {
-          foreach ($param as $index => $word) {
-              $query->orWhere('title', 'like', "%" . $word . "%");
-          }
-          
-        });
+
+          $query->whereHas('translations', function (Builder $q) use ($criterion) {
+              $q->where('title', 'like', "%{$criterion}%");
+          });
       }
       
       //Filter by date

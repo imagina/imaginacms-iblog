@@ -104,18 +104,28 @@ class Post extends Model implements TaggableInterface
     ];
   }
 
-  public function getGalleryAttribute()
-  {
-    $gallery = $this->filesByZone('gallery')->get();
-    $response = [];
-    foreach ($gallery as $img){
-      array_push($response,[
-        'mimeType' => $img->mimetype,
-        'path' => $img->path_string
-      ]);
+    public function getGalleryAttribute(){
+
+        $images = Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
+        if(count($images)){
+            $response=array();
+            foreach ($images as $image){
+                $response=["mimetype"=>"image/jpeg","path"=>$image];
+            }
+        }else{
+            $gallery = $this->filesByZone('gallery')->get();
+            $response = [];
+            foreach ($gallery as $img){
+                array_push($response,[
+                    'mimeType' => $img->mimetype,
+                    'path' => $img->path_string
+                ]);
+            }
+
+        }
+
+        return $response;
     }
-    return $response;
-  }
 
   /**
    * URL post

@@ -39,7 +39,7 @@
                         </div> {{-- end nav-tabs-custom --}}
                     </div>
                 </div>
-                @if (config('asgard.iblog.config.fields.ategory.partials.normal.edit') && config('asgard.iblog.config.fields.category.partials.normal.edit') !== [])
+                @if (config('asgard.iblog.config.fields.category.partials.normal.edit') && config('asgard.iblog.config.fields.category.partials.normal.edit') !== [])
 
                 <div class="col-xs-12 ">
                     <div class="box box-primary">

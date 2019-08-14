@@ -62,13 +62,13 @@ class CategoryController extends AdminBaseController
             $this->category->create($request->all());
             \DB::commit();//Commit to Data Base
             return redirect()->route('admin.iblog.category.index')
-                ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('iblog::categories.title.categories')]));
+                ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('iblog::category.title.categories')]));
 
         } catch (\Exception $e) {
             \DB::rollback();
             \Log::error($e);
             return redirect()->back()
-                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::categories.title.categories')]))->withInput($request->all());
+                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::category.title.categories')]))->withInput($request->all());
 
         }
 
@@ -100,11 +100,11 @@ class CategoryController extends AdminBaseController
             $this->category->update($Category, $request->all());
 
             return redirect()->route('admin.iblog.category.index')
-                ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('iblog::categories.title.categories')]));
+                ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('iblog::category.title.categories')]));
         } catch (\Exception $e) {
             \Log::error($e);
             return redirect()->back()
-                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::categories.title.categories')]))->withInput($request->all());
+                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::category.title.categories')]))->withInput($request->all());
 
         }
     }
@@ -121,11 +121,11 @@ class CategoryController extends AdminBaseController
             $this->category->destroy($Category);
 
             return redirect()->route('admin.iblog.category.index')
-                ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('iblog::categories.title.categories')]));
+                ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('iblog::category.title.categories')]));
         } catch (\Exception $e) {
             \Log::error($e);
             return redirect()->back()
-                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::categories.title.categories')]));
+                ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::category.title.categories')]));
 
         }
     }

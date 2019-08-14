@@ -18,12 +18,32 @@ return [
         'create post' => 'Create a Post',
     ],
     'table' => [
-        'title' => 'Title'
+        'id'=>'id',
+        'title' => 'Title',
+        'slug'=>'Slug',
+        'categories'=>'Categories',
+        'principal category'=>'Main Category'
     ],
     'form' => [
         'gallery'=>'Gallery',
         'drag'=>'Drag and drop here',
-        'click'=>'click to upload.'
+        'click'=>' Click to upload',
+        'title'=>'Title',
+        'slug'=>'Slug',
+        'description'=>'Description',
+        'categories'=>'Categories',
+        'secondary image'=>'Secondary image',
+        'image'=>'Main Image',
+        'Principal Category'=> 'Main Category',
+        'Categories'=>'Categories',
+        'metadata'=> 'SEO',
+        'meta_title'=>'Meta Title',
+        'meta_description'=>'Meta Description',
+        'meta_keywords'=>'Keywords',
+        'editor'=>'Editor\'s name',
+        'tags'=> 'Tags',
+        'summary'=>'Summary'
+
 
 
     ],

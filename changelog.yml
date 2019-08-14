@@ -1,5 +1,17 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.15":
+    added:
+      - Casts in CategoryTraslation Entity
+      - Example false field of image
+    changed:
+      - Event CatgoryWasDelete Name Propierty
+      - Lang "en" Category and Posts
+      - Lang "es" Posts
+      - Categories edit file Added "c" in validate config false fields
+      - translatable_option by translatable_options in Category and CategoryTraslation entities
+    deleted:
+      - Listener of CategoryWasDeleted
   "4.0.9":
     added:
       - template-ignored-directories in config

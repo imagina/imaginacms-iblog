@@ -40,7 +40,7 @@ return [
         'meta_title'=>'Meta Titulo',
         'meta_description'=>'Meta Descripción',
         'meta_keywords'=>'Palabras Clave',
-        'editor'=>'Nombre eel Editor',
+        'editor'=>'Nombre del Editor',
         'tags'=> 'Etiquetas',
         'summary'=>'Descripcion Corta'
 

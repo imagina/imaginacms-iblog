@@ -2,35 +2,42 @@
 
 namespace Modules\Iblog\Events;
 
-use Modules\Iblog\Entities\Category;
-use Modules\Media\Contracts\StoringMedia;
+use Modules\Media\Contracts\DeletingMedia;
 
-class CategoryWasDeleted implements StoringMedia
+class CategoryWasDeleted implements DeletingMedia
 {
 
     /**
-     * @var Category
+     * @var categoryClass
      */
-    public $entity;
+    public $categoryClass;
 
     /**
-     * @var disk
+     * @var categoryId
      */
-    public $disk;
+    public $categoryId;
 
-    public function __construct($category)
+    public function __construct($categoryId,$categoryClass)
     {
-
-        $this->entity = $category;
-        $this->disk='publicmedia';
+        $this->categoryClass = $categoryClass;
+        $this->categoryId = $categoryId;
     }
 
     /**
-     * Return the entity
-     * @return Category
+     * Get the entity ID
+     * @return int
      */
-    public function getEntity()
+    public function getEntityId()
     {
-        return $this->entity;
+        return $this->categoryId;
+    }
+
+    /**
+     * Get the class name the imageables
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->categoryClass;
     }
 }
