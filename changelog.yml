@@ -1,5 +1,8 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.16":
+    changed:
+      - getMainImage and getSecondaryImage Methods reuturn Object
   "4.0.15":
     added:
       - Casts in CategoryTraslation Entity
