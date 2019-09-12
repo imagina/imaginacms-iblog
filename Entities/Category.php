@@ -16,9 +16,9 @@ class Category extends Model
   protected $table = 'iblog__categories';
   protected static $entityNamespace = 'iblog/category';
 
-  protected $fillable = ['title', 'description', 'slug', 'parent_id', 'options', 'translatable_option'];
+  protected $fillable = ['title', 'description', 'slug', 'parent_id', 'options', 'translatable_options'];
 
-  public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_option'];
+  public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 
   protected $fakeColumns = ['options'];
   /**
@@ -51,47 +51,67 @@ class Category extends Model
     return $this->belongsToMany('Modules\Iblog\Entities\Post', 'iblog__post__category');
   }
 
-  public function getOptionsAttribute($value)
-  {
-    try {
-      return json_decode(json_decode($value));
-    } catch (\Exception $e) {
-      return json_decode($value);
+    public function getOptionsAttribute($value)
+    {
+        try {
+            return json_decode(json_decode($value));
+        } catch (\Exception $e) {
+            return json_decode($value);
+        }
     }
 
-  }
-
-  public function getSecondaryImageAttribute()
-  {
-    $thumbnail = $this->files()->where('zone', 'secondaryimage')->first() ?? null;
-    if ($thumbnail === null) {
-      $thumbnail = (object)['path' => null, 'main-type' => 'image/jpeg'];
-      if (isset($this->options->mainimage)) {
-        $thumbnail->path = $this->options->mainimage;
-      }
-      $thumbnail->path = 'modules/iblog/img/post/default.jpg';
+    public function getSecondaryImageAttribute()
+    {
+        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
+        if (!$thumbnail) {
+            $image = [
+                'mimeType' => 'image/jpeg',
+                'path' => url('modules/iblog/img/post/default.jpg')
+            ];
+        } else {
+            $image = [
+                'mimeType' => $thumbnail->mimetype,
+                'path' => $thumbnail->path_string
+            ];
+        }
+        return json_decode(json_encode($image));
     }
-    return $thumbnail;
-  }
 
-  public function getMainImageAttribute()
-  {
-    $thumbnail = $this->files()->where('zone', 'mainimage')->first();
-    if (!$thumbnail) return [
-      'mimeType' => 'image/jpeg',
-      'path' => url('modules/iblog/img/category/default.jpg')
-    ];
-    return [
-      'mimeType' => $thumbnail->mimetype,
-      'path' => $thumbnail->path_string
-    ];
-  }
+    public function getMainImageAttribute()
+    {
+        $thumbnail = $this->files()->where('zone', 'mainimage')->first();
+        if (!$thumbnail) {
+            if (isset($this->options->mainimage)) {
+                $image = [
+                    'mimeType' => 'image/jpeg',
+                    'path' => url($this->options->mainimage)
+                ];
+            } else {
+                $image = [
+                    'mimeType' => 'image/jpeg',
+                    'path' => url('modules/iblog/img/post/default.jpg')
+                ];
+            }
+        } else {
+            $image = [
+                'mimeType' => $thumbnail->mimetype,
+                'path' => $thumbnail->path_string
+            ];
+        }
+        return json_decode(json_encode($image));
 
-  /*
-  |--------------------------------------------------------------------------
-  | SCOPES
-  |--------------------------------------------------------------------------
-  */
+    }
+
+    public function getUrlAttribute() {
+
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.category', [$this->slug]);
+
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
   public function scopeFirstLevelItems($query)
   {
     return $query->where('depth', '1')

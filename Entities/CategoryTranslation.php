@@ -50,10 +50,5 @@ class CategoryTranslation extends Model
         return $this->meta_title ?? $this->title;
     }
 
-    public function getUrlAttribute() {
-
-        return url($this->slug);
-
-    }
 
 }

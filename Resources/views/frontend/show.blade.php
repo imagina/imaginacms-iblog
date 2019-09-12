@@ -1,27 +1,7 @@
 @extends('layouts.master')
 
 @section('meta')
-    <meta name="description" content="{{$post->summary}}">
-    <!-- Schema.org para Google+ -->
-    <meta itemprop="name" content="{{$post->title}}">
-    <meta itemprop="description" content="{{$post->summary}}">
-    <meta itemprop="image" content=" {{url($post->mainimage->path) }}">
-    <!-- Open Graph para Facebook-->
-    <meta property="og:title" content="{{$post->title}}"/>
-    <meta property="og:type" content="article"/>
-    <meta property="og:url" content="{{url($post->slug)}}"/>
-    <meta property="og:image" content="{{url($post->mainimage->path)}}"/>
-    <meta property="og:description" content="{{$post->summary}}"/>
-    <meta property="og:site_name" content="{{Setting::get('core::site-name') }}"/>
-    <meta property="og:locale" content="{{config('asgard.iblog.config.oglocal')}}">
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="{{ Setting::get('core::site-name') }}">
-    <meta name="twitter:title" content="{{$post->title}}">
-    <meta name="twitter:description" content="{{$post->summary}}">
-    <meta name="twitter:creator" content="">
-    <meta name="twitter:image:src" content="{{url($post->mainimage->path)}}">
-
+    @include('iblog::frontend.partials.post.metas')
 @stop
 
 @section('title')
@@ -29,15 +9,17 @@
 @stop
 
 @section('content')
-    <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
+
+
+   <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
         <div class="container" id="body-wrapper">
             <div class="row">
                 <div class="col-xs-12 col-sm-9 column1">
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="bgimg">
-                                    <img class="image img-responsive" src="{{url($post->mainimage->path)}}"
-                                         alt="{{$post->title}}"/>
+                                <img class="image img-responsive" src="{{url($post->mainimage->path)}}"
+                                     alt="{{$post->title}}"/>
                             </div>
                         </div>
                     </div>
@@ -47,14 +29,14 @@
                             {!! $post->description !!}
 
                             @if(!$tags->isEmpty())
-                            <div class="tag">
+                                <div class="tag">
                                 <span class="tags-links">
                                     @foreach($tags as $tag)
-                                    <a href="{{$tag->url}}" rel="tag">{{$tag->title}}</a>
+                                        <a href="{{$tag->url}}" rel="tag">{{$tag->title}}</a>
                                     @endforeach
                                 </span>
-                            </div>
-                           @endif
+                                </div>
+                            @endif
                         </div>
                         <div class="content col-xs-12 col-sm-10">
                             @include('iblog::frontend.gallery.viewline')
@@ -99,7 +81,7 @@
                                             </li>
                                             <li class="whatsapp_share">
                                                 <!-- WhatsApp Share Button-->
-                                                <a href="whatsapp://send?text={{ $post->url }}"
+                                                <a href="whatsapp://send?text={{$post->url}}"
                                                    data-action="share/whatsapp/share">
                                                     <div class="share-item-icon"><span class="fa-stack"><i
                                                                     class="fa fa-square fa-stack-2x"></i><i
@@ -114,12 +96,10 @@
                         </div>
                     </div>
                     <div class="facebook-comments">
-
                         <div class="fb-comments"
                              data-href="{{url($post->url)}}"
                              data-numposts="5" data-width="100%">
                         </div>
-
                     </div>
 
                 </div>
@@ -146,17 +126,12 @@
 
                     </div>
                 </div>
-                <div id="fb-root"></div>
-                <script>(function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0];
-                        if (d.getElementById(id)) return;
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = "//connect.facebook.net/{{config('asgard.iblog.config.oglocal')}}/sdk.js#xfbml=1&version=v2.8";
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }(document, 'script', 'facebook-jssdk'));
-                </script>
             </div>
         </div>
     </div>
+@stop
+
+@section('scripts')
+    @parent
+    @include('iblog::frontend.partials.post.script')
 @stop

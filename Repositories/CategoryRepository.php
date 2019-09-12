@@ -10,11 +10,31 @@ use Modules\Core\Repositories\BaseRepository;
  */
 interface CategoryRepository extends BaseRepository
 {
+    /**
+     * @param $params
+     * @return mixed
+     */
     public function getItemsBy($params);
-    
-      public function getItem($criteria, $params);
 
-      public function updateBy($criteria, $data, $params);
-    
-      public function deleteBy($criteria, $params);
+    /**
+     * @param $criteria
+     * @param $params
+     * @return mixed
+     */
+    public function getItem($criteria, $params);
+
+    /**
+     * @param $criteria
+     * @param $data
+     * @param $params
+     * @return mixed
+     */
+    public function updateBy($criteria, $data, $params);
+
+    /**
+     * @param $criteria
+     * @param $params
+     * @return mixed
+     */
+    public function deleteBy($criteria, $params);
 }

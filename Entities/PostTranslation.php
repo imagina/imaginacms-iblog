@@ -57,5 +57,4 @@ class PostTranslation extends Model
         return $this->meta_title ?? $this->title;
     }
 
-
 }

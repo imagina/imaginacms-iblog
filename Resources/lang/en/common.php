@@ -4,7 +4,7 @@ return [
     'iblog' => 'Blog',
 
     'button' => [
-
+        "read more"=>"Read More"
     ],
     'table' => [
     ],
@@ -44,9 +44,9 @@ return [
 
     'summary' => 'Sumary',
     'content' => 'Content',
-
+    'Posted on'=>'Posted on',
     'author' => 'Author',
-
+    'by'=>'by',
     'default_category' => 'Default Category',
 
     'admin_notes' => 'Admin`s notes',

@@ -28,7 +28,7 @@ class Post extends Model implements TaggableInterface
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'translatable_option',
+        'translatable_options',
         'options',
         'category_id',
         'user_id',
@@ -43,7 +43,7 @@ class Post extends Model implements TaggableInterface
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'translatable_option'
+        'translatable_options'
     ];
     protected $presenter = PostPresenter::class;
     protected $fakeColumns = ['options'];
@@ -123,7 +123,7 @@ class Post extends Model implements TaggableInterface
     public function getGalleryAttribute()
     {
 
-        $images = Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
+        $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
         if (count($images)) {
             $response = array();
             foreach ($images as $image) {
@@ -155,7 +155,7 @@ class Post extends Model implements TaggableInterface
             $this->category = Category::take(1)->get()->first();
         }
 
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.' . $this->category->slug . '.slug', [$this->slug]);
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.post', [$this->category->slug,$this->slug]);
 
     }
 

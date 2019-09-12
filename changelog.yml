@@ -1,5 +1,16 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.17":
+    added:
+      - Settings lang protugues
+      - Metas and scripts partials for views of category and post
+      -
+    changed:
+      - Cofig/setings file add if facebook
+      - Paginate helper in funtions of EloquentPotsRepository added seting "posts-per-page"
+      - View fontend of caregory and post
+    remove:
+      - function whereFilter in EloquentCategoryRepository
   "4.0.16":
     changed:
       - getMainImage and getSecondaryImage Methods reuturn Object

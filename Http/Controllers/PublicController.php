@@ -11,6 +11,7 @@ use Modules\Ifeeds\Support\SupportFeed;
 use Modules\Tag\Repositories\TagRepository;
 use Request;
 use Route;
+use Modules\Page\Http\Controllers\PublicController as PageController;
 
 class PublicController extends BasePublicController
 {
@@ -29,20 +30,16 @@ class PublicController extends BasePublicController
         $this->tag = $tag;
     }
 
-    public function index()
+    public function index($slug)
     {
-        //Search category.
-        $uri = Route::current()->uri();
-        //Default Template
-        $tpl = 'iblog::frontend.index';
-        $ttpl = 'iblog.index';
+        try{
+            //Default Template
+            $tpl = 'iblog::frontend.index';
+            $ttpl = 'iblog.index';
 
-        if (view()->exists($ttpl)) $tpl = $ttpl;
+            if (view()->exists($ttpl)) $tpl = $ttpl;
 
-        if (empty($uri)) {
-            //Root
-        } else {
-            $category = $this->category->findBySlug($uri);
+            $category = $this->category->findBySlug($slug);
             $posts = $this->post->whereCategory($category->id);
             //Get Custom Template.
 
@@ -53,35 +50,47 @@ class PublicController extends BasePublicController
             $ctpl = "iblog.category.{$category->id}.index";
             if (view()->exists($ctpl)) $tpl = $ctpl;
 
+            return view($tpl, compact('posts', 'category'));
+        }catch (\ModelNotFoundException $e){
+            dd($e);
+            if(is_module_enabled('Icommerce')){
+                return app(\Modules\Icommerce\Http\Controllers\PublicController::class)->index($slug);
+            }
+            $page= app(PageController::class)->uri($slug);
+            return $page;
         }
 
-        return view($tpl, compact('posts', 'category'));
 
     }
 
-    public function show($slug)
+    public function show($slug,$slugp)
     {
-        $tpl = 'iblog::frontend.show';
-        $ttpl = 'iblog.show';
 
-        if (view()->exists($ttpl)) $tpl = $ttpl;
+        $category = $this->category->findBySlug($slug);
+        $post = $this->post->findBySlug($slugp);
+        if($category->id == $post->category_id){
+            $tpl = 'iblog::frontend.show';
+            $ttpl = 'iblog.show';
 
-        $post = $this->post->findBySlug($slug);
-        $category = $post->category;
-        $tags = $post->tags()->get();
+            if (view()->exists($ttpl)) $tpl = $ttpl;
 
-        $ptpl = "iblog.category.{$category->parent_id}.show";
-        if ($category->parent_id != 0 && view()->exists($ptpl)) {
-            $tpl = $ptpl;
+            $tags = $post->tags()->get();
+
+            $ptpl = "iblog.category.{$category->parent_id}.show";
+            if ($category->parent_id != 0 && view()->exists($ptpl)) {
+                $tpl = $ptpl;
+            }
+            //Get Custom Template.
+            $ctpl = "iblog.category.{$category->id}.show";
+
+
+            if (view()->exists($ctpl)) $tpl = $ctpl;
+
+
+            return view($tpl, compact('post', 'category', 'tags'));
         }
-        //Get Custom Template.
-        $ctpl = "iblog.category.{$category->id}.show";
+        return abort(404);
 
-
-        if (view()->exists($ctpl)) $tpl = $ctpl;
-
-
-        return view($tpl, compact('post', 'category', 'tags'));
     }
 
     public function tag($slug)
@@ -90,7 +99,7 @@ class PublicController extends BasePublicController
         //Default Template
         $tpl = 'iblog::frontend.tag';
         $ttpl = 'iblog.tag';
-        $tag= $this->tag->findBySlug($slug);
+        $tag = $this->tag->findBySlug($slug);
         if (view()->exists($ttpl)) $tpl = $ttpl;
 
         $posts = $this->post->whereTag($slug);

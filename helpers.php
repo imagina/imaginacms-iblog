@@ -18,63 +18,19 @@ if (!function_exists('get_posts')) {
             'exclude' => array(),// post, categorias o usuarios, que desee excluir de una consulta metodo de llmado category=>'', posts=>'' , users=>''
             'exclude_categories' => null,// categoria o categorias que desee Excluir, se envia como arreglo ['exclude_categories'=>[1,2,3]]
             'exclude_users' => null, //usuario o usuarios que desea Excluir, se envia como arreglo ['users'=>[1,2,3]]
-            'created_at' => ['operator' => '<=', 'date' => date('Y-m-d H:i:s')],
+            'date' =>null, //['from'=>date('Y-m-d H:i:s'), 'to' => date('Y-m-d H:i:s')],
             'take' => 5, //Numero de posts a obtener,
             'skip' => 0, //Omitir Cuantos post a llamar
-            'order' => 'desc',//orden de llamado
+            'order' => ['field'=>'created_at','way'=>'desc'],//orden de llamado
             'status' => Status::PUBLISHED
         );
 
         $options = array_merge($default_options, $options);
 
-        $posts = Post::with(['user', 'categories', 'category'])->select('*', 'iblog__posts.id as id','iblog__posts.category_id as category_id');
+        $post=app('Modules\Iblog\Repositories\PostRepository');
+        $params=json_decode(json_encode(["filter"=>$options,'include'=>['user', 'categories', 'category'],'take'=>$options['take'],'skip'=>$options['skip']]));
 
-        if (!empty($options['categories']) || isset($options['exclude_categories'])) {
-
-            $posts->leftJoin('iblog__post__category', 'iblog__post__category.post_id', '=', 'iblog__posts.id');
-        }
-
-        if (!empty($options['categories'])) {
-
-            $posts->whereIn('iblog__post__category.category_id', $options['categories']);
-
-        }
-        if (isset($options['exclude_categories'])) {
-
-            $posts->whereNotIn('iblog__post__category.category_id', $options['exclude_categories']);
-        }
-
-        if (!empty($options['users'])) {
-            $posts->whereHas('user', function ($query) use ($options) {
-                $query->whereIn('user_id', $options['users']);
-            });
-        }
-        if (!empty($options['exclude'])) {
-            $posts->whereNotIn('iblog__posts.id', $options['exclude']);
-        }
-
-        if (isset($options['exclude_users'])) {
-            $posts->whereHas('user', function ($query) use ($options) {
-                $query->whereNotIn('user_id', $options['exclude_users']);
-            });
-        }
-        if (isset($options['created_at'])) {
-            $posts->where('created_at', $options['created_at']['operator'], $options['created_at']['date']);
-        }
-
-        $posts->whereStatus($options['status'])
-            ->skip($options['skip'])
-            ->take($options['take']);
-
-        $posts->orderBy('created_at', $options['order']);
-
-        if (!empty($options['include'])) {
-            $posts->orWhere(function ($query) use ($options) {
-                $query->whereIn('iblog__posts.id', $options['include']);
-            });
-
-        }
-        return $posts->get();
+        return $post->getItemsBy($params);
 
     }
 }
@@ -176,6 +132,7 @@ if (!function_exists('format_date')) {
 
     function format_date($date, $format = '%A, %B %d, %Y')
     {
+        dd($date);
         return strftime($format, strtotime($date));
     }
 

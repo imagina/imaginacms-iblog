@@ -2,17 +2,15 @@
 
 return [
     'posts-per-page' => [
-        'description'  => 'iblog::settings.posts-per-page',
-        'view'         => 'text',
-        'translatable' => true,
+        'description' => 'iblog::settings.posts-per-page',
+        'view' => 'number',
     ],
-    'latest-posts-amount'  => [
-        'description'  => 'iblog::settings.latest-posts-amount',
-        'view'         => 'text',
-        'translatable' => true,
+    'id-facebook' => [
+        'description' => 'iblog::settings.id-facebook',
+        'view' => 'text',
     ],
-    'widget-posts-amount' => [
-        'description' => 'iblog::settings.widget-posts-amount',
+    'twitter' => [
+        'description' => 'iblog::settings.twitter Account',
         'view' => 'text',
     ],
 ];
