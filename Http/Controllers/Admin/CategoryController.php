@@ -32,7 +32,7 @@ class CategoryController extends AdminBaseController
      */
     public function index()
     {
-        $categories = $this->category->paginate(20);
+        $categories = $this->category->all();
 
         return view('iblog::admin.categories.index', compact('categories'));
     }

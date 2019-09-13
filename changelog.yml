@@ -1,5 +1,10 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.18":
+    added:
+      - Validate route backend in route files
+    changed:
+      - Method index in AdminCategoryController  from paginate() to all()
   "4.0.17":
     added:
       - Settings lang protugues
