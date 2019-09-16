@@ -51,8 +51,7 @@ class PublicController extends BasePublicController
             if (view()->exists($ctpl)) $tpl = $ctpl;
 
             return view($tpl, compact('posts', 'category'));
-        }catch (\ModelNotFoundException $e){
-            dd($e);
+        }catch (\Exception $e){
             if(is_module_enabled('Icommerce')){
                 return app(\Modules\Icommerce\Http\Controllers\PublicController::class)->index($slug);
             }

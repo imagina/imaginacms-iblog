@@ -132,7 +132,7 @@ if (!function_exists('format_date')) {
 
     function format_date($date, $format = '%A, %B %d, %Y')
     {
-        dd($date);
+       
         return strftime($format, strtotime($date));
     }
 
