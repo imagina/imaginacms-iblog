@@ -23,7 +23,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     if (method_exists($this->model, 'translations')) {
       return $this->model->with('translations')->find($id);
     }
-    
     return $this->model->with('parent', 'children')->find($id);
   }
   
@@ -257,5 +256,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     $model = $query->where($field ?? 'id', $criteria)->first();
     $model ? $model->delete() : false;
     event(new DeleteMedia($model->id, get_class($model)));
+
   }
 }

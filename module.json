@@ -3,7 +3,7 @@
     "alias": "iblog",
     "description": "The Blog module allows authorized users to maintain a blog.",
     "keywords": [],
-    "version": "4.0.19",
+    "version": "4.0.20",
     "active": 1,
     "order": 1,
     "providers": [

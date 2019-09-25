@@ -14,14 +14,8 @@ $router->group(['prefix' =>'/iblog'], function (Router $router) {
             'uses' => 'PostController@index',
             'middleware' => 'can:iblog.posts.index'
         ]);
-        $router->get('q', [
-            'as' => 'admin.iblog.post.search',
-            'uses' => 'PostController@search',
-            'middleware' => 'can:iblog.posts.index'
-        ]);
 
         $router->get('create', [
-            // dd('hgh'),
             'as' => 'admin.iblog.post.create',
             'uses' => 'PostController@create',
             'middleware' => 'can:iblog.posts.create'
@@ -46,16 +40,6 @@ $router->group(['prefix' =>'/iblog'], function (Router $router) {
             'uses' => 'PostController@destroy',
             'middleware' => 'can:iblog.posts.destroy'
         ]);
-        $router->post('gallery', [
-            'as' => 'iblog.posts.gallery.store',
-            'uses' => 'PostController@galleryStore',
-            //'middleware' => ['api.token','token-can:iblog.posts.create']
-        ]);
-        $router->post('gallery/delete', [
-            'as' => 'iblog.posts.gallery.delete',
-            'uses' => 'PostController@galleryDelete',
-            // 'middleware' => ['api.token','token-can:iblog.posts.create']
-        ]);
     });
 
     $router->group(['prefix' => 'categories'], function (Router $router) {
@@ -72,7 +56,7 @@ $router->group(['prefix' =>'/iblog'], function (Router $router) {
             'uses' => 'CategoryController@create',
             'middleware' => 'can:iblog.categories.create'
         ]);
-        $router->post('', [
+        $router->post('/', [
             'as' => 'admin.iblog.category.store',
             'uses' => 'CategoryController@store',
             'middleware' => 'can:iblog.categories.create'

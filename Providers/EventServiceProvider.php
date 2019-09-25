@@ -12,15 +12,5 @@ use Modules\Iblog\Events\PostWasCreated;
 
 class EventServiceProvider extends ServiceProvider
 {
-    protected $listen = [
-        CategoryWasCreated::class => [
-           SaveCategoryImage::class,
-        ],
-        CategoryWasDeleted::class=>[
-            DeleteCategoryImage::class,
-        ],
-        PostWasCreated::class => [
-            SavePostImage::class,
-        ],
-    ];
+    protected $listen = [];
 }
