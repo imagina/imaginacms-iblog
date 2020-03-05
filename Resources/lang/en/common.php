@@ -17,6 +17,9 @@ return [
         'description min 2'=>'The description must contain at least two characters',
         'summary is required'=>'The summary is required',
         'summary min 2'=>'The summary must contain at least two characters',
+        'resource updated'=>'Resource Updated',
+        'resource deleted'=>'Resource Deleted',
+        'resource created'=>'Resource Created'
     ],
     'validation' => [
     ],

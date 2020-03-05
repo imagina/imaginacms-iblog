@@ -28,18 +28,4 @@ class CacheCategoryDecorator extends BaseCacheDecorator implements CategoryRepos
         });
     }
 
-
-    public function updateBy($criteria, $data, $params)
-    {
-        return $this->remember(function () use ($criteria, $data, $params) {
-            return $this->repository->updateBy($criteria, $data, $params);
-        });
-    }
-
-    public function deleteBy($criteria, $params)
-    {
-        return $this->remember(function () use ($criteria, $params) {
-            return $this->repository->deleteBy($criteria, $params);
-        });
-    }
 }

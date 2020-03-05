@@ -21,19 +21,12 @@ class Post extends Model implements TaggableInterface
     protected $table = 'iblog__posts';
 
     protected $fillable = [
-        'title',
-        'description',
-        'slug',
-        'summary',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
-        'translatable_options',
         'options',
         'category_id',
         'user_id',
         'status',
-        'created_at'
+        'created_at',
+        'store_id'
     ];
     public $translatedAttributes = [
         'title',
@@ -46,7 +39,7 @@ class Post extends Model implements TaggableInterface
         'translatable_options'
     ];
     protected $presenter = PostPresenter::class;
-    protected $fakeColumns = ['options'];
+
 
     protected $casts = [
         'options' => 'array'
@@ -69,6 +62,13 @@ class Post extends Model implements TaggableInterface
         return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
     }
 
+    public function store()
+    {
+        if (is_module_enabled('Marketplace')) {
+            return $this->belongsTo('Modules\Marketplace\Entities\Store');
+        }
+        return null;
+    }
     public function getOptionsAttribute($value)
     {
         try {
@@ -151,11 +151,7 @@ class Post extends Model implements TaggableInterface
     public function getUrlAttribute()
     {
 
-        if (!isset($this->category->slug)) {
-            $this->category = Category::take(1)->get()->first();
-        }
-
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.post', [$this->category->slug,$this->slug]);
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$this->category->slug.'.post', [$this->slug]);
 
     }
 

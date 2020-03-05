@@ -30,65 +30,54 @@ class PublicController extends BasePublicController
         $this->tag = $tag;
     }
 
-    public function index($slug)
+    public function index()
     {
-        try{
-            //Default Template
-            $tpl = 'iblog::frontend.index';
-            $ttpl = 'iblog.index';
+        $slug = Request::path();
+        //Default Template
+        $tpl = 'iblog::frontend.index';
+        $ttpl = 'iblog.index';
 
-            if (view()->exists($ttpl)) $tpl = $ttpl;
+        if (view()->exists($ttpl)) $tpl = $ttpl;
 
-            $category = $this->category->findBySlug($slug);
-            $posts = $this->post->whereCategory($category->id);
-            //Get Custom Template.
+        $category = $this->category->findBySlug($slug);
+        $posts = $this->post->whereCategory($category->id);
+        //Get Custom Template.
 
-            $ptpl = "iblog.category.{$category->parent_id}.index";
-            if ($category->parent_id != 0 && view()->exists($ptpl)) {
-                $tpl = $ptpl;
-            }
-            $ctpl = "iblog.category.{$category->id}.index";
-            if (view()->exists($ctpl)) $tpl = $ctpl;
-
-            return view($tpl, compact('posts', 'category'));
-        }catch (\Exception $e){
-            if(is_module_enabled('Icommerce')){
-                return app(\Modules\Icommerce\Http\Controllers\PublicController::class)->index($slug);
-            }
-            $page= app(PageController::class)->uri($slug);
-            return $page;
+        $ptpl = "iblog.category.{$category->parent_id}.index";
+        if ($category->parent_id != 0 && view()->exists($ptpl)) {
+            $tpl = $ptpl;
         }
+        $ctpl = "iblog.category.{$category->id}.index";
+        if (view()->exists($ctpl)) $tpl = $ctpl;
 
+        return view($tpl, compact('posts', 'category'));
 
     }
 
-    public function show($slug,$slugp)
+    public function show($slug)
     {
+        $post = $this->post->findBySlug($slug);
+        $category = $post->category;
+        $tpl = 'iblog::frontend.show';
+        $ttpl = 'iblog.show';
 
-        $category = $this->category->findBySlug($slug);
-        $post = $this->post->findBySlug($slugp);
-        if($category->id == $post->category_id){
-            $tpl = 'iblog::frontend.show';
-            $ttpl = 'iblog.show';
+        if (view()->exists($ttpl)) $tpl = $ttpl;
 
-            if (view()->exists($ttpl)) $tpl = $ttpl;
+        $tags = $post->tags()->get();
 
-            $tags = $post->tags()->get();
-
-            $ptpl = "iblog.category.{$category->parent_id}.show";
-            if ($category->parent_id != 0 && view()->exists($ptpl)) {
-                $tpl = $ptpl;
-            }
-            //Get Custom Template.
-            $ctpl = "iblog.category.{$category->id}.show";
-
-
-            if (view()->exists($ctpl)) $tpl = $ctpl;
-
-
-            return view($tpl, compact('post', 'category', 'tags'));
+        $ptpl = "iblog.category.{$category->parent_id}.show";
+        if ($category->parent_id != 0 && view()->exists($ptpl)) {
+            $tpl = $ptpl;
         }
-        return abort(404);
+        //Get Custom Template.
+        $ctpl = "iblog.category.{$category->id}.show";
+
+
+        if (view()->exists($ctpl)) $tpl = $ctpl;
+
+
+        return view($tpl, compact('post', 'category', 'tags'));
+
 
     }
 

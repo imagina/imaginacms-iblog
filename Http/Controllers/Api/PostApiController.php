@@ -133,12 +133,13 @@ class PostApiController extends BaseApiController
 
             //Get Parameters from URL.
             $params = $this->getParamsRequest($request);
-
             //Request to Repository
-            $this->post->updateBy($criteria, $data, $params);
+            $post = $this->post->getItem($criteria, $params);
+            //Request to Repository
+            $this->post->update($post, $data);
 
             //Response
-            $response = ["data" => 'Item Updated'];
+            $response = ["data" => trans('iblog::common.messages.resource updated')];
             \DB::commit();//Commit to DataBase
         } catch (\Exception $e) {
             Log::Error($e);
@@ -164,11 +165,14 @@ class PostApiController extends BaseApiController
             //Get params
             $params = $this->getParamsRequest($request);
 
+            //Request to Repository
+            $post = $this->post->getItem($criteria, $params);
+
             //call Method delete
-            $this->post->deleteBy($criteria, $params);
+            $this->post->destroy($post);
 
             //Response
-            $response = ["data" => "Item deleted"];
+            $response = ["data" => trans('iblog::common.messages.resource deleted')];
             \DB::commit();//Commit to Data Base
         } catch (\Exception $e) {
             Log::Error($e);

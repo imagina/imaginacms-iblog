@@ -15,77 +15,22 @@ class CachePostDecorator extends BaseCacheDecorator implements PostRepository
         $this->repository = $post;
     }
 
-    /**
-     * Return the latest x iblog posts
-     * @param int $amount
-     * @return Collection
-     */
-    public function latest($amount = 5)
-    {
-        return $this->cache
-            ->tags([$this->entityName, 'global'])
-            ->remember("{$this->locale}.{$this->entityName}.latest.{$amount}", $this->cacheTime,
-                function () use ($amount) {
-                    return $this->repository->latest($amount);
-                }
-            );
-    }
 
     /**
-     * Get the previous post of the given post
-     * @param object $post
-     * @return object
-     */
-    public function getPreviousOf($post)
-    {
-        $postId = $post->id;
-
-        return $this->cache
-            ->tags([$this->entityName, 'global'])
-            ->remember("{$this->locale}.{$this->entityName}.getPreviousOf.{$postId}", $this->cacheTime,
-                function () use ($post) {
-                    return $this->repository->getPreviousOf($post);
-                }
-            );
-    }
-
-    /**
-     * Get the next post of the given post
-     * @param object $post
-     * @return object
-     */
-    public function getNextOf($post)
-    {
-        $postId = $post->id;
-
-        return $this->cache
-            ->tags([$this->entityName, 'global'])
-            ->remember("{$this->locale}.{$this->entityName}.getNextOf.{$postId}", $this->cacheTime,
-                function () use ($post) {
-                    return $this->repository->getNextOf($post);
-                }
-            );
-    }
-
-    /**
-     * Get the next post of the given post
      * @param object $id
      * @return object
      */
-    public function category($id)
+    public function whereCategory($id)
     {
         return $this->remember(function () use ($id) {
-            return $this->repository->category($id);
+            return $this->repository->whereCategory($id);
         });
     }
 
-    public function search($param)
-    {
-        return $this->remember(function () use ($param) {
-            return $this->repository->search($param);
-        });
-    }
-
+    /**
+     * @param $params
+     * @return mixed
+     */
     public function getItemsBy($params)
     {
         return $this->remember(function () use ($params) {
@@ -93,6 +38,11 @@ class CachePostDecorator extends BaseCacheDecorator implements PostRepository
         });
     }
 
+    /**
+     * @param $criteria
+     * @param $params
+     * @return mixed
+     */
     public function getItem($criteria, $params)
     {
         return $this->remember(function () use ($criteria, $params) {
@@ -100,18 +50,4 @@ class CachePostDecorator extends BaseCacheDecorator implements PostRepository
         });
     }
 
-
-    public function updateBy($criteria, $data, $params)
-    {
-        return $this->remember(function () use ($criteria, $data, $params) {
-            return $this->repository->updateBy($criteria, $data, $params);
-        });
-    }
-
-    public function deleteBy($criteria, $params)
-    {
-        return $this->remember(function () use ($criteria, $params) {
-            return $this->repository->deleteBy($criteria, $params);
-        });
-    }
 }

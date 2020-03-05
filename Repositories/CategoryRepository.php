@@ -23,18 +23,4 @@ interface CategoryRepository extends BaseRepository
      */
     public function getItem($criteria, $params);
 
-    /**
-     * @param $criteria
-     * @param $data
-     * @param $params
-     * @return mixed
-     */
-    public function updateBy($criteria, $data, $params);
-
-    /**
-     * @param $criteria
-     * @param $params
-     * @return mixed
-     */
-    public function deleteBy($criteria, $params);
 }

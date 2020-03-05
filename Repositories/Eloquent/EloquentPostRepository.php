@@ -20,39 +20,6 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 {
 
     /**
-     * Return the latest x iblog posts
-     * @param int $amount
-     * @return Collection
-     */
-    public function latest($amount = 5)
-    {
-        return $this->model->whereStatus(Status::PUBLISHED)->orderBy('created_at', 'desc')->take($amount)->get();
-    }
-
-    /**
-     * Get the previous post of the given post
-     * @param object $post
-     * @return object
-     */
-    public function getPreviousOf($post)
-    {
-        return $this->model->where('created_at', '<', $post->created_at)
-            ->whereStatus(Status::PUBLISHED)->orderBy('created_at', 'desc')->first();
-    }
-
-    /**
-     * Get the next post of the given post
-     * @param object $post
-     * @return object
-     */
-    public function getNextOf($post)
-    {
-        return $this->model->where('created_at', '>', $post->created_at)
-            ->whereStatus(Status::PUBLISHED)->first();
-    }
-
-
-    /**
      * @inheritdoc
      */
     public function findBySlug($slug)
@@ -66,9 +33,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();;
     }
 
+    /**
+     * @param object $id
+     * @return object
+     */
     public function whereCategory($id)
     {
-        $query = $this->model->with('categories','category', 'categories', 'tags', 'user', 'translations');
+        $query = $this->model->with('categories','category', 'tags', 'user', 'translations');
         $query->whereHas('categories', function ($q) use ($id) {
             $q->where('category_id', $id);
         })->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC');
@@ -77,12 +48,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     }
 
 
-    public function category($id)
-    {
-        return $this->model->where('category_id', $id)->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC')->get();
-    }
 
     /**
+     * Find post by id
      * @param  int $id
      * @return object
      */
@@ -101,25 +69,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
 
     /**
-     * @param $param
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function search($keys)
-    {
-        $query = $this->model->query();
-        $criterion = $keys;
-        $param = explode(' ', $criterion);
-        $query->whereHas('translations', function (Builder $q) use ($criterion) {
-            $q->where('title', 'like', "%{$criterion}%");
-        });
-        //$query->orWhere('title', 'like', "%{$criterion}%");
-        $query->orWhere('id', $criterion);
-
-        return $query->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-    /**
-     * Standard Api Method
+     * create a resource
      * Create a iblog post
      * @param  array $data
      * @return Post
@@ -151,7 +101,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $post;
     }
 
-
+    /**
+     * Delete a resource
+     * @param $model
+     * @return mixed
+     */
     public function destroy($model)
     {
         $model->untag();
@@ -195,6 +149,30 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                 $users = is_array($filter->users) ? $filter->users : [$filter->users];
                 $query->whereIn('user_id', $users);
             }
+
+            if (isset($filter->include)) {
+                $include = is_array($filter->include) ? $filter->include : [$filter->include];
+                $query->whereIn('id', $include);
+            }
+            if (isset($filter->exclude)) {
+                $exclude = is_array($filter->exclude) ? $filter->exclude : [$filter->exclude];
+                $query->whereNotIn('id', $exclude);
+            }
+
+            if (isset($filter->exclude_categories)) {
+
+                $exclude_categories = is_array($filter->exclude_categories) ? $filter->exclude_categories : [$filter->exclude_categories];
+                $query->whereHas('categories', function ($q) use ($exclude_categories) {
+                    $q->whereNotIn('category_id', $exclude_categories);
+                });
+            }
+
+            if (isset($filter->exclude_users)) {
+                $exclude_users = is_array($filter->exclude_users) ? $filter->exclude_users: [$filter->exclude_users];
+                $query->whereNotIn('user_id', $exclude_users);
+            }
+
+
             if (isset($filter->search)) { //si hay que filtrar por rango de precio
                 $criterion = $filter->search;
 
@@ -213,12 +191,23 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                     $query->whereDate($date->field, '<=', $date->to);
             }
 
+            if (isset($filter->store)) {
+                $query->where('store_id',$filter->store);
+            }else{
+                $query->where('store_id',null);
+            }
+
             //Order by
             if (isset($filter->order)) {
                 $orderByField = $filter->order->field ?? 'created_at';//Default field
                 $orderWay = $filter->order->way ?? 'desc';//Default way
                 $query->orderBy($orderByField, $orderWay);//Add order to query
             }
+
+            if (isset($filter->status)) {
+                $query->whereStatus($filter->status);
+            }
+
         }
 
         /*== FIELDS ==*/
@@ -287,66 +276,5 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
     }
 
-
-    /**
-     * Standard Api Method
-     * @param $criteria
-     * @param $data
-     * @param bool $params
-     * @return bool
-     */
-    public function updateBy($criteria, $data, $params = false)
-    {
-        /*== initialize query ==*/
-        $query = $this->model->query();
-
-        /*== FILTER ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;
-
-            //Update by field
-            if (isset($filter->field))
-                $field = $filter->field;
-        }
-
-        /*== REQUEST ==*/
-        $model = $query->where($field ?? 'id', $criteria)->first();
-
-        if ($model) {
-            $model->update((array)$data);
-            $model->categories()->sync(array_get($data, 'categories', []));
-            $model->setTags(array_get($data, 'tags', []));
-            event(new UpdateMedia($model, $data));
-        }
-
-    }
-
-    /**
-     * Standard Api Method
-     * @param $criteria
-     * @param bool $params
-     */
-    public function deleteBy($criteria, $params = false)
-    {
-        /*== initialize query ==*/
-        $query = $this->model->query();
-
-        /*== FILTER ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;
-
-            if (isset($filter->field))//Where field
-                $field = $filter->field;
-        }
-
-        /*== REQUEST ==*/
-        $model = $query->where($field ?? 'id', $criteria)->first();
-        if ($model) {
-            $model->untag();
-            $model->delete();
-            event(new DeleteMedia($model->id, get_class($model)));
-        }
-
-    }
 
 }

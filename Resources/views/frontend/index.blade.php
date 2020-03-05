@@ -29,12 +29,12 @@
                                 <div class="card-body">
                                     <h2 class="card-title">{{$post->title}}e</h2>
                                     <p class="card-text">{{$post->summary}}</p>
-                                    <a href="#"
+                                    <a href="{{$post->url}}"
                                        class="btn btn-primary">{{trans('iblog::common.button.read more')}} &rarr;</a>
                                 </div>
                                 <div class="card-footer text-muted">
                                     {{trans('iblog::common.Posted on')}} {{format_date($post->created_at,'%m %d, %G')}} {{trans('iblog::common.by')}}
-                                    <a href="#">{{$post->user->present()->fullName()}}</a>
+                                    <a href="{{$post->url}}">{{$post->user->present()->fullName()}}</a>
                                 </div>
                             </div>
                     @endforeach

@@ -11,45 +11,44 @@ use Modules\Media\Support\Traits\MediaRelation;
 
 class Category extends Model
 {
-  use Translatable, MediaRelation, PresentableTrait, NamespacedEntity;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity;
 
-  protected $table = 'iblog__categories';
-  protected static $entityNamespace = 'iblog/category';
+    protected $table = 'iblog__categories';
+    protected static $entityNamespace = 'iblog/category';
 
-  protected $fillable = ['title', 'description', 'slug', 'parent_id', 'options', 'translatable_options'];
+    protected $fillable = ['parent_id', 'options', 'store_id'];
 
-  public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
+    public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 
-  protected $fakeColumns = ['options'];
-  /**
-   * The attributes that should be casted to native types.
-   *
-   * @var array
-   */
-  protected $casts = [
-    'options' => 'array'
-  ];
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'options' => 'array'
+    ];
 
 
-  /*
-  |--------------------------------------------------------------------------
-  | RELATIONS
-  |--------------------------------------------------------------------------
-  */
-  public function parent()
-  {
-    return $this->belongsTo('Modules\Iblog\Entities\Category', 'parent_id');
-  }
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
+    public function parent()
+    {
+        return $this->belongsTo('Modules\Iblog\Entities\Category', 'parent_id');
+    }
 
-  public function children()
-  {
-    return $this->hasMany('Modules\Iblog\Entities\Category', 'parent_id');
-  }
+    public function children()
+    {
+        return $this->hasMany('Modules\Iblog\Entities\Category', 'parent_id');
+    }
 
-  public function posts()
-  {
-    return $this->belongsToMany('Modules\Iblog\Entities\Post', 'iblog__post__category');
-  }
+    public function posts()
+    {
+        return $this->belongsToMany('Modules\Iblog\Entities\Post', 'iblog__post__category')->as('posts')->with('category');
+    }
 
     public function getOptionsAttribute($value)
     {
@@ -102,20 +101,22 @@ class Category extends Model
 
     }
 
-    public function getUrlAttribute() {
+    public function getUrlAttribute()
+    {
 
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.category', [$this->slug]);
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.category.' . $this->slug);
 
     }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES
     |--------------------------------------------------------------------------
     */
-  public function scopeFirstLevelItems($query)
-  {
-    return $query->where('depth', '1')
-      ->orWhere('depth', null)
-      ->orderBy('lft', 'ASC');
-  }
+    public function scopeFirstLevelItems($query)
+    {
+        return $query->where('depth', '1')
+            ->orWhere('depth', null)
+            ->orderBy('lft', 'ASC');
+    }
 }

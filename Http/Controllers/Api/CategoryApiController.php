@@ -42,9 +42,9 @@ class CategoryApiController extends BaseApiController
     public function index(Request $request)
     {
         try {
+
             //Get Parameters from URL.
             $params = $this->getParamsRequest($request);
-
             //Request to Repository
             $categories = $this->category->getItemsBy($params);
 
@@ -74,25 +74,25 @@ class CategoryApiController extends BaseApiController
         try {
           //Get Parameters from URL.
           $params = $this->getParamsRequest($request);
-    
+
           //Request to Repository
           $category = $this->category->getItem($criteria, $params);
-    
+
           //Break if no found item
           if(!$category) throw new Exception('Item not found',404);
-          
+
           //Response
           $response = ["data" => new CategoryTransformer($category)];
-    
+
         } catch (\Exception $e) {
           $status = $this->getStatusError($e->getCode());
           $response = ["errors" => $e->getMessage()];
         }
-    
+
         //Return response
         return response()->json($response, $status ?? 200);
       }
-      
+
 
     /**
      * Create a Category
@@ -104,7 +104,7 @@ class CategoryApiController extends BaseApiController
     {
         \DB::beginTransaction();
         try {
-            $data = $request->input('attributes') ?? [];//Get data  
+            $data = $request->input('attributes') ?? [];//Get data
             //Validate Request
             $this->validateRequestApi(new CreateCategoryRequest($data));
 
@@ -144,11 +144,15 @@ class CategoryApiController extends BaseApiController
             //Get Parameters from URL.
             $params = $this->getParamsRequest($request);
 
+
             //Request to Repository
-            $this->category->updateBy($criteria, $data, $params);
+            $category = $this->category->getItem($criteria, $params);
+
+            //Request to Repository
+            $this->category->update($category, $data);
 
             //Response
-            $response = ["data" => 'Item Updated'];
+            $response = ["data" => trans('iblog::common.messages.resource updated')];
             \DB::commit();//Commit to DataBase
         } catch (\Exception $e) {
             \DB::rollback();//Rollback to Data Base
@@ -175,11 +179,13 @@ class CategoryApiController extends BaseApiController
             //Get params
             $params = $this->getParamsRequest($request);
 
+            //Request to Repository
+            $category = $this->category->getItem($criteria, $params);
             //call Method delete
-            $this->category->deleteBy($criteria, $params);
+            $this->category->destroy($category);
 
             //Response
-            $response = ["data" => "Item deleted"];
+            $response = ["data" => trans('iblog::common.messages.resource deleted')];
             \DB::commit();//Commit to Data Base
         } catch (\Exception $e) {
             \DB::rollback();//Rollback to Data Base

@@ -1,8 +1,17 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.21":
+    added:
+      - Tranlation messenges cretated, updated an deleted in common lang
+    chagend:
+      -  Methods updateBy and deleteBy by update and destroy in PostApiController and CategoryApiController
+      -  Routes frontend and PublicController
+    deleted:
+      - latest, getPreviousOf, getNextOf methods in Post
+      - Methods updateBy and deleteBy in CategoryRepository and PostRepository
   "4.0.20":
     changed:
-      - routes bakend of catgegories
+      - Routes bakend of catgegories
     deleted:
       - Handlers PostSaveImage, CategorySaveImage, CategoryDeleteImage Class
       - Listeners of Post Events and Category Events
