@@ -2,9 +2,10 @@
 
 use Illuminate\Routing\Router;
 
+$locale = LaravelLocalization::setLocale() ?: App::getLocale();
+
 if (!App::runningInConsole()) {
     $categoryRepository = app('Modules\Iblog\Repositories\CategoryRepository');
-    $locale = LaravelLocalization::setLocale() ?: App::getLocale();
     $categories = $categoryRepository->getItemsBy(json_decode(json_encode(['filter' => [], 'include' => [], 'take' => null])));
     foreach ($categories as $category) {
 
