@@ -190,11 +190,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                 if (isset($date->to))//to a date
                     $query->whereDate($date->field, '<=', $date->to);
             }
-
-            if (isset($filter->store)) {
-                $query->where('store_id',$filter->store);
-            }else{
-                $query->where('store_id',null);
+            if(is_module_enabled('Marketplace')){
+                if (isset($filter->store)) {
+                    $query->where('store_id',$filter->store);
+                }
             }
 
             //Order by

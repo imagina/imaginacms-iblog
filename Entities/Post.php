@@ -26,7 +26,6 @@ class Post extends Model implements TaggableInterface
         'user_id',
         'status',
         'created_at',
-        'store_id'
     ];
     public $translatedAttributes = [
         'title',
@@ -65,6 +64,7 @@ class Post extends Model implements TaggableInterface
     public function store()
     {
         if (is_module_enabled('Marketplace')) {
+            array_push($this->fillable, 'store_id' );
             return $this->belongsTo('Modules\Marketplace\Entities\Store');
         }
         return null;

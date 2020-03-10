@@ -16,7 +16,7 @@ class Category extends Model
     protected $table = 'iblog__categories';
     protected static $entityNamespace = 'iblog/category';
 
-    protected $fillable = ['parent_id', 'options', 'store_id'];
+    protected $fillable = ['parent_id', 'options'];
 
     public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 
@@ -39,7 +39,14 @@ class Category extends Model
     {
         return $this->belongsTo('Modules\Iblog\Entities\Category', 'parent_id');
     }
-
+    public function store()
+    {
+        if (is_module_enabled('Marketplace')) {
+            array_push($this->fillable, 'store_id' );
+            return $this->belongsTo('Modules\Marketplace\Entities\Store');
+        }
+        return null;
+    }
     public function children()
     {
         return $this->hasMany('Modules\Iblog\Entities\Category', 'parent_id');
