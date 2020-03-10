@@ -1,5 +1,8 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.23":
+    added:
+      - Validate runningInConsole in routes forntend
   "4.0.22":
     added:
       - Field store_id in Post and Category Entities for Marqketplace Module
