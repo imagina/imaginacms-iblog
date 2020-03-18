@@ -137,29 +137,29 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         /*== FILTERS ==*/
         if (isset($params->filter)) {
             $filter = $params->filter;//Short filter
-
-            if (isset($filter->categories)) {
+            if (isset($filter->categories) && !empty($filter->categories)) {
 
                 $categories = is_array($filter->categories) ? $filter->categories : [$filter->categories];
                 $query->whereHas('categories', function ($q) use ($categories) {
                     $q->whereIn('category_id', $categories);
                 });
             }
-            if (isset($filter->users)) {
+
+            if (isset($filter->users) && !empty($filter->users)) {
                 $users = is_array($filter->users) ? $filter->users : [$filter->users];
                 $query->whereIn('user_id', $users);
             }
 
-            if (isset($filter->include)) {
+            if (isset($filter->include) && !empty($filter->include)) {
                 $include = is_array($filter->include) ? $filter->include : [$filter->include];
                 $query->whereIn('id', $include);
             }
-            if (isset($filter->exclude)) {
+            if (isset($filter->exclude) && !empty($filter->exclude)) {
                 $exclude = is_array($filter->exclude) ? $filter->exclude : [$filter->exclude];
                 $query->whereNotIn('id', $exclude);
             }
 
-            if (isset($filter->exclude_categories)) {
+            if (isset($filter->exclude_categories) && !empty($filter->exclude_categories)) {
 
                 $exclude_categories = is_array($filter->exclude_categories) ? $filter->exclude_categories : [$filter->exclude_categories];
                 $query->whereHas('categories', function ($q) use ($exclude_categories) {
@@ -167,13 +167,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                 });
             }
 
-            if (isset($filter->exclude_users)) {
+            if (isset($filter->exclude_users)  && !empty($filter->exclude_users)) {
                 $exclude_users = is_array($filter->exclude_users) ? $filter->exclude_users: [$filter->exclude_users];
                 $query->whereNotIn('user_id', $exclude_users);
             }
 
 
-            if (isset($filter->search)) { //si hay que filtrar por rango de precio
+            if (isset($filter->search)&& !empty($filter->search)) { //si hay que filtrar por rango de precio
                 $criterion = $filter->search;
 
                 $query->whereHas('translations', function (Builder $q) use ($criterion) {
@@ -182,7 +182,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             }
 
             //Filter by date
-            if (isset($filter->date)) {
+            if (isset($filter->date) && !empty($filter->date) ) {
                 $date = $filter->date;//Short filter date
                 $date->field = $date->field ?? 'created_at';
                 if (isset($date->from))//From a date
@@ -191,19 +191,19 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                     $query->whereDate($date->field, '<=', $date->to);
             }
             if(is_module_enabled('Marketplace')){
-                if (isset($filter->store)) {
+                if (isset($filter->store) && !empty($filter->store)) {
                     $query->where('store_id',$filter->store);
                 }
             }
 
             //Order by
-            if (isset($filter->order)) {
+            if (isset($filter->order) && !empty($filter->order)) {
                 $orderByField = $filter->order->field ?? 'created_at';//Default field
                 $orderWay = $filter->order->way ?? 'desc';//Default way
                 $query->orderBy($orderByField, $orderWay);//Add order to query
             }
 
-            if (isset($filter->status)) {
+            if (isset($filter->status) && !empty($filter->status)) {
                 $query->whereStatus($filter->status);
             }
 

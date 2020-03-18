@@ -1,5 +1,9 @@
 url: https://github.com/imagina/asgardcms-iblog
 versions:
+  "4.0.25":
+    changed:
+      - null by array() in helper get_posts
+      - Mo empty for getItemsBy in EloquenPostRepository
   "4.0.24":
     changed:
       - Variable $locale in forntend Routes
