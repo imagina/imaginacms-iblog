@@ -39,7 +39,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
      */
     public function whereCategory($id)
     {
-        $query = $this->model->with('categories','category', 'tags', 'user', 'translations');
+        $query = $this->model->with('categories', 'category', 'tags', 'user', 'translations');
         $query->whereHas('categories', function ($q) use ($id) {
             $q->where('category_id', $id);
         })->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC');
@@ -48,10 +48,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     }
 
 
-
     /**
      * Find post by id
-     * @param  int $id
+     * @param int $id
      * @return object
      */
     public function find($id)
@@ -71,7 +70,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /**
      * create a resource
      * Create a iblog post
-     * @param  array $data
+     * @param array $data
      * @return Post
      */
     public function create($data)
@@ -86,7 +85,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /**
      * Update a resource
      * @param $post
-     * @param  array $data
+     * @param array $data
      * @return mixed
      */
     public function update($post, $data)
@@ -167,13 +166,18 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                 });
             }
 
-            if (isset($filter->exclude_users)  && !empty($filter->exclude_users)) {
-                $exclude_users = is_array($filter->exclude_users) ? $filter->exclude_users: [$filter->exclude_users];
+            if (isset($filter->exclude_users) && !empty($filter->exclude_users)) {
+                $exclude_users = is_array($filter->exclude_users) ? $filter->exclude_users : [$filter->exclude_users];
                 $query->whereNotIn('user_id', $exclude_users);
             }
 
+            if (isset($filter->tag) && !empty($filter->tag)) {
 
-            if (isset($filter->search)&& !empty($filter->search)) { //si hay que filtrar por rango de precio
+                $query->whereTag($filter->tag);
+            }
+
+
+            if (isset($filter->search) && !empty($filter->search)) { //si hay que filtrar por rango de precio
                 $criterion = $filter->search;
 
                 $query->whereHas('translations', function (Builder $q) use ($criterion) {
@@ -182,7 +186,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             }
 
             //Filter by date
-            if (isset($filter->date) && !empty($filter->date) ) {
+            if (isset($filter->date) && !empty($filter->date)) {
                 $date = $filter->date;//Short filter date
                 $date->field = $date->field ?? 'created_at';
                 if (isset($date->from))//From a date
@@ -190,9 +194,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                 if (isset($date->to))//to a date
                     $query->whereDate($date->field, '<=', $date->to);
             }
-            if(is_module_enabled('Marketplace')){
+            if (is_module_enabled('Marketplace')) {
                 if (isset($filter->store) && !empty($filter->store)) {
-                    $query->where('store_id',$filter->store);
+                    $query->where('store_id', $filter->store);
                 }
             }
 
@@ -216,7 +220,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         if (isset($params->page) && $params->page) {
             return $query->paginate($params->take);
         } else {
-            if(isset($params->skip) && !empty($params->skip)){$query->skip($params->skip);};
+            if (isset($params->skip) && !empty($params->skip)) {
+                $query->skip($params->skip);
+            };
 
             $params->take ? $query->take($params->take) : false;//Take
 
