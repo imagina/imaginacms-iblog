@@ -44,6 +44,16 @@ class Post extends Model implements TaggableInterface
         'options' => 'array'
     ];
 
+
+    public function __construct(array $attributes = [])
+    {
+        if (config()->has('asgard.iblog.config.fillable.post')) {
+            $this->fillable = config('asgard.iblog.config.fillable.post');
+        }
+
+        parent::__construct($attributes);
+    }
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'iblog__post__category');
@@ -61,14 +71,6 @@ class Post extends Model implements TaggableInterface
         return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
     }
 
-    public function store()
-    {
-        if (is_module_enabled('Marketplace')) {
-            array_push($this->fillable, 'store_id' );
-            return $this->belongsTo('Modules\Marketplace\Entities\Store');
-        }
-        return null;
-    }
     public function getOptionsAttribute($value)
     {
         try {
@@ -164,7 +166,7 @@ class Post extends Model implements TaggableInterface
     public function __call($method, $parameters)
     {
         #i: Convert array to dot notation
-        $config = implode('.', ['asgard.iblog.config.relations', $method]);
+        $config = implode('.', ['asgard.iblog.config.relations.post', $method]);
 
         #i: Relation method resolver
         if (config()->has($config)) {

@@ -2,9 +2,9 @@
     "name": "imagina/iblog-module",
     "description": "",
     "type": "asgard-module",
-    "license": "MIT", 
+    "license": "MIT",
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.4",
         "idavoll/core-module": "~3.0",
         "imagina/ihelpers-module": ">=3.1.0",
         "cviebrock/eloquent-sluggable":"~4.3"

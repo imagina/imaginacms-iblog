@@ -29,6 +29,13 @@ class Category extends Model
         'options' => 'array'
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        if (config()->has('asgard.iblog.config.fillable.category')) {
+            $this->fillable = config('asgard.iblog.config.fillable.category');
+        }
+        parent::__construct($attributes);
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -39,14 +46,7 @@ class Category extends Model
     {
         return $this->belongsTo('Modules\Iblog\Entities\Category', 'parent_id');
     }
-    public function store()
-    {
-        if (is_module_enabled('Marketplace')) {
-            array_push($this->fillable, 'store_id' );
-            return $this->belongsTo('Modules\Marketplace\Entities\Store');
-        }
-        return null;
-    }
+
     public function children()
     {
         return $this->hasMany('Modules\Iblog\Entities\Category', 'parent_id');
@@ -125,5 +125,22 @@ class Category extends Model
         return $query->where('depth', '1')
             ->orWhere('depth', null)
             ->orderBy('lft', 'ASC');
+    }
+
+    public function __call($method, $parameters)
+    {
+        #i: Convert array to dot notation
+        $config = implode('.', ['asgard.iblog.config.relations.category', $method]);
+
+        #i: Relation method resolver
+        if (config()->has($config)) {
+            $function = config()->get($config);
+            $bound = $function->bindTo($this);
+
+            return $bound();
+        }
+
+        #i: No relation found, return the call to parent (Eloquent) to handle it.
+        return parent::__call($method, $parameters);
     }
 }

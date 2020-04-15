@@ -53,11 +53,40 @@ return [
    | Add relations that will be dynamically added to the Post entity
    */
     'relations' => [
-//        'extension' => function ($self) {
-//            return $self->belongsTo(PageExtension::class, 'id', 'page_id')->first();
-//        }
+        'category'=>[
+          /*  'store' => function () {
+                return $this->belongsTo(
+                    \Modules\Marketplace\Entities\Store::class);
+            },*/
+        ],
+        'post'=>[
+           /* 'store' => function () {
+                return $this->belongsTo(
+                    \Modules\Marketplace\Entities\Store::class);
+            },*/
+        ],
     ],
-
+    /*
+    |--------------------------------------------------------------------------
+    | Fillable user fields
+    |--------------------------------------------------------------------------
+    | Set the fillable post and category fields, those fields will be mass assigned
+    */
+    'fillable' => [
+       'post'=>[
+           'options',
+           'category_id',
+           'user_id',
+           'status',
+           'created_at',
+           //'store_id'
+       ],
+        'category'=>[
+            'parent_id',
+            'options',
+            //'store_id'
+        ]
+    ],
     /*
    |--------------------------------------------------------------------------
    | Iblog Locale Configuration

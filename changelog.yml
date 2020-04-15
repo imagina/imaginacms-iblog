@@ -3,8 +3,13 @@ versions:
   "4.0.26":
     added:
       - Filter tag in getItemsBy of EloquentPostRepository
+      - Config file relationship and filleables for Category and Post entities
+      - function __cal in Category entity
+      - Construct to start filleable config on Post and Category entities
     changed:
       - Translation of category label in post view
+    deleted:
+      - Relationship  of store in Post and Category entities
   "4.0.25":
     changed:
       - null by array() in helper get_posts
