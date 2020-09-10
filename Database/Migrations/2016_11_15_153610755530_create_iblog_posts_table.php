@@ -16,7 +16,7 @@ class CreateIblogPostsTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
             // fields
-            $table->text('options')->default('')->nullable();
+            $table->text('options')->nullable();
             $table->integer('status')->default(0)->unsigned();
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on(config('auth.table', 'users'))->onDelete('restrict');
