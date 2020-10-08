@@ -51,7 +51,7 @@ class RoleTableSeeder extends Seeder
 
     //Create Roles
     foreach ($roles as $role) {
-      $roleCreated = DB::table('roles')->where("slug",$role->slug)->first();
+      $roleCreated = DB::table('roles')->where("slug",$role["slug"])->first();
       if(!isset($roleCreated->id)){
         $roleId = DB::table('roles')->insertGetId($role);
         //Assign Role to admin user
