@@ -152,8 +152,20 @@ class Post extends Model implements TaggableInterface
      */
     public function getUrlAttribute()
     {
-
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$this->category->slug.'.post', [$this->slug]);
+  
+      $category = $this->category;
+      if (!isset($category->slug)) {
+        if (!empty($this->categories)) {
+          $category = $this->categories->first();
+          if (!isset($category->slug)) {
+            $category = Category::take(1)->get()->first();
+          }
+        } else {
+          $category = Category::take(1)->get()->first();
+        }
+      }
+        
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$category->slug.'.post', [$this->slug]);
 
     }
 
