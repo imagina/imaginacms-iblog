@@ -6,7 +6,7 @@ return [
     'value' => null,
     'type' => 'input',
     'props' => [
-      'label' => 'iblog::settings.posts-per-page',
+      'label' => '(trans)iblog::settings.posts-per-page',
       'type' => 'number',
     ],
   ],
@@ -15,7 +15,7 @@ return [
     'value' => null,
     'type' => 'input',
     'props' => [
-      'label' => 'iblog::settings.id-facebook',
+      'label' => '(trans)iblog::settings.id-facebook',
     ],
   ],
   'twitter' => [
@@ -23,7 +23,7 @@ return [
     'value' => null,
     'type' => 'input',
     'props' => [
-      'label' => 'iblog::settings.twitter account',
+      'label' => '(trans)iblog::settings.twitter account',
     ],
   ],
 ];
