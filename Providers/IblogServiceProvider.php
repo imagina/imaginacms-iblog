@@ -51,6 +51,7 @@ class IblogServiceProvider extends ServiceProvider
         $this->publishConfig('iblog', 'settings');
         $this->publishConfig('iblog', 'permissions');
         $this->publishConfig('iblog', 'settings-fields');
+        $this->publishConfig('iblog', 'crud-fields');
 
         $this->app[TagManager::class]->registerNamespace(new Post());
 
