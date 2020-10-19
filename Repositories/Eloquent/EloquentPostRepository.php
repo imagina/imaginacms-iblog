@@ -76,7 +76,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   public function create($data)
   {
     $post = $this->model->create($data);
-    $post->categories()->sync(array_get($data, 'categories', []));
+    $post->categories()->sync(array_merge(array_get($data, 'categories', []), [$post->category_id]));
     event(new PostWasCreated($post, $data));
     $post->setTags(array_get($data, 'tags', []));
     return $post;
@@ -92,7 +92,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   {
     $post->update($data);
     
-    $post->categories()->sync(array_get($data, 'categories', []));
+    $post->categories()->sync(array_merge(array_get($data, 'categories', []), [$post->category_id]));
     
     event(new PostWasUpdated($post, $data));
     $post->setTags(array_get($data, 'tags', []));
@@ -179,12 +179,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       
       if (isset($filter->search) && !empty($filter->search)) { //si hay que filtrar por rango de precio
         $criterion = $filter->search;
-        //find search in columns
-        $query->where(function ($query) use ($filter, $criterion) {
-          $query->whereHas('translations', function (Builder $q) use ($criterion) {
-            $q->where('title', 'like', "%{$criterion}%");
-          });
-        })->orWhere('id', 'like', '%' . $filter->search . '%');
+        
+        $query->whereHas('translations', function (Builder $q) use ($criterion) {
+          $q->where('title', 'like', "%{$criterion}%");
+        });
       }
       
       //Filter by date
