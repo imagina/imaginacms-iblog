@@ -32,6 +32,7 @@ class PostTransformer extends Resource
       'categoryId' => $this->when($this->category_id, $this->category_id),
       'editor' => new UserProfileTransformer($this->whenLoaded('user')),
       'categories' => CategoryTransformer::collection($this->whenLoaded('categories')),
+      'files' => $this->transformerFiles()
     ];
 
     foreach ($this->tags as $tag) {
