@@ -10,8 +10,7 @@ return [
     'smallThumbSize' => ['width' => 100, 'height' => 80, 'quality' => 80],
     'roles' => [
         'editor' => 'admin'
-    ],
-    /*
+    ],    /*
      |--------------------------------------------------------------------------
      | Dynamic fields
      |--------------------------------------------------------------------------
@@ -166,5 +165,15 @@ return [
         'postPerFeed' => 20,
         'logo' => ''
     ],
-
+    //Media Fillables
+    'mediaFillable' => [
+      'post' => [
+        'mainimage' => 'single',
+        'secondaryimage' => 'single'
+      ],
+      'category' => [
+        'mainimage' => 'single',
+        'secondaryimage' => 'single'
+      ]
+    ]
 ];
