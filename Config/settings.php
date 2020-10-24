@@ -1,16 +1,5 @@
 <?php
 
-return [
-    'posts-per-page' => [
-        'description' => 'iblog::settings.posts-per-page',
-        'view' => 'number',
-    ],
-    'id-facebook' => [
-        'description' => 'iblog::settings.id-facebook',
-        'view' => 'text',
-    ],
-    'twitter' => [
-        'description' => 'iblog::settings.twitter Account',
-        'view' => 'text',
-    ],
-];
+include(base_path().'/Modules/Setting/helpers.php');
+$settingsFields = include 'settings-fields.php';//Get settings fields
+return getSettingsFormat($settingsFields, 'iblog');
