@@ -2,11 +2,11 @@
 
 namespace Modules\Iblog\Transformers;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\User\Transformers\UserProfileTransformer;
 use Modules\Media\Image\Imagy;
 
-class CategoryTransformer extends Resource
+class CategoryTransformer extends JsonResource
 {
    /**
     * @var Imagy
@@ -45,7 +45,7 @@ class CategoryTransformer extends Resource
          'parentId' => $this->parent_id,
          'children' => CategoryTransformer::collection($this->whenLoaded('children')),
          'posts' => PostTransformer::collection($this->whenLoaded('posts')),
-        'mediaFiles' => $this->mediaFiles()
+         'mediaFiles' => $this->mediaFiles()
       ];
 
       $filter = json_decode($request->filter);

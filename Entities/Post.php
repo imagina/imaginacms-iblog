@@ -2,7 +2,7 @@
 
 namespace Modules\Iblog\Entities;
 
-use Dimsav\Translatable\Translatable;
+use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Core\Traits\NamespacedEntity;
@@ -152,7 +152,7 @@ class Post extends Model implements TaggableInterface
      */
     public function getUrlAttribute()
     {
-  
+
       $category = $this->category;
       if (!isset($category->slug)) {
         if (!empty($this->categories)) {
@@ -164,7 +164,7 @@ class Post extends Model implements TaggableInterface
           $category = Category::take(1)->get()->first();
         }
       }
-        
+
         return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$category->slug.'.post', [$this->slug]);
 
     }

@@ -2,12 +2,12 @@
 
 namespace Modules\Iblog\Transformers;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Tag\Transformers\TagTransformer;
 use Modules\User\Transformers\UserProfileTransformer;
 use Illuminate\Support\Arr;
 
-class PostTransformer extends Resource
+class PostTransformer extends JsonResource
 {
   public function toArray($request)
   {

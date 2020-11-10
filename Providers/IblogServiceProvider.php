@@ -38,8 +38,8 @@ class IblogServiceProvider extends ServiceProvider
         $this->registerBindings();
         $this->app['events']->listen(BuildingSidebar::class, RegisterIblogSidebar::class);
         $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
-            $event->load('post', array_dot(trans('iblog::post')));
-            $event->load('category', array_dot(trans('iblog::category')));
+            $event->load('post', Arr::dot(trans('iblog::post')));
+            $event->load('category', Arr::dot(trans('iblog::category')));
             // append translations
         });
         $this->registerCommands();

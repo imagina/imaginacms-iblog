@@ -80,7 +80,7 @@ class MigrateIblog extends Command
 
                         foreach ($title as $i => $t) {
                             $data[$i]['title'] = $t;
-                            $titlep = str_slug($t, '-');
+                            $titlep = Str::slug($t, '-');
                         }
                     } else {
                         $data[$locale]['title'] = $post->title;
