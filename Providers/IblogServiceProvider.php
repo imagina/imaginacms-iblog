@@ -17,6 +17,7 @@ use Modules\Iblog\Repositories\Eloquent\EloquentCategoryRepository;
 use Modules\Iblog\Repositories\Eloquent\EloquentPostRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Tag\Repositories\TagManager;
+use Illuminate\Support\Arr;
 
 class IblogServiceProvider extends ServiceProvider
 {
