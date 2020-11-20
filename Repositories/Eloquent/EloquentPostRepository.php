@@ -2,6 +2,7 @@
 
 namespace Modules\Iblog\Repositories\Eloquent;
 
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Laracasts\Presenter\PresentableTrait;
