@@ -16,7 +16,6 @@ use Modules\Iblog\Repositories\PostRepository;
 use Modules\Ihelpers\Events\CreateMedia;
 use Modules\Ihelpers\Events\DeleteMedia;
 use Modules\Ihelpers\Events\UpdateMedia;
-use Illuminate\Support\Arr;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
