@@ -191,7 +191,7 @@ class MigrateIblog extends Command
 
             }
         } catch (\Exception $e) {
-            \Log::error($e);
+            \Log::error($e->getMessage());
             $this->info($e->getMessage());
         }
     }

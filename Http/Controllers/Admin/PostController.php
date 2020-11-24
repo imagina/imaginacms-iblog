@@ -100,7 +100,7 @@ class PostController extends AdminBaseController
 
         } catch (\Exception $e) {
             \DB::rollback();
-            \Log::error($e);
+            \Log::error($e->getMessage());
             return redirect()->back()
                 ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::posts.title.posts')]))->withInput($request->all());
 
@@ -139,7 +139,7 @@ class PostController extends AdminBaseController
                 ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('iblog::posts.title.posts')]));
         } catch (\Exception $e) {
             \DB::rollback();
-            \Log::error($e);
+            \Log::error($e->getMessage());
             return redirect()->back()
                 ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::posts.title.posts')]))->withInput($request->all());
 
@@ -160,7 +160,7 @@ class PostController extends AdminBaseController
             return redirect()->route('admin.iblog.post.index')
                 ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('iblog::posts.title.posts')]));
         } catch (\Exception $e) {
-            \Log::error($e);
+            \Log::error($e->getMessage());
             return redirect()->back()
                 ->withError(trans('core::core.messages.resource error', ['name' => trans('iblog::posts.title.posts')]));
 
