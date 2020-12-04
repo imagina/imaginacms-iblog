@@ -174,7 +174,8 @@ return [
       ],
       'category' => [
         'mainimage' => 'single',
-        'secondaryimage' => 'single'
+        'secondaryimage' => 'single',
+        'iconimage' => 'single'
       ]
     ]
 ];
