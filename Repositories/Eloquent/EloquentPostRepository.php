@@ -44,7 +44,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query = $this->model->with('categories', 'category', 'tags', 'user', 'translations');
         $query->whereHas('categories', function ($q) use ($id) {
             $q->where('category_id', $id);
-        })->whereStatus(Status::PUBLISHED)->where('created_at', '<', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC');
+        })->whereStatus(Status::PUBLISHED)->where('created_at', '<=', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC');
 
         return $query->paginate(setting('iblog::posts-per-page'));
     }
