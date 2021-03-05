@@ -18,6 +18,12 @@
 @section('content')
     <div class="page blog blog-revista blog-category-{{$tag->slug}} blog-category-{{$tag->id}}">
         <div class="container">
+            <div class="row">
+                @include('iblog::frontend.partials.breadcrumb')
+            </div>
+        </div>
+        
+        <div class="container">
             <div class="row fondo1 sombra-interna">
                 <div class="col-xs-12">
                     <div class="titulo-2">

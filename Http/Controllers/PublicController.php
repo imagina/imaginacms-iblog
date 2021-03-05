@@ -7,6 +7,8 @@ use Mockery\CountValidator\Exception;
 use Modules\Core\Http\Controllers\BasePublicController;
 use Modules\Iblog\Repositories\CategoryRepository;
 use Modules\Iblog\Repositories\PostRepository;
+use Modules\Iblog\Transformers\CategoryTransformer;
+use Modules\Iblog\Entities\Category;
 use Modules\Ifeeds\Support\SupportFeed;
 use Modules\Tag\Repositories\TagRepository;
 use Request;
@@ -42,7 +44,9 @@ class PublicController extends BasePublicController
         $category = $this->category->findBySlug($slug);
         $posts = $this->post->whereCategory($category->id);
         //Get Custom Template.
-
+  
+        $categoryBreadcrumb = CategoryTransformer::collection(Category::ancestorsAndSelf($category->id));
+        
         $ptpl = "iblog.category.{$category->parent_id}.index";
         if ($category->parent_id != 0 && view()->exists($ptpl)) {
             $tpl = $ptpl;
@@ -50,7 +54,7 @@ class PublicController extends BasePublicController
         $ctpl = "iblog.category.{$category->id}.index";
         if (view()->exists($ctpl)) $tpl = $ctpl;
 
-        return view($tpl, compact('posts', 'category'));
+        return view($tpl, compact('posts', 'category','categoryBreadcrumb'));
 
     }
 
@@ -71,12 +75,12 @@ class PublicController extends BasePublicController
         }
         //Get Custom Template.
         $ctpl = "iblog.category.{$category->id}.show";
-
-
+  
+      $categoryBreadcrumb = CategoryTransformer::collection(Category::ancestorsAndSelf($category->id));
         if (view()->exists($ctpl)) $tpl = $ctpl;
 
 
-        return view($tpl, compact('post', 'category', 'tags'));
+        return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb'));
 
 
     }

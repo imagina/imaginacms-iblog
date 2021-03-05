@@ -13,6 +13,7 @@ use Modules\Iblog\Events\PostWasCreated;
 use Modules\Iblog\Events\PostWasDeleted;
 use Modules\Iblog\Events\PostWasUpdated;
 use Modules\Iblog\Repositories\PostRepository;
+use Modules\Iblog\Entities\Category;
 use Modules\Ihelpers\Events\CreateMedia;
 use Modules\Ihelpers\Events\DeleteMedia;
 use Modules\Ihelpers\Events\UpdateMedia;
@@ -137,13 +138,37 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         /*== FILTERS ==*/
         if (isset($params->filter)) {
             $filter = $params->filter;//Short filter
-            if (isset($filter->categories) && !empty($filter->categories)) {
-
-                $categories = is_array($filter->categories) ? $filter->categories : [$filter->categories];
-                $query->whereHas('categories', function ($q) use ($categories) {
-                    $q->whereIn('category_id', $categories);
+          
+          // add filter by Categories 1 or more than 1, in array/*
+          if (isset($filter->categories) && !empty($filter->categories)) {
+            is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
+            $query->where(function ($query) use ($filter) {
+              $query->whereHas('categories', function ($query) use ($filter) {
+                $query->whereIn('iblog__post__category.category_id', $filter->categories);
+              })->orWhereIn('category_id', $filter->categories);
+            });
+    
+          }
+  
+          //Filter by catgeory ID
+          if (isset($filter->category) && !empty($filter->category)) {
+            
+            $categories = Category::descendantsAndSelf($filter->category);
+    
+            if ($categories->isNotEmpty()) {
+              $query->where(function ($query) use ($categories) {
+        
+                $query->where(function ($query) use ($categories) {
+                  $query->whereHas('categories', function ($query) use ($categories) {
+                    $query->whereIn('iblog__post__category.category_id', $categories->pluck("id"));
+                  })->orWhereIn('iblog__posts.category_id', $categories->pluck("id"));
                 });
+              });
+      
             }
+    
+    
+          }
 
             if (isset($filter->users) && !empty($filter->users)) {
                 $users = is_array($filter->users) ? $filter->users : [$filter->users];
