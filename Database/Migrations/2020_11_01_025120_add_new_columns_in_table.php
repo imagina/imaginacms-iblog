@@ -16,6 +16,7 @@ class AddNewColumnsInTable extends Migration
         Schema::table('iblog__posts', function (Blueprint $table) {
 					$table->boolean('featured')->default(false);
           $table->integer('sort_order')->default(0);
+          $table->date('date_available')->nullable();
         });
       Schema::table('iblog__categories', function (Blueprint $table) {
         $table->tinyInteger('status')->default(1)->unsigned();

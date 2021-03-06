@@ -10,7 +10,7 @@ return [
     ],
     
     'show' => [
-      'post' => 'blog/p/{productSlug}',
+      'post' => 'blog/{categorySlug}/{postSlug}',
     ],
   ],
 ];

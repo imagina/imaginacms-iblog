@@ -184,7 +184,7 @@ return [
  | Define routes to sites with old routes
  |--------------------------------------------------------------------------
  */
-  'useOldRoutes' => true,
+  'useOldRoutes' => false,
   
   /*
   |--------------------------------------------------------------------------
@@ -221,6 +221,72 @@ return [
   
   "indexItemListAttributes" => [
     'withCreatedDate' => true,
-    'withViewMoreButton' => true
-  ]
+    'withViewMoreButton' => true,
+  
+  ],
+  
+  /*
+|--------------------------------------------------------------------------
+| Filters to the index page
+|--------------------------------------------------------------------------
+*/
+  'filters' => [
+    'categories' => [
+      'title' => 'iblog::category.plural',
+      'name' => 'categories',
+      /*
+       * Types of Title:
+       *  itemSelected
+       *  titleOfTheConfig - default
+       */
+      'typeTitle' => 'titleOfTheConfig',
+      /*
+       * Types of Modes for render:
+       *  allTree - default
+       *  allFamilyOfTheSelectedNode (Need NodeTrait implemented - laravel-nestedset package)
+       *  onlyLeftAndRightOfTheSelectedNode (Need NodeTrait implemented - laravel-nestedset package)
+       */
+      'renderMode' => 'allTree',
+      'status' => true,
+      'isExpanded' => true,
+      'type' => 'tree',
+      'repository' => 'Modules\Iblog\Repositories\CategoryRepository',
+      'entityClass' => 'Modules\Iblog\Entities\Category',
+      'emitTo' => null,
+      'repoAction' => null,
+      'repoAttribute' => null,
+      'listener' => null,
+      /*
+      * Layouts available:
+      *  ttys
+      *  alnat
+       * default - default
+      */
+      'layout' => 'default',
+      'classes' => 'col-12'
+    ]
+  ],
+  
+  /*
+|--------------------------------------------------------------------------
+| Custom Includes Before Filters
+|--------------------------------------------------------------------------
+*/
+  'customIncludesBeforeFilters' => [
+  /*
+   "iblog.partials.beforeFilter"
+  
+  */
+  ],
+  /*
+|--------------------------------------------------------------------------
+| Custom Includes After Filters
+|--------------------------------------------------------------------------
+*/
+  'customIncludesAfterFilters' => [
+  /*
+   "iblog.partials.beforeFilter"
+  
+  */
+  ],
 ];

@@ -270,6 +270,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
     
       } else {
+        //Pre filters by default
+        //pre-filter date_available
+        $query->where(function ($query) {
+          $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
+          $query->orWhereNull("date_available");
+        });
         
         //pre-filter status
         $query->where("status", 2);
@@ -355,7 +361,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
     
       } else {
-    
+        //Pre filters by default
+        //pre-filter date_available
+        $query->where(function ($query) {
+          $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
+          $query->orWhereNull("date_available");
+        });
+        
         //pre-filter status
         $query->where("status", 2);
     

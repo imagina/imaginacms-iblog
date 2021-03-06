@@ -127,10 +127,10 @@ class Category extends Model
     
     if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
       if ($useOldRoutes) {
-        $url = \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.category.' . $this->slug);
+        $url = \URL::route($currentLocale . '.iblog.category.' . $this->slug);
       } else {
    
-        $url = \URL::route($currentLocale . '.iblog.blog.index', $this->slug);
+        $url = \URL::route($currentLocale . '.iblog.blog.index.category', $this->slug);
         
       }
     }

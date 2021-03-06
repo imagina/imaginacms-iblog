@@ -154,21 +154,30 @@ class Post extends Model implements TaggableInterface
      */
     public function getUrlAttribute()
     {
+      $useOldRoutes = config('asgard.iblog.config.useOldRoutes') ?? false;
 
+      
       $category = $this->category;
-      if (!isset($category->slug)) {
-        if (!empty($this->categories)) {
-          $category = $this->categories->first();
-          if (!isset($category->slug)) {
+  
+      if ($useOldRoutes){
+        if (!isset($category->slug)) {
+          if (!empty($this->categories)) {
+            $category = $this->categories->first();
+            if (!isset($category->slug)) {
+              $category = Category::take(1)->get()->first();
+            }
+          } else {
             $category = Category::take(1)->get()->first();
           }
-        } else {
-          $category = Category::take(1)->get()->first();
         }
-      }
-
+  
         return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$category->slug.'.post', [$this->slug]);
-
+  
+      }else{
+        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.blog.show', [$category->slug,$this->slug]);
+  
+      }
+  
     }
 
     /**

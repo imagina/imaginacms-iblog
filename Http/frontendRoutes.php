@@ -14,6 +14,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     'as' => $locale . '.iblog.blog.index',
     'uses' => 'PublicController@index',
   ]);
+  $router->get(trans('iblog::routes.blog.index.category'), [
+    'as' => $locale . '.iblog.blog.index.category',
+    'uses' => 'PublicController@index',
+  ]);
+  $router->get(trans('iblog::routes.blog.show.post'), [
+    'as' => $locale . '.iblog.blog.show',
+    'uses' => 'PublicController@show',
+  ]);
   
 });
 
@@ -30,12 +38,12 @@ if(config('asgard.iblog.config.useOldRoutes')) {
         
         $router->get('/', [
           'as' => $locale . '.iblog.category.' . $category->slug,
-          'uses' => 'PublicController@index',
+          'uses' => 'OldPublicController@index',
           'middleware' => config('asgard.iblog.config.middleware'),
         ]);
         $router->get('{slug}', [
           'as' => $locale . '.iblog.' . $category->slug . '.post',
-          'uses' => 'PublicController@show',
+          'uses' => 'OldPublicController@show',
           'middleware' => config('asgard.iblog.config.middleware'),
         ]);
       });
@@ -46,7 +54,7 @@ if(config('asgard.iblog.config.useOldRoutes')) {
     'middleware' => $customMiddlewares], function (Router $router) use ($locale) {
     $router->get('{slug}', [
       'as' => $locale . '.iblog.tag.slug',
-      'uses' => 'PublicController@tag',
+      'uses' => 'OldPublicController@tag',
       //'middleware' => config('asgard.iblog.config.middleware'),
     ]);
   });
@@ -57,7 +65,7 @@ if(config('asgard.iblog.config.useOldRoutes')) {
     'middleware' => $customMiddlewares], function (Router $router) use ($locale) {
     $router->get('{format}', [
       'as' => $locale . '.iblog.feed.format',
-      'uses' => 'PublicController@feed',
+      'uses' => 'OldPublicController@feed',
     
     ]);
   });
