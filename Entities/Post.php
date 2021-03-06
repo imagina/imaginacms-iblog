@@ -25,6 +25,8 @@ class Post extends Model implements TaggableInterface
         'category_id',
         'user_id',
         'status',
+        'featured',
+        'sort_order',
         'created_at',
     ];
     public $translatedAttributes = [

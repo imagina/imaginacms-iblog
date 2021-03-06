@@ -18,7 +18,14 @@ class Category extends Model
     protected $table = 'iblog__categories';
     protected static $entityNamespace = 'iblog/category';
 
-    protected $fillable = ['parent_id', 'options'];
+    protected $fillable = [
+      'parent_id',
+      'show_menu',
+      'featured',
+      'status',
+      'sort_order',
+      'options'
+    ];
 
     public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 

@@ -126,7 +126,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query = $this->model->query();
 
         /*== RELATIONSHIPS ==*/
-        if (in_array('*', $params->include)) {//If Request all relationships
+        if (in_array('*', $params->include ?? [])) {//If Request all relationships
             $query->with(['translations']);
         } else {//Especific relationships
             $includeDefault = ['translations'];//Default relationships
@@ -148,6 +148,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
               })->orWhereIn('category_id', $filter->categories);
             });
     
+          }
+  
+          //Filter by featured
+          if (isset($filter->featured) && is_bool($filter->featured)) {
+            $query->where("featured", $filter->featured);
           }
   
           //Filter by catgeory ID
@@ -201,15 +206,33 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
                 $query->whereTag($filter->tag);
             }
-
-
-            if (isset($filter->search) && !empty($filter->search)) { //si hay que filtrar por rango de precio
-                $criterion = $filter->search;
-
-                $query->whereHas('translations', function (Builder $q) use ($criterion) {
-                    $q->where('title', 'like', "%{$criterion}%");
-                });
+  
+  
+          // add filter by search
+          if (isset($filter->search) && !empty($filter->search)) {
+            // removing symbols used by MySQL
+            $filter->search = preg_replace("/[^a-zA-Z0-9]+/", " ", $filter->search);
+            $words = explode(" ", $filter->search);//Explode
+    
+            //Validate words of minum 3 length
+            foreach ($words as $key => $word) {
+              if (strlen($word) >= 3) {
+                $words[$key] = '+' . $word . '*';
+              }
             }
+    
+            //Search query
+            $query->leftJoin(\DB::raw(
+              "(SELECT MATCH (name) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
+              "from iblog__post_translations " .
+              "where `locale` = '{$filter->locale}') as ptrans"
+            ), 'ptrans.post_id', 'iblog__posts.id')
+              ->where('scoreSearch', '>', 0)
+              ->orderBy('scoreSearch', 'desc');
+    
+            //Remove order by
+            unset($filter->order);
+          }
 
             //Filter by date
             if (isset($filter->date) && !empty($filter->date)) {
@@ -238,21 +261,52 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             }
 
         }
-
-        /*== FIELDS ==*/
-        if (isset($params->fields) && count($params->fields))
-            $query->select($params->fields);
-        /*== REQUEST ==*/
+  
+      //Order by "Sort order"
+      if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
+        $query->orderBy('sort_order', 'desc');//Add order to query
+      }
+  
+      if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
+    
+      } else {
+        
+        //pre-filter status
+        $query->where("status", 2);
+    
+      }
+      
+      // ORDER
+      if (isset($params->order) && $params->order) {
+    
+        $order = is_array($params->order) ? $params->order : [$params->order];
+    
+        foreach ($order as $orderObject) {
+          if (isset($orderObject->field) && isset($orderObject->way)) {
+            if (in_array($orderObject->field, $this->model->translatedAttributes)) {
+              $query->join('iblog__post_translations as translations', 'translations.post_id', '=', 'iblog__posts.id');
+              $query->orderBy("translations.$orderObject->field", $orderObject->way);
+            } else
+              $query->orderBy($orderObject->field, $orderObject->way);
+          }
+      
+        }
+      }
+  
+      /*== FIELDS ==*/
+      if (isset($params->fields) && count($params->fields))
+        $query->select($params->fields);
+  
+      //dd($query->toSql());
+      /*== REQUEST ==*/
+      if (isset($params->onlyQuery) && $params->onlyQuery) {
+        return $query;
+      } else
         if (isset($params->page) && $params->page) {
-            return $query->paginate($params->take);
+          return $query->paginate($params->take);
         } else {
-            if (isset($params->skip) && !empty($params->skip)) {
-                $query->skip($params->skip);
-            };
-
-            $params->take ? $query->take($params->take) : false;//Take
-
-            return $query->get();
+          isset($params->take) && $params->take ? $query->take($params->take) : false;//Take
+          return $query->get();
         }
     }
 
@@ -297,6 +351,15 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                 // find by specific attribute or by id
                 $query->where($field ?? 'id', $criteria);
         }
+  
+      if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
+    
+      } else {
+    
+        //pre-filter status
+        $query->where("status", 2);
+    
+      }
 
         /*== FIELDS ==*/
         if (isset($params->fields) && count($params->fields))
