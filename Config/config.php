@@ -284,9 +284,19 @@ return [
 |--------------------------------------------------------------------------
 */
   'customIncludesAfterFilters' => [
-  /*
-   "iblog.partials.beforeFilter"
+    /*
+     "iblog.partials.beforeFilter"
+    
+    */
+  ],
   
-  */
+  /*
+|--------------------------------------------------------------------------
+| Custom classes to the index cols
+|--------------------------------------------------------------------------
+*/
+  'customClassesToTheIndexCols' => [
+    "sidebar" => "",
+    "posts" => "",
   ],
 ];
