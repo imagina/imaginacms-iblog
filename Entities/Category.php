@@ -7,16 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Core\Traits\NamespacedEntity;
 use Modules\Media\Entities\File;
+use Kalnoy\Nestedset\NodeTrait;
 use Modules\Media\Support\Traits\MediaRelation;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait;
 
     protected $table = 'iblog__categories';
     protected static $entityNamespace = 'iblog/category';
 
-    protected $fillable = ['parent_id', 'options'];
+    protected $fillable = [
+      'parent_id',
+      'show_menu',
+      'featured',
+      'status',
+      'sort_order',
+      'options'
+    ];
 
     public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 
@@ -108,12 +117,25 @@ class Category extends Model
 
     }
 
-    public function getUrlAttribute()
-    {
 
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.category.' . $this->slug);
+  public function getUrlAttribute()
+  {
+    $url = "";
+    $useOldRoutes = config('asgard.iblog.config.useOldRoutes') ?? false;
+    $currentLocale = \LaravelLocalization::getCurrentLocale();
 
+
+    if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
+      if ($useOldRoutes) {
+        $url = \URL::route($currentLocale . '.iblog.category.' . $this->slug);
+      } else {
+
+        $url = \URL::route($currentLocale . '.iblog.blog.index.category', $this->slug);
+
+      }
     }
+    return $url;
+  }
 
     /*
     |--------------------------------------------------------------------------
@@ -143,4 +165,25 @@ class Category extends Model
         #i: No relation found, return the call to parent (Eloquent) to handle it.
         return parent::__call($method, $parameters);
     }
+
+  public function getLftName()
+  {
+    return 'lft';
+  }
+
+  public function getRgtName()
+  {
+    return 'rgt';
+  }
+
+  public function getDepthName()
+  {
+    return 'depth';
+  }
+
+  public function getParentIdName()
+  {
+    return 'parent_id';
+  }
+
 }

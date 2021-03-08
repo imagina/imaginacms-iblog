@@ -44,7 +44,7 @@ return [
 
     'date'      =>  'Fecha y hora',
     'optional'  =>  '(Opcional)',
-    
+
     'summary' => 'Sumario',
     'content' => 'Content',
 
@@ -58,5 +58,8 @@ return [
     'parent' => 'Superior',
 
 
+  'social' => [
+    'share' => 'Compartir'
+  ],
 
 ];

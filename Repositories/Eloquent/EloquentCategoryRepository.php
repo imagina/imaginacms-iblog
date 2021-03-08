@@ -96,6 +96,11 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
                     $query->where('store_id',$filter->store);
                 }
             }
+
+            if (isset($filter->ids)) {
+                is_array($filter->ids) ? true : $filter->ids = [$filter->ids];
+                $query->whereIn('iblog__categories.id', $filter->ids);
+            }
             //Order by
             if (isset($filter->order)) {
                 $orderByField = $filter->order->field ?? 'created_at';//Default field
