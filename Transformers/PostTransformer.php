@@ -27,7 +27,7 @@ class PostTransformer extends JsonResource
       'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
       'gallery' => $this->gallery,
       'featured' => $this->when($this->featured, $this->featured),
-      'sortOrder' => $this->when($this->sortOrder, $this->sortOrder),
+      'sortOrder' => !$this->sort_order ? "0": (string)$this->sort_order,
       'updatedAt' => $this->when($this->updated_at, $this->updated_at),
       'createdAt' => $this->when($this->created_at, $this->created_at),
       'options' => $this->when($this->options, $this->options),

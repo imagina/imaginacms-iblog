@@ -22,6 +22,7 @@ class AddNewColumnsInTable extends Migration
         $table->tinyInteger('status')->default(1)->unsigned();
         $table->tinyInteger('show_menu')->default(0)->unsigned();
         $table->boolean('featured')->default(false);
+        $table->integer('sort_order')->default(0);
         $table->integer('parent_id')->nullable()->default(null)->change();
   
       });
@@ -42,6 +43,7 @@ class AddNewColumnsInTable extends Migration
         $table->dropColumn('status');
         $table->dropColumn('show_menu');
         $table->dropColumn('featured');
+        $table->dropColumn('sort_order');
       });
     }
 }

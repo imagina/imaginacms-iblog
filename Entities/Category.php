@@ -16,7 +16,6 @@ class Category extends Model
     use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait;
 
     protected $table = 'iblog__categories';
-    protected static $entityNamespace = 'iblog/category';
 
     protected $fillable = [
       'parent_id',

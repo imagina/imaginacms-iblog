@@ -381,6 +381,58 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $query->first();
 
     }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param $data
+   * @param bool $params
+   * @return bool
+   */
+  public function updateBy($criteria, $data, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      //Update by field
+      if (isset($filter->field))
+        $field = $filter->field;
+    }
+    
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+    $model ? $model->update((array)$data) : false;
+    event(new UpdateMedia($model, $data));
+  }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param bool $params
+   */
+  public function deleteBy($criteria, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      if (isset($filter->field))//Where field
+        $field = $filter->field;
+    }
+    
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+    $model ? $model->delete() : false;
+    event(new DeleteMedia($model->id, get_class($model)));
+    
+  }
 
 
 }

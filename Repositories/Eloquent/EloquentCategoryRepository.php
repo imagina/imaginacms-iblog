@@ -190,7 +190,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     public function update($category, $data)
     {
         $category->update($data);
-
+    
         event(new CategoryWasUpdated($category, $data));
 
         return $category;
