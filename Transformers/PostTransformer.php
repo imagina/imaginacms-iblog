@@ -19,7 +19,7 @@ class PostTransformer extends JsonResource
       'description' => $this->when($this->description, $this->description),
       'status' => $this->when($this->status, intval($this->status)),
       'statusName' => $this->when($this->status, $this->present()->status),
-      //'url' => $this->when($this->url, $this->url),
+      'url' => $this->url ?? '#',
       'metaTitle' => $this->when($this->meta_title, $this->meta_title),
       'metaDescription' => $this->when($this->meta_description, $this->meta_description),
       'metaKeywords' => $this->when($this->meta_keywords, $this->meta_keywords),
@@ -37,17 +37,17 @@ class PostTransformer extends JsonResource
       'categories' => CategoryTransformer::collection($this->whenLoaded('categories')),
       'mediaFiles' => $this->mediaFiles()
     ];
-
+    
     foreach ($this->tags as $tag) {
       $data['tags'][] = $tag->name;
     }
     $filter = json_decode($request->filter);
-
+    
     // Return data with available translations
     if (isset($filter->allTranslations) && $filter->allTranslations) {
       // Get langs avaliables
       $languages = \LaravelLocalization::getSupportedLocales();
-
+      
       foreach ($languages as $lang => $value) {
         $data[$lang]['title'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['title'] : '';
@@ -65,8 +65,8 @@ class PostTransformer extends JsonResource
           $this->translate("$lang")['meta_keywords'] : '';
       }
     }
-
+    
     return $data;
-
+    
   }
 }
