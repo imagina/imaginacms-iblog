@@ -20,7 +20,7 @@
       
       <div class="row">
         {{-- Sidebar --}}
-        <div class="col-lg-3 sidebar {{config('asgard.iblog.config.customClassesToTheIndexCols.sidebar')}}">
+        <div class="sidebar {{config('asgard.iblog.config.customClassesToTheIndexCols.sidebar')}}">
           {{-- Custom Includes --}}
           @if(config("asgard.iblog.config.customIncludesBeforeFilters"))
             @foreach(config("asgard.iblog.config.customIncludesBeforeFilters") as $view)
@@ -40,7 +40,7 @@
   
   
         {{-- Top Content , Products, Pagination --}}
-        <div class="col-lg-9  {{config('asgard.iblog.config.customClassesToTheIndexCols.posts')}}">
+        <div class="posts {{config('asgard.iblog.config.customClassesToTheIndexCols.posts')}}">
   
           @if(setting("iblog::showCategoryChildrenIndexHeader"))
             @include('iblog::frontend.partials.children-categories-index-section',["category" => $category ?? null])

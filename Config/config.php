@@ -296,7 +296,7 @@ return [
 |--------------------------------------------------------------------------
 */
   'customClassesToTheIndexCols' => [
-    "sidebar" => "",
-    "posts" => "",
+    "sidebar" => "col-lg-3",
+    "posts" => "col-lg-9",
   ],
 ];
