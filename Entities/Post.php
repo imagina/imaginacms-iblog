@@ -47,15 +47,6 @@ class Post extends Model implements TaggableInterface
     ];
 
 
-    public function __construct(array $attributes = [])
-    {
-        if (config()->has('asgard.iblog.config.fillable.post')) {
-            $this->fillable = config('asgard.iblog.config.fillable.post');
-        }
-
-        parent::__construct($attributes);
-    }
-
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'iblog__post__category');

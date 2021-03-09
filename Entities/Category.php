@@ -36,14 +36,7 @@ class Category extends Model
     protected $casts = [
         'options' => 'array'
     ];
-
-    public function __construct(array $attributes = [])
-    {
-        if (config()->has('asgard.iblog.config.fillable.category')) {
-            $this->fillable = config('asgard.iblog.config.fillable.category');
-        }
-        parent::__construct($attributes);
-    }
+    
 
     /*
     |--------------------------------------------------------------------------
