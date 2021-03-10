@@ -48,6 +48,24 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
         return $query->paginate(setting('iblog::posts-per-page'));
     }
+    
+    public function whereTag($slug)
+    {
+      /*== initialize query ==*/
+      $query = $this->model->query();
+  
+      /*== RELATIONSHIPS ==*/
+      if (in_array('*', $params->include ?? [])) {//If Request all relationships
+        $query->with(['categories', 'category', 'tags', 'user', 'translations']);
+      } else {//Especific relationships
+        $includeDefault = ['categories', 'category', 'tags', 'user', 'translations'];//Default relationships
+        if (isset($params->include))//merge relations with default relationships
+          $includeDefault = array_merge($includeDefault, $params->include);
+        $query->with($includeDefault);//Add Relationships to query
+      }
+      $query->whereTag($slug);
+        return $query->paginate(setting('iblog::posts-per-page'));
+    }
 
 
     /**
