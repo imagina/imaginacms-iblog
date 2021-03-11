@@ -104,11 +104,12 @@ class PublicController extends BasePublicController
     $tpl = 'iblog::frontend.tag';
     $ttpl = 'iblog.tag';
     $tag = $this->tag->findBySlug($slug);
+    
     if (view()->exists($ttpl)) $tpl = $ttpl;
     
     $posts = $this->post->whereTag($slug);
     //Get Custom Template.
-    $ctpl = "iblog.tag.{$tag->id}";
+    $ctpl = "iblog.tag.".($tag->id ?? '');
     if (view()->exists($ctpl)) $tpl = $ctpl;
     
     

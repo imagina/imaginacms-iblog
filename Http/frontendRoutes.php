@@ -14,6 +14,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     'as' => $locale . '.iblog.blog.index',
     'uses' => 'PublicController@index',
   ]);
+  $router->get(trans('iblog::routes.blog.index.tag'), [
+    'as' => $locale . '.iblog.blog.tag',
+    'uses' => 'PublicController@tag',
+  ]);
   $router->get(trans('iblog::routes.blog.index.category'), [
     'as' => $locale . '.iblog.blog.index.category',
     'uses' => 'PublicController@index',

@@ -25,5 +25,9 @@
     <li class="breadcrumb-item active" aria-current="page">{{$post->title}}</li>
   @endif
   
+  @if(isset($tag->id))
+    <li class="breadcrumb-item active" aria-current="page">{{$tag->name}}</li>
+  @endif
+  
 
 </x-isite::breadcrumb>

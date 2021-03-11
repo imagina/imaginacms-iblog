@@ -192,6 +192,19 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     
           }
+          if (isset($filter->tagId)) {
+    
+            $query->whereTag($filter->tagId,"id");
+    
+    
+          }
+  
+          if (isset($filter->tagSlug) ) {
+    
+            $query->whereTag($filter->tagSlug);
+    
+    
+          }
 
             if (isset($filter->users) && !empty($filter->users)) {
                 $users = is_array($filter->users) ? $filter->users : [$filter->users];
@@ -424,7 +437,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
     $model ? $model->update((array)$data) : false;
-    event(new UpdateMedia($model, $data));
+    event(new PostWasUpdated($model, $data));
+    $model->setTags(Arr::get($data, 'tags', []));
   }
   
   /**
