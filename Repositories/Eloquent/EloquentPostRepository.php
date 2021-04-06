@@ -48,6 +48,24 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
         return $query->paginate(setting('iblog::posts-per-page'));
     }
+    
+    public function whereTag($slug)
+    {
+      /*== initialize query ==*/
+      $query = $this->model->query();
+  
+      /*== RELATIONSHIPS ==*/
+      if (in_array('*', $params->include ?? [])) {//If Request all relationships
+        $query->with(['categories', 'category', 'tags', 'user', 'translations']);
+      } else {//Especific relationships
+        $includeDefault = ['categories', 'category', 'tags', 'user', 'translations'];//Default relationships
+        if (isset($params->include))//merge relations with default relationships
+          $includeDefault = array_merge($includeDefault, $params->include);
+        $query->with($includeDefault);//Add Relationships to query
+      }
+      $query->whereTag($slug);
+        return $query->paginate(setting('iblog::posts-per-page'));
+    }
 
 
     /**
@@ -173,6 +191,19 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             }
 
 
+          }
+          if (isset($filter->tagId)) {
+    
+            $query->whereTag($filter->tagId,"id");
+    
+    
+          }
+  
+          if (isset($filter->tagSlug) ) {
+    
+            $query->whereTag($filter->tagSlug);
+    
+    
           }
 
             if (isset($filter->users) && !empty($filter->users)) {
@@ -381,6 +412,59 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $query->first();
 
     }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param $data
+   * @param bool $params
+   * @return bool
+   */
+  public function updateBy($criteria, $data, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      //Update by field
+      if (isset($filter->field))
+        $field = $filter->field;
+    }
+    
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+    $model ? $model->update((array)$data) : false;
+    event(new PostWasUpdated($model, $data));
+    $model->setTags(Arr::get($data, 'tags', []));
+  }
+  
+  /**
+   * Standard Api Method
+   * @param $criteria
+   * @param bool $params
+   */
+  public function deleteBy($criteria, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
+    
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+      
+      if (isset($filter->field))//Where field
+        $field = $filter->field;
+    }
+    
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+    $model ? $model->delete() : false;
+    event(new DeleteMedia($model->id, get_class($model)));
+    
+  }
 
 
 }

@@ -81,8 +81,15 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
                 });
         })->orWhere('id', 'like', '%' . $filter->search . '%');
             }
-
-            //Filter by date
+  
+  
+          //add filter by showMenu
+          if (isset($filter->showMenu)&& is_bool($filter->showMenu)) {
+            $query->where('show_menu', $filter->showMenu);
+          }
+  
+  
+          //Filter by date
             if (isset($filter->date)) {
                 $date = $filter->date;//Short filter date
                 $date->field = $date->field ?? 'created_at';
@@ -195,7 +202,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     public function update($category, $data)
     {
         $category->update($data);
-
+    
         event(new CategoryWasUpdated($category, $data));
 
         return $category;

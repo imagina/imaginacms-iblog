@@ -66,27 +66,7 @@ return [
        },*/
     ],
   ],
-  /*
-  |--------------------------------------------------------------------------
-  | Fillable user fields
-  |--------------------------------------------------------------------------
-  | Set the fillable post and category fields, those fields will be mass assigned
-  */
-  'fillable' => [
-    'post' => [
-      'options',
-      'category_id',
-      'user_id',
-      'status',
-      'created_at',
-      //'store_id'
-    ],
-    'category' => [
-      'parent_id',
-      'options',
-      //'store_id'
-    ]
-  ],
+
   /*
  |--------------------------------------------------------------------------
  | Iblog Locale Configuration
@@ -296,7 +276,7 @@ return [
 |--------------------------------------------------------------------------
 */
   'customClassesToTheIndexCols' => [
-    "sidebar" => "",
-    "posts" => "",
+    "sidebar" => "col-lg-3",
+    "posts" => "col-lg-9",
   ],
 ];
