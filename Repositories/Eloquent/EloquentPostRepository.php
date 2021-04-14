@@ -254,7 +254,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
             //Search query
             $query->leftJoin(\DB::raw(
-              "(SELECT MATCH (name) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
+              "(SELECT MATCH (title) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
               "from iblog__post_translations " .
               "where `locale` = '{$filter->locale}') as ptrans"
             ), 'ptrans.post_id', 'iblog__posts.id')
