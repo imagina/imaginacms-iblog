@@ -48,12 +48,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
         return $query->paginate(setting('iblog::posts-per-page'));
     }
-    
+
     public function whereTag($slug)
     {
       /*== initialize query ==*/
       $query = $this->model->query();
-  
+
       /*== RELATIONSHIPS ==*/
       if (in_array('*', $params->include ?? [])) {//If Request all relationships
         $query->with(['categories', 'category', 'tags', 'user', 'translations']);
@@ -193,17 +193,17 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
           }
           if (isset($filter->tagId)) {
-    
+
             $query->whereTag($filter->tagId,"id");
-    
-    
+
+
           }
-  
+
           if (isset($filter->tagSlug) ) {
-    
+
             $query->whereTag($filter->tagSlug);
-    
-    
+
+
           }
 
             if (isset($filter->users) && !empty($filter->users)) {
@@ -254,7 +254,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
             //Search query
             $query->leftJoin(\DB::raw(
-              "(SELECT MATCH (name) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
+              "(SELECT MATCH (title) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
               "from iblog__post_translations " .
               "where `locale` = '{$filter->locale}') as ptrans"
             ), 'ptrans.post_id', 'iblog__posts.id')
@@ -412,7 +412,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         return $query->first();
 
     }
-  
+
   /**
    * Standard Api Method
    * @param $criteria
@@ -424,23 +424,23 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   {
     /*== initialize query ==*/
     $query = $this->model->query();
-    
+
     /*== FILTER ==*/
     if (isset($params->filter)) {
       $filter = $params->filter;
-      
+
       //Update by field
       if (isset($filter->field))
         $field = $filter->field;
     }
-    
+
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
     $model ? $model->update((array)$data) : false;
     event(new PostWasUpdated($model, $data));
     $model->setTags(Arr::get($data, 'tags', []));
   }
-  
+
   /**
    * Standard Api Method
    * @param $criteria
@@ -450,20 +450,20 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   {
     /*== initialize query ==*/
     $query = $this->model->query();
-    
+
     /*== FILTER ==*/
     if (isset($params->filter)) {
       $filter = $params->filter;
-      
+
       if (isset($filter->field))//Where field
         $field = $filter->field;
     }
-    
+
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
     $model ? $model->delete() : false;
     event(new DeleteMedia($model->id, get_class($model)));
-    
+
   }
 
 
