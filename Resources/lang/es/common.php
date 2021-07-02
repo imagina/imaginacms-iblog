@@ -29,6 +29,9 @@ return [
         'published' => 'Publicado',
         'unpublished' => 'En espera',
     ],
+    'settings' => [
+        'defaultImageBlogBreadcrumb' => 'Imagen por defecto para el Breadcrumb del Blog',
+    ],
 
     'status_text' => 'Estado',
 

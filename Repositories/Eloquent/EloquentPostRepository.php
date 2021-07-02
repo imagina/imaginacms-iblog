@@ -168,6 +168,14 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
           }
 
+          if(isset($filter->onlyTrashed) && $filter->onlyTrashed){
+              $query->onlyTrashed();
+          }
+
+          if(isset($filter->withTrashed) && $filter->withTrashed){
+              $query->withTrashed();
+          }
+
           //Filter by featured
           if (isset($filter->featured) && is_bool($filter->featured)) {
             $query->where("featured", $filter->featured);
@@ -374,6 +382,14 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
             if (isset($filter->field))//Filter by specific field
                 $field = $filter->field;
+
+            if(isset($filter->onlyTrashed) && $filter->onlyTrashed){
+                $query->onlyTrashed();
+            }
+
+            if(isset($filter->withTrashed) && $filter->withTrashed){
+                $query->withTrashed();
+            }
 
             // find translatable attributes
             $translatedAttributes = $this->model->translatedAttributes;

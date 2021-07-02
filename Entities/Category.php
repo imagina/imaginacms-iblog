@@ -4,8 +4,10 @@ namespace Modules\Iblog\Entities;
 
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Core\Traits\NamespacedEntity;
+use Modules\Ihelpers\Traits\UserStamps;
 use Modules\Media\Entities\File;
 use Kalnoy\Nestedset\NodeTrait;
 use Modules\Media\Support\Traits\MediaRelation;
@@ -13,9 +15,11 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, UserStamps, SoftDeletes;
 
     protected $table = 'iblog__categories';
+
+    protected $softdeleting = true;
 
     protected $fillable = [
       'parent_id',
@@ -36,7 +40,7 @@ class Category extends Model
     protected $casts = [
         'options' => 'array'
     ];
-    
+
 
     /*
     |--------------------------------------------------------------------------
