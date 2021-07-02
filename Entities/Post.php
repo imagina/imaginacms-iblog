@@ -146,9 +146,20 @@ class Post extends Model implements TaggableInterface
     public function getUrlAttribute()
     {
       $useOldRoutes = config('asgard.iblog.config.useOldRoutes') ?? false;
-
+      $currentLocale = \LaravelLocalization::getCurrentLocale();
       
       $category = $this->category;
+      
+      if(empty($category->slug))
+        $category = $category->getTranslation(\LaravelLocalization::getDefaultLocale());
+      
+      if(empty($this->slug)){
+        $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
+        $this->slug = $post->slug;
+      }
+      
+  
+  
   
       if ($useOldRoutes){
         if (!isset($category->slug)) {
@@ -161,11 +172,13 @@ class Post extends Model implements TaggableInterface
             $category = Category::take(1)->get()->first();
           }
         }
-  
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$category->slug.'.post', [$this->slug]);
+
+        return \URL::route($currentLocale. '.iblog.'.$category->slug.'.post', [$this->slug]);
   
       }else{
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.blog.show', [$category->slug,$this->slug]);
+        
+       
+        return \URL::route($currentLocale. '.iblog.blog.show', [$category->slug, $this->slug]);
   
       }
   

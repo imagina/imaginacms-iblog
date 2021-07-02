@@ -115,13 +115,20 @@ class Category extends Model
     $url = "";
     $useOldRoutes = config('asgard.iblog.config.useOldRoutes') ?? false;
     $currentLocale = \LaravelLocalization::getCurrentLocale();
-
+//dd($useOldRoutes);
+    if(empty($this->slug)){
+  
+      $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
+      $this->slug = $category->slug;
+    }
     
+
     if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
       if ($useOldRoutes) {
         $url = \URL::route($currentLocale . '.iblog.category.' . $this->slug);
       } else {
    
+        //dd(\URL::route($currentLocale . '.iblog.blog.index.category', $this->slug));
         $url = \URL::route($currentLocale . '.iblog.blog.index.category', $this->slug);
         
       }
