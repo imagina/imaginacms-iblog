@@ -453,6 +453,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
     $model ? $model->update((array)$data) : false;
+    if(isset($data["categories"]) && $model){
+      $model->categories()->sync(array_merge(Arr::get($data, 'categories', []), [$model->category_id]));
+    }
     event(new PostWasUpdated($model, $data));
     $model->setTags(Arr::get($data, 'tags', []));
   }

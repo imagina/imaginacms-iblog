@@ -150,6 +150,7 @@ class Post extends Model implements TaggableInterface
     public function getUrlAttribute()
     {
       $useOldRoutes = config('asgard.iblog.config.useOldRoutes') ?? false;
+<<<<<<< HEAD
 
 
       $category = $this->category;
@@ -157,6 +158,23 @@ class Post extends Model implements TaggableInterface
       if(!$category)
           return null;
 
+=======
+      $currentLocale = \LaravelLocalization::getCurrentLocale();
+      
+      $category = $this->category;
+      
+      if(empty($category->slug))
+        $category = $category->getTranslation(\LaravelLocalization::getDefaultLocale());
+      
+      if(empty($this->slug)){
+        $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
+        $this->slug = $post->slug;
+      }
+      
+  
+  
+  
+>>>>>>> cb92557debe78fb3f22e1e6f0769d05dab19a537
       if ($useOldRoutes){
         if (!isset($category->slug)) {
           if (!empty($this->categories)) {
@@ -169,11 +187,21 @@ class Post extends Model implements TaggableInterface
           }
         }
 
+<<<<<<< HEAD
         return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$category->slug.'.post', [$this->slug]);
 
       }else{
         return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.blog.show', [$category->slug,$this->slug]);
 
+=======
+        return \URL::route($currentLocale. '.iblog.'.$category->slug.'.post', [$this->slug]);
+  
+      }else{
+        
+       
+        return \URL::route($currentLocale. '.iblog.blog.show', [$category->slug, $this->slug]);
+  
+>>>>>>> cb92557debe78fb3f22e1e6f0769d05dab19a537
       }
 
     }

@@ -3,13 +3,18 @@
 use Illuminate\Routing\Router;
 
 $locale = LaravelLocalization::setLocale() ?: App::getLocale();
-
 $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
 
 /** @var Router $router */
+<<<<<<< HEAD
 Route::group(['prefix' => LaravelLocalization::setLocale(),
   'middleware' => array_merge(['localize'], $customMiddlewares)], function (Router $router) use ($locale) {
 
+=======
+Route::group([
+  'middleware' => array_merge([ 'localize'], $customMiddlewares)], function (Router $router) use ($locale) {
+  
+>>>>>>> cb92557debe78fb3f22e1e6f0769d05dab19a537
   $router->get(trans('iblog::routes.blog.index.index'), [
     'as' => $locale . '.iblog.blog.index',
     'uses' => 'PublicController@index',
