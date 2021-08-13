@@ -158,10 +158,7 @@ class Post extends Model implements TaggableInterface
         $this->slug = $post->slug;
       }
       
-  
-  
-  
-      if ($useOldRoutes){
+      
         if (!isset($category->slug)) {
           if (!empty($this->categories)) {
             $category = $this->categories->first();
@@ -175,12 +172,7 @@ class Post extends Model implements TaggableInterface
 
         return \URL::route($currentLocale. '.iblog.'.$category->slug.'.post', [$this->slug]);
   
-      }else{
-        
-       
-        return \URL::route($currentLocale. '.iblog.blog.show', [$category->slug, $this->slug]);
-  
-      }
+     
   
     }
 
