@@ -14,10 +14,10 @@ class UpdateCategoryRequest extends BaseFormRequest
 
   public function translationRules()
   {
-
+ 
     return [
       'title' => 'min:2',
-      'slug' => [new UniqueSlugRule("iblog__category_translations", $this->id, "category_id") ,"min:2"],
+      'slug' => [new UniqueSlugRule("iblog__category_translations", $this->id, "category_id",trans("iblog::category.messages.sameSlug")) ,"min:2"],
       'description' => 'min:2',
     ];
   }
