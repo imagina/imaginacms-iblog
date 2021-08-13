@@ -5,31 +5,6 @@ use Illuminate\Routing\Router;
 $locale = LaravelLocalization::setLocale() ?: App::getLocale();
 $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
 
-/** @var Router $router */
-Route::group([
-  'middleware' => array_merge([ 'localize'], $customMiddlewares)], function (Router $router) use ($locale) {
-  
-  $router->get(trans('iblog::routes.blog.index.index'), [
-    'as' => $locale . '.iblog.blog.index',
-    'uses' => 'PublicController@index',
-  ]);
-  $router->get(trans('iblog::routes.blog.index.tag'), [
-    'as' => $locale . '.iblog.blog.tag',
-    'uses' => 'PublicController@tag',
-  ]);
-  $router->get(trans('iblog::routes.blog.index.category'), [
-    'as' => $locale . '.iblog.blog.index.category',
-    'uses' => 'PublicController@index',
-  ]);
-  $router->get(trans('iblog::routes.blog.show.post'), [
-    'as' => $locale . '.iblog.blog.show',
-    'uses' => 'PublicController@show',
-  ]);
-  
-});
-
-if(config('asgard.iblog.config.useOldRoutes')) {
-  
   if (!App::runningInConsole()) {
     $categoryRepository = app('Modules\Iblog\Repositories\CategoryRepository');
     $categories = $categoryRepository->getItemsBy(json_decode(json_encode(['filter' => [], 'include' => [], 'take' => null])));
@@ -73,4 +48,4 @@ if(config('asgard.iblog.config.useOldRoutes')) {
     ]);
   });
   
-}
+
