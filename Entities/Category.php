@@ -21,6 +21,7 @@ class Category extends Model
       'parent_id',
       'show_menu',
       'featured',
+      'internal',
       'status',
       'sort_order',
       'options'

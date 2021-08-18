@@ -290,7 +290,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             if (isset($filter->status) && !empty($filter->status)) {
                 $query->whereStatus($filter->status);
             }
-
+  
+            if(isset($filter->withoutInternal)){
+              $query->whereHas('categories', function ($query) use ($categories) {
+                $query->whereIn('iblog__post__category.internal', false);
+              });
+            }
         }
   
       //Order by "Sort order"
