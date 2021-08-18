@@ -1,7 +1,7 @@
 <x-isite::breadcrumb>
   <li class="breadcrumb-item text-capitalize store-index" aria-current="page">
-    @if(isset($category->id) || isset($manufacturer->id))
-      <a href="{{\URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.blog.index')}}">
+    @if(isset($category->id))
+      <a href="{{$category->url}}">
         {{ trans('iblog::routes.blog.index.index') }}
       </a>
     @else
