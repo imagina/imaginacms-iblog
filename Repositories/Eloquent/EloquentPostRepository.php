@@ -292,8 +292,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             }
   
             if(isset($filter->withoutInternal)){
-              $query->whereHas('categories', function ($query) use ($categories) {
-                $query->whereIn('iblog__post__category.internal', false);
+              $query->whereHas('category', function ($query) use ($categories) {
+                $query->where('internal', false);
               });
             }
         }
@@ -339,7 +339,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       if (isset($params->fields) && count($params->fields))
         $query->select($params->fields);
   
-      //dd($query->toSql());
+      //dd($params,$query->toSql());
       /*== REQUEST ==*/
       if (isset($params->onlyQuery) && $params->onlyQuery) {
         return $query;

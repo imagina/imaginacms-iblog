@@ -54,7 +54,7 @@
           :itemComponentAttributes="config('asgard.iblog.config.indexItemListAttributes')"
           entityName="Post"
           :showTitle="true"
-          :params="['filter' => ['category' => $category->id ?? null]]"
+          :params="['filter' => ['category' => $category->id ?? null, 'withoutInternal' => true]]"
           :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
         />
 
