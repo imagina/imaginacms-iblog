@@ -1,13 +1,5 @@
 <x-isite::breadcrumb>
-  <li class="breadcrumb-item text-capitalize store-index" aria-current="page">
-    @if(isset($category->id))
-      <a href="{{$category->url}}">
-        {{ trans('iblog::routes.blog.index.index') }}
-      </a>
-    @else
-      {{ trans('iblog::routes.blog.index.index') }}
-    @endif
-  </li>
+
   
   @isset($categoryBreadcrumb)
     @foreach($categoryBreadcrumb as $key => $breadcrumb)
