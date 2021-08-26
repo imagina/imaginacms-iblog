@@ -11,7 +11,7 @@
 @section('content')
 
 
-   <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
+   <article id="post{{$post->id}}" class="post blog single single-{{$category->slug}} single-{{$category->id}}">
         <div class="container" id="body-wrapper">
             <div class="row">
                 <div class="col-xs-12 col-sm-9 column1">
@@ -25,7 +25,7 @@
                     </div>
                     <div class="row">
                         <div class="content col-xs-12 col-sm-10 ">
-                            <h2>{{ $post->title }}</h2>
+                            <h1>{{ $post->title }}</h1>
                             {!! $post->description !!}
 
                             @if(!$tags->isEmpty())
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </article>
 @stop
 
 @section('scripts')
