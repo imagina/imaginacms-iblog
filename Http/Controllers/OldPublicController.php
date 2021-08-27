@@ -56,6 +56,8 @@ class OldPublicController extends BasePublicController
     }
     $ctpl = "iblog.category.{$category->id}.index";
     if (view()->exists($ctpl)) $tpl = $ctpl;
+  
+    $this->addAlternateUrls(alternate($category));
     
     return view($tpl, compact('posts', 'category', 'categoryBreadcrumb'));
     
@@ -81,7 +83,8 @@ class OldPublicController extends BasePublicController
     
     $categoryBreadcrumb = CategoryTransformer::collection(Category::ancestorsAndSelf($category->id));
     if (view()->exists($ctpl)) $tpl = $ctpl;
-    
+  
+    $this->addAlternateUrls(alternate($post));
     
     return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb'));
     
