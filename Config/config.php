@@ -150,12 +150,14 @@ return [
   'mediaFillable' => [
     'post' => [
       'mainimage' => 'single',
-      'secondaryimage' => 'single'
+      'secondaryimage' => 'single',
+      'gallery' => 'multiple',
     ],
     'category' => [
       'mainimage' => 'single',
       'secondaryimage' => 'single',
-      'iconimage' => 'single'
+      'iconimage' => 'single',
+      'gallery' => 'multiple',
     ]
   ],
   
