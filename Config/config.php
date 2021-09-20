@@ -169,11 +169,14 @@ return [
     'mediaFillable' => [
       'post' => [
         'mainimage' => 'single',
-        'secondaryimage' => 'single'
+        'secondaryimage' => 'single',
+        'gallery' => 'multiple',
+        'breadcrumbimage' => 'single'
       ],
       'category' => [
         'mainimage' => 'single',
-        'secondaryimage' => 'single'
+        'secondaryimage' => 'single',
+        'breadcrumbimage' => 'single'
       ]
     ]
 ];
