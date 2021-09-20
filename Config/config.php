@@ -152,12 +152,15 @@ return [
       'mainimage' => 'single',
       'secondaryimage' => 'single',
       'gallery' => 'multiple',
+      'breadcrumbimage' => 'single'
     ],
     'category' => [
       'mainimage' => 'single',
       'secondaryimage' => 'single',
       'iconimage' => 'single',
       'gallery' => 'multiple',
+      'breadcrumbimage' => 'single'
+
     ]
   ],
   
