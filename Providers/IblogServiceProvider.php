@@ -18,6 +18,7 @@ use Modules\Iblog\Repositories\Eloquent\EloquentCategoryRepository;
 use Modules\Iblog\Repositories\Eloquent\EloquentPostRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Tag\Repositories\TagManager;
+use Illuminate\Support\Facades\Blade;
 
 class IblogServiceProvider extends ServiceProvider
 {
@@ -57,6 +58,8 @@ class IblogServiceProvider extends ServiceProvider
         $this->app[TagManager::class]->registerNamespace(new Post());
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
+        $this->registerComponents();
     }
 
     /**
@@ -110,5 +113,14 @@ class IblogServiceProvider extends ServiceProvider
         $this->app['command.iblog.migrateiblog'] = $this->app->make(MigrateIblog::class);;
         $this->commands(['command.iblog.migrateiblog']);
     }
+
+    
+  /**
+   * Register components
+   */
+
+  private function registerComponents(){
+    Blade::componentNamespace("Modules\Iblog\View\Components", 'iblog');
+  }
 
 }
