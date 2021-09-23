@@ -14,7 +14,7 @@ class SetUniqueSlugInProductAndCategoryTranslationTable extends Migration
     public function up()
     {
       Schema::table('iblog__category_translations', function (Blueprint $table) {
-        $table->string('slug')->unique()->change();
+        $table->unique(['slug', 'locale'])->change();
       });
      
     }
