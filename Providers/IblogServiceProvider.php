@@ -19,6 +19,7 @@ use Modules\Iblog\Repositories\Eloquent\EloquentPostRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Tag\Repositories\TagManager;
 use Illuminate\Support\Facades\Blade;
+use Modules\Iblog\View\Components\Timeline;
 
 class IblogServiceProvider extends ServiceProvider
 {
