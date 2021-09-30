@@ -5,7 +5,6 @@
     <div class="entry">
         @foreach($items as $index => $item)
       <div class="title">
-        @if($index%2 == 0)
         <h3>06 | 05 <br>
         Title <br> 9:00 Am </h3>
         <i class="{{$item->icom}}" <style  opacity: 0.5;> </style></i>
