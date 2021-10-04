@@ -10,22 +10,7 @@ return [
       'type' => 'number',
     ],
   ],
-  'id-facebook' => [
-    'name' => 'iblog::id-facebook',
-    'value' => null,
-    'type' => 'input',
-    'props' => [
-      'label' => 'iblog::settings.id-facebook',
-    ],
-  ],
-  'twitter' => [
-    'name' => 'iblog::twitter',
-    'value' => null,
-    'type' => 'input',
-    'props' => [
-      'label' => 'iblog::settings.twitter account',
-    ],
-  ],
+ 
   'defaultImageBlogBreadcrumb' => [
     'value' => (object)['iblog::defaultImageBlogBreadcrumb' => null],
     'name' => 'medias_single',
