@@ -9,22 +9,23 @@ $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
     $categoryRepository = app('Modules\Iblog\Repositories\CategoryRepository');
     $categories = $categoryRepository->getItemsBy(json_decode(json_encode(['filter' => [], 'include' => [], 'take' => null])));
     foreach ($categories as $category) {
-      
-      /** @var Router $router */
-      $router->group(['prefix' => $category->slug,
-        'middleware' => $customMiddlewares], function (Router $router) use ($locale, $category) {
-        
-        $router->get('/', [
-          'as' => $locale . '.iblog.category.' . $category->slug,
-          'uses' => 'OldPublicController@index',
-          'middleware' => config('asgard.iblog.config.middleware'),
-        ]);
-        $router->get('{slug}', [
-          'as' => $locale . '.iblog.' . $category->slug . '.post',
-          'uses' => 'OldPublicController@show',
-          'middleware' => config('asgard.iblog.config.middleware'),
-        ]);
-      });
+      if(!empty($category->slug) && !$categories->internal) {
+        /** @var Router $router */
+        $router->group(['prefix' => $category->slug,
+          'middleware' => $customMiddlewares], function (Router $router) use ($locale, $category) {
+    
+          $router->get('/', [
+            'as' => $locale . '.iblog.category.' . $category->slug,
+            'uses' => 'OldPublicController@index',
+            'middleware' => config('asgard.iblog.config.middleware'),
+          ]);
+          $router->get('{slug}', [
+            'as' => $locale . '.iblog.' . $category->slug . '.post',
+            'uses' => 'OldPublicController@show',
+            'middleware' => config('asgard.iblog.config.middleware'),
+          ]);
+        });
+      }
     }
   }
   /** @var Router $router */
