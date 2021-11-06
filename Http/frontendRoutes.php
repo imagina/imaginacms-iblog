@@ -9,7 +9,7 @@ $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
     $categoryRepository = app('Modules\Iblog\Repositories\CategoryRepository');
     $categories = $categoryRepository->getItemsBy(json_decode(json_encode(['filter' => [], 'include' => [], 'take' => null])));
     foreach ($categories as $category) {
-      if(!empty($category->slug) && !$categories->internal) {
+      if(!empty($category->slug) && !$category->internal) {
         /** @var Router $router */
         $router->group(['prefix' => $category->slug,
           'middleware' => $customMiddlewares], function (Router $router) use ($locale, $category) {
