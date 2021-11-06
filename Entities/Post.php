@@ -150,6 +150,8 @@ class Post extends Model implements TaggableInterface
       
       $category = $this->category;
       
+      if($category->internal) return "";
+      
       if(empty($category->slug))
         $category = $category->getTranslation(\LaravelLocalization::getDefaultLocale());
       

@@ -116,7 +116,8 @@ class Category extends Model
     $url = "";
 
     $currentLocale = \LaravelLocalization::getCurrentLocale();
-//dd($useOldRoutes);
+
+    if($this->internal) return "";
     if(empty($this->slug)){
   
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
