@@ -4,8 +4,17 @@
     @foreach($items as $index => $item)
       <div class="content-timeline">
         <div class="title">
-          <h3><b>{{$item->options->eventHour ?? ''}}</b><br>
-            {{$item->options->eventPlace ?? ''}} <br> {{$item->options->eventDate ?? ''}} </h3>
+          <h3>
+            <div class="hour">
+              {{$item->options->eventHour ?? ''}}
+            </div>
+            <div class="place text-bold">
+              {{$item->options->eventPlace ?? ''}}
+            </div>
+            <div class="date">
+              {{$item->options->eventDate ?? ''}}
+            </div>
+          </h3>
           <i class="icon fa fa-home {{$item->options->icon ?? ''}}" style=" opacity: 0.5;"></i>
         </div>
         <div class="body">
