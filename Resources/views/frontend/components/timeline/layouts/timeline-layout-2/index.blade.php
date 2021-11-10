@@ -8,7 +8,7 @@
             <div class="hour">
               {{$item->options->eventHour ?? ''}}
             </div>
-            <div class="place text-bold">
+            <div class="place font-weight-bold">
               {{$item->options->eventPlace ?? ''}}
             </div>
             <div class="date">
