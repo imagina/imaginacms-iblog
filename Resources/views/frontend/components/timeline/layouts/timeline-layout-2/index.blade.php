@@ -5,14 +5,14 @@
       <div class="content-timeline">
         <div class="title">
           <h3>
-            <div class="hour">
-              {{$item->options->eventHour ?? ''}}
+            <div class="date">
+              {{$item->options->eventDate ?? ''}}
             </div>
             <div class="place font-weight-bold">
               {{$item->options->eventPlace ?? ''}}
             </div>
-            <div class="date">
-              {{$item->options->eventDate ?? ''}}
+            <div class="hour">
+              {{$item->options->eventHour ?? ''}}
             </div>
           </h3>
           <i class="icon fa fa-home {{$item->options->icon ?? ''}}" style=" opacity: 0.5;"></i>
