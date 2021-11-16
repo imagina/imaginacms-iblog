@@ -43,7 +43,9 @@ class OldPublicController extends BasePublicController
     if (view()->exists($ttpl)) $tpl = $ttpl;
     
     $category = $this->category->findBySlug($slug);
-
+  
+    $configFilters = config("asgard.iblog.config.filters");
+    
     $posts = $this->post->whereCategory($category->id);
     //Get Custom Template.
     
@@ -57,6 +59,10 @@ class OldPublicController extends BasePublicController
     if (view()->exists($ctpl)) $tpl = $ctpl;
   
     $this->addAlternateUrls(alternate($category));
+  
+    $configFilters["categories"]["itemSelected"] = $category;
+  
+    config(["asgard.iblog.config.filters" => $configFilters]);
     
     return view($tpl, compact('posts', 'category', 'categoryBreadcrumb'));
     
