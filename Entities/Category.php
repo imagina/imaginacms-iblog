@@ -10,13 +10,14 @@ use Modules\Media\Entities\File;
 use Kalnoy\Nestedset\NodeTrait;
 use Modules\Media\Support\Traits\MediaRelation;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class Category extends Model
 {
-    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, BelongsToTenant;
 
     protected $table = 'iblog__categories';
-
+    
     protected $fillable = [
       'parent_id',
       'show_menu',
@@ -24,6 +25,7 @@ class Category extends Model
       'internal',
       'status',
       'sort_order',
+      'external_id',
       'options'
     ];
 
@@ -121,9 +123,9 @@ class Category extends Model
     if(empty($this->slug)){
   
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
-      $this->slug = $category->slug;
+      $this->slug = $category->slug ?? '';
     }
-    
+    if(empty($this->slug)) return "";
 
     if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
       

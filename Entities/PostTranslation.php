@@ -8,7 +8,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 
 class PostTranslation extends Model
 {
-    use Sluggable;
+    use Sluggable, BelongsToTenant;
 
     public $timestamps = false;
     protected $table = 'iblog__post_translations';

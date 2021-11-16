@@ -145,9 +145,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
         /*== RELATIONSHIPS ==*/
         if (in_array('*', $params->include ?? [])) {//If Request all relationships
-            $query->with(['translations']);
+            $query->with(['translations','files']);
         } else {//Especific relationships
-            $includeDefault = ['translations'];//Default relationships
+            $includeDefault = ['translations','files'];//Default relationships
             if (isset($params->include))//merge relations with default relationships
                 $includeDefault = array_merge($includeDefault, $params->include);
             $query->with($includeDefault);//Add Relationships to query
@@ -300,7 +300,20 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   
       //Order by "Sort order"
       if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
-        $query->orderBy('sort_order', 'desc');//Add order to query
+        $query->orderBy('sort_order', 'asc');//Add order to query
+      }
+      
+      // ORDER
+      if (isset($params->order) && $params->order) {
+    
+        $order = is_array($params->order) ? $params->order : [$params->order];
+    
+        foreach ($order as $orderObject) {
+          if (isset($orderObject->field) && isset($orderObject->way))
+            $query->orderBy("iblog__posts." . $orderObject->field, $orderObject->way);
+        }
+      } else {
+        $query->orderBy('sort_order', 'asc');//Add order to query
       }
   
       if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
@@ -311,6 +324,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->where(function ($query) {
           $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
           $query->orWhereNull("date_available");
+        });
+  
+        $query->whereHas('category',function ($query) {
+          $query->where("iblog__categories.status", "!=", 0);
         });
         
         //pre-filter status
@@ -334,20 +351,23 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       
         }
       }
-  
+   
       /*== FIELDS ==*/
       if (isset($params->fields) && count($params->fields))
         $query->select($params->fields);
   
-      //dd($params,$query->toSql());
+      
+      //  dd($params,$query->toSql(),$query->paginate($params->take));
       /*== REQUEST ==*/
       if (isset($params->onlyQuery) && $params->onlyQuery) {
         return $query;
       } else
         if (isset($params->page) && $params->page) {
+        
           return $query->paginate($params->take);
         } else {
           isset($params->take) && $params->take ? $query->take($params->take) : false;//Take
+      
           return $query->get();
         }
     }

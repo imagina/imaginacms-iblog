@@ -1,3 +1,4 @@
+
 @if(count(postgallery($post->id)) > 0)
 
     <div class="gallery">

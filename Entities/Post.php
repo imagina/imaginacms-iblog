@@ -11,10 +11,11 @@ use Modules\Media\Entities\File;
 use Modules\Media\Support\Traits\MediaRelation;
 use Modules\Tag\Contracts\TaggableInterface;
 use Modules\Tag\Traits\TaggableTrait;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class Post extends Model implements TaggableInterface
 {
-    use Translatable, PresentableTrait, NamespacedEntity, TaggableTrait, MediaRelation;
+    use Translatable, PresentableTrait, NamespacedEntity, TaggableTrait, MediaRelation, BelongsToTenant;
 
     protected static $entityNamespace = 'asgardcms/post';
 
@@ -27,6 +28,7 @@ class Post extends Model implements TaggableInterface
         'status',
         'featured',
         'sort_order',
+        'external_id',
         'created_at',
     ];
     public $translatedAttributes = [
@@ -160,17 +162,7 @@ class Post extends Model implements TaggableInterface
         $this->slug = $post->slug;
       }
       
-      
-        if (!isset($category->slug)) {
-          if (!empty($this->categories)) {
-            $category = $this->categories->first();
-            if (!isset($category->slug)) {
-              $category = Category::take(1)->get()->first();
-            }
-          } else {
-            $category = Category::take(1)->get()->first();
-          }
-        }
+      if(empty($category->slug)) return "";
 
         return \URL::route($currentLocale. '.iblog.'.$category->slug.'.post', [$this->slug]);
   

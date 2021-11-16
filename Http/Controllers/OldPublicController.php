@@ -34,17 +34,16 @@ class OldPublicController extends BasePublicController
   
   public function index()
   {
-    
+  
     //Default Template
     $tpl = 'iblog::frontend.index';
     $ttpl = 'iblog.index';
-    $argv = explode("/", Request::path());
-    $slug = end($argv);
+    $slug = Request::path();
     
     if (view()->exists($ttpl)) $tpl = $ttpl;
     
     $category = $this->category->findBySlug($slug);
-    
+
     $posts = $this->post->whereCategory($category->id);
     //Get Custom Template.
     
@@ -65,6 +64,7 @@ class OldPublicController extends BasePublicController
   
   public function show($slug)
   {
+
     $post = $this->post->findBySlug($slug);
     $category = $post->category;
     $tpl = 'iblog::frontend.show';
@@ -85,7 +85,7 @@ class OldPublicController extends BasePublicController
     if (view()->exists($ctpl)) $tpl = $ctpl;
   
     $this->addAlternateUrls(alternate($post));
-    
+   
     return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb'));
     
     

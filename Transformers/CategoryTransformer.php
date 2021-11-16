@@ -42,7 +42,7 @@ class CategoryTransformer extends JsonResource
       'showMenu' => $this->when(isset($this->show_menu), ((boolean)$this->show_menu )),
       'featured' => $this->featured ? '1' : '0',
       'sortOrder' => !$this->sort_order ? "0": (string)$this->sort_order,
-      'status' => $this->when($this->status, $this->status),
+      'status' => $this->when(isset($this->status), $this->status),
       'createdAt' => $this->when($this->created_at, $this->created_at),
       'updatedAt' => $this->when($this->updated_at, $this->updated_at),
       'options' => $this->when($this->options, $this->options),
