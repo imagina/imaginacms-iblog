@@ -7,7 +7,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 
 class CategoryTranslation extends Model
 {
-    use Sluggable, BelongsToTenant;
+    use Sluggable;
 
     public $timestamps = false;
     protected $table = 'iblog__category_translations';
