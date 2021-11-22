@@ -72,13 +72,18 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             }
             
             if (isset($filter->parentId)) {
+     
               !is_array($filter->parentId) ? $filter->parentId = [$filter->parentId] : false;
               $ids = [];
               foreach ($filter->parentId as $parentId){
-                if(isset($filter->includeSelf) && $filter->includeSelf)
-                  $categories = Category::descendantsAndSelf($parentId);
-                else
-                  $categories = Category::descendantsOf($parentId);
+                if(isset($filter->includeDescendants) && $filter->includeDescendants){
+                  if(isset($filter->includeSelf) && $filter->includeSelf)
+                    $categories = Category::descendantsAndSelf($parentId);
+                  else
+                    $categories = Category::descendantsOf($parentId);
+                }else{
+                  $categories = $this->model->query()->where("parent_id", $parentId)->get();
+                }
                 
                 $ids = array_merge($ids,$categories->pluck("id")->toArray());
               }
