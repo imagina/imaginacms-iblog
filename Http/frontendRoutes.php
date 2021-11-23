@@ -5,7 +5,7 @@ use Illuminate\Routing\Router;
 $locale = LaravelLocalization::setLocale() ?: App::getLocale();
 $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
 
-//  if (!App::runningInConsole()) {
+  if (!App::runningInConsole()) {
     $categoryRepository = app('Modules\Iblog\Repositories\CategoryRepository');
     $categories = $categoryRepository->getItemsBy(json_decode(json_encode(['filter' => [], 'include' => [], 'take' => null])));
     foreach ($categories as $category) {
@@ -26,7 +26,7 @@ $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
           ]);
         });
       }
-//    }
+    }
   }
   /** @var Router $router */
   $router->group(['prefix' => trans('iblog::tag.uri'),

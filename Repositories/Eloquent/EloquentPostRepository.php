@@ -173,7 +173,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             $query->where("featured", $filter->featured);
           }
   
-          //Filter by catgeory ID
+          //Filter by category
           if (isset($filter->category) && !empty($filter->category)) {
             
             $categories = Category::descendantsAndSelf($filter->category);
@@ -189,8 +189,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
               });
       
             }
-    
-    
+          }
+          //Filter by category ID
+          if (isset($filter->categoryId) && !empty($filter->categoryId)) {
+            !is_array($filter->categoryId) ? $filter->categoryId = [$filter->categoryId] : false;
+            
+            $query->whereIn("iblog__posts.category_id",$filter->categoryId);
+          
           }
           if (isset($filter->tagId)) {
     
@@ -350,6 +355,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
           }
       
         }
+      }else {
+        $query->orderBy('sort_order', 'asc');//Add order to query
       }
    
       /*== FIELDS ==*/

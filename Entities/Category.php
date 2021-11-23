@@ -28,6 +28,7 @@ class Category extends Model
       'external_id',
       'options'
     ];
+    
 
     public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 

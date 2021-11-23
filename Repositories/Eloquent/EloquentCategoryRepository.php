@@ -93,7 +93,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
                 
                 $ids = array_merge($ids,$categories->pluck("id")->toArray());
               }
-                $query->whereIn('id', $ids);
+                $query->whereIn('iblog__categories.id', $ids);
             }
 
             if (isset($filter->search)) { //si hay que filtrar por rango de precio
@@ -141,6 +141,28 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             $query->where("internal", $filter->internal);//Add order to query
           }
         }
+  
+  
+      // ORDER
+      if (isset($params->order) && $params->order) {
+    
+        $order = is_array($params->order) ? $params->order : [$params->order];
+
+        foreach ($order as $orderObject) {
+          
+          if (isset($orderObject->field) && isset($orderObject->way)) {
+            if (in_array($orderObject->field, $this->model->translatedAttributes)) {
+              $query->join('iblog__category_translations as translations', 'translations.category_id', '=', 'iblog__categories.id');
+              $query->orderBy("translations.$orderObject->field", $orderObject->way);
+            } else
+              $query->orderBy($orderObject->field, $orderObject->way);
+          }
+      
+        }
+      }else {
+          $query->orderBy('sort_order', 'asc');//Add order to query
+        }
+      
 
         /*== FIELDS ==*/
         if (isset($params->fields) && count($params->fields))
@@ -154,26 +176,16 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
         //pre-filter status
         $query->where("status", 1);
       }
-      // ORDER
-      if (isset($params->order) && $params->order) {
-    
-        $order = is_array($params->order) ? $params->order : [$params->order];
-    
-        foreach ($order as $orderObject) {
-          if (isset($orderObject->field) && isset($orderObject->way))
-            $query->orderBy("iblog__categories." . $orderObject->field, $orderObject->way);
-        }
-      } else {
-        $query->orderBy('sort_order', 'asc');//Add order to query
-      }
+      
       
         /*== REQUEST ==*/
         if (isset($params->page) && $params->page) {
+         // dd($query->toSql(),$query->getBindings(),$query->get(), $params);
             return $query->paginate($params->take);
         } else {
             isset($params->take) && $params->take ? $query->take($params->take) : false;//Take
           
-          //  dd($query->toSql(),$query->getBindings(),$query->get(), $params);
+           // dd($query->toSql(),$query->getBindings(),$query->get(), $params);
             return $query->get();
         }
     }

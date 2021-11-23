@@ -104,6 +104,8 @@ class OldPublicController extends BasePublicController
     $tpl = 'iblog::frontend.tag';
     $ttpl = 'iblog.tag';
     $tag = $this->tag->findBySlug($slug);
+
+    if(!isset($tag->id))  return response()->view('errors.404', [], 404);
     if (view()->exists($ttpl)) $tpl = $ttpl;
     
     $posts = $this->post->whereTag($slug);
