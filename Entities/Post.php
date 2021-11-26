@@ -149,25 +149,26 @@ class Post extends Model implements TaggableInterface
     {
       $useOldRoutes = config('asgard.iblog.config.useOldRoutes') ?? false;
       $currentLocale = \LaravelLocalization::getCurrentLocale();
-      
+
       $category = $this->category;
-      
+
       if($category->internal) return "";
-      
+
       if(empty($category->slug))
         $category = $category->getTranslation(\LaravelLocalization::getDefaultLocale());
-      
+
       if(empty($this->slug)){
         $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
         $this->slug = $post->slug;
       }
-      
+
       if(empty($category->slug)) return "";
 
+      try{
         return \URL::route($currentLocale. '.iblog.'.$category->slug.'.post', [$this->slug]);
-  
-     
-  
+      } catch (\Exception $e) {
+        return '';
+      }
     }
 
     /**
