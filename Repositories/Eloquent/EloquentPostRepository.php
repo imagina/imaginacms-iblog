@@ -156,6 +156,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         /*== FILTERS ==*/
         if (isset($params->filter)) {
             $filter = $params->filter;//Short filter
+  
+          if (isset($filter->id)) {
+            !is_array($filter->id) ? $filter->id = [$filter->id] : false;
+            $query->whereIn('iblog__posts.id', $filter->id);
+          }
+  
           
           // add filter by Categories 1 or more than 1, in array/*
           if (isset($filter->categories) && !empty($filter->categories)) {
@@ -287,9 +293,18 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
             //Order by
             if (isset($filter->order) && !empty($filter->order)) {
-                $orderByField = $filter->order->field ?? 'created_at';//Default field
-                $orderWay = $filter->order->way ?? 'desc';//Default way
-                $query->orderBy($orderByField, $orderWay);//Add order to query
+              $order = is_array($filter->order) ? $filter->order : [$filter->order];
+  
+              foreach ($order as $orderObject) {
+                if (isset($orderObject->field) && isset($orderObject->way)) {
+                  if (in_array($orderObject->field, $this->model->translatedAttributes)) {
+                    $query->join('iblog__post_translations as ftranslations', 'ftranslations.post_id', '=', 'iblog__posts.id');
+                    $query->orderBy("translations.$orderObject->field", $orderObject->way);
+                  } else
+                    $query->orderBy($orderObject->field, $orderObject->way);
+                }
+    
+              }
             }
 
             if (isset($filter->status) && !empty($filter->status)) {
@@ -307,15 +322,22 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
         $query->orderBy('sort_order', 'asc');//Add order to query
       }
-      
+  
+  
       // ORDER
       if (isset($params->order) && $params->order) {
     
         $order = is_array($params->order) ? $params->order : [$params->order];
     
         foreach ($order as $orderObject) {
-          if (isset($orderObject->field) && isset($orderObject->way))
-            $query->orderBy("iblog__posts." . $orderObject->field, $orderObject->way);
+          if (isset($orderObject->field) && isset($orderObject->way)) {
+            if (in_array($orderObject->field, $this->model->translatedAttributes)) {
+              $query->join('iblog__post_translations as ptranslations', 'ptranslations.post_id', '=', 'iblog__posts.id');
+              $query->orderBy("translations.$orderObject->field", $orderObject->way);
+            } else
+              $query->orderBy($orderObject->field, $orderObject->way);
+          }
+      
         }
       } else {
         $query->orderBy('sort_order', 'asc');//Add order to query
