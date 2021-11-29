@@ -21,7 +21,7 @@
           <hr>
           <h2>{{$item->title}}</h2>
           <ul>
-            <li> {!! $item->summary !!}</li>
+            <li> {!! $item->description ? $item->description : $item->summary !!}</li>
           </ul>
           <hr>
         </div>
