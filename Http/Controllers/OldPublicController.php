@@ -39,7 +39,7 @@ class OldPublicController extends BasePublicController
     $tpl = 'iblog::frontend.index';
     $ttpl = 'iblog.index';
     $slug = Request::path();
-    
+
     if (view()->exists($ttpl)) $tpl = $ttpl;
     
     $category = $this->category->findBySlug($slug);
@@ -70,8 +70,13 @@ class OldPublicController extends BasePublicController
   
   public function show($slug)
   {
-
-    $post = $this->post->findBySlug($slug);
+   
+    $arg = explode("/",Request::path());
+    
+    $category = $this->category->findBySlug($arg[0]);
+    
+    $post = $this->post->getItem($slug,json_decode(json_encode(["filter" => ["categories" => $category->id, "field" => "slug"]])));
+    //$post = $this->post->findBySlug($slug);
     $category = $post->category;
     $tpl = 'iblog::frontend.show';
     $ttpl = 'iblog.show';
