@@ -49,7 +49,7 @@ class OldPublicController extends BasePublicController
     $posts = $this->post->whereCategory($category->id);
     //Get Custom Template.
     
-    $categoryBreadcrumb = CategoryTransformer::collection(Category::ancestorsAndSelf($category->id));
+    $categoryBreadcrumb = CategoryTransformer::collection(Category::defaultOrder()->ancestorsAndSelf($category->id));
     
     $ptpl = "iblog.category.{$category->parent_id}.index";
     if ($category->parent_id != 0 && view()->exists($ptpl)) {
@@ -57,6 +57,11 @@ class OldPublicController extends BasePublicController
     }
     $ctpl = "iblog.category.{$category->id}.index";
     if (view()->exists($ctpl)) $tpl = $ctpl;
+
+    if(isset($category->options->template) && !empty($category->options->template)){
+      if (view()->exists($category->options->template)) $tpl = $category->options->template;
+    }
+  
   
     $this->addAlternateUrls(alternate($category));
   
