@@ -82,7 +82,9 @@ class OldPublicController extends BasePublicController
     
     $post = $this->post->getItem($slug,json_decode(json_encode(["filter" => ["categories" => $category->id, "field" => "slug"]])));
     //$post = $this->post->findBySlug($slug);
-    $category = $post->category;
+  
+    if(!isset($post->id))  return response()->view('errors.404', [], 404);
+    
     $tpl = 'iblog::frontend.show';
     $ttpl = 'iblog.show';
     
