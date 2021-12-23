@@ -11,10 +11,12 @@ use Kalnoy\Nestedset\NodeTrait;
 use Modules\Media\Support\Traits\MediaRelation;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
+use Modules\Isite\Traits\Typeable;
+use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 
 class Category extends Model
 {
-    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, BelongsToTenant;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, BelongsToTenant, hasEventsWithBindings, Typeable;
 
     protected $table = 'iblog__categories';
     
@@ -41,7 +43,6 @@ class Category extends Model
         'options' => 'array'
     ];
     
-
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
@@ -130,8 +131,7 @@ class Category extends Model
 
     if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
       
-        $url = \URL::route($currentLocale . '.iblog.category.' . $this->slug);
-     
+        $url = url($this->slug);
     }
     return $url;
   }

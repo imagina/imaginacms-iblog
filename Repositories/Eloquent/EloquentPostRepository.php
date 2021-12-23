@@ -95,7 +95,16 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
    */
   public function create($data)
   {
+    //Event creating model
+    if (method_exists($this->model, 'creatingCrudModel'))
+      $this->model->creatingCrudModel(['data' => $data]);
+  
     $post = $this->model->create($data);
+  
+    //Event created model
+    if (method_exists($post, 'createdCrudModel'))
+      $post->createdCrudModel(['data' => $data]);
+  
     $post->categories()->sync(array_merge(Arr::get($data, 'categories', []), [$post->category_id]));
     event(new PostWasCreated($post, $data));
     $post->setTags(Arr::get($data, 'tags', []));
@@ -110,8 +119,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
    */
   public function update($post, $data)
   {
-    $post->update($data);
+ 
     
+    $post->update($data);
+  
+
     $post->categories()->sync(array_merge(Arr::get($data, 'categories', []), [$post->category_id]));
     
     event(new PostWasUpdated($post, $data));
@@ -489,7 +501,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   {
     /*== initialize query ==*/
     $query = $this->model->query();
-    
+  
+    //Event updating model
+    if (method_exists($this->model, 'updatingCrudModel'))
+      $this->model->updatingCrudModel(['data' => $data, 'params' => $params, 'criteria' => $criteria]);
+  
     /*== FILTER ==*/
     if (isset($params->filter)) {
       $filter = $params->filter;
@@ -501,12 +517,19 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
-    $model ? $model->update((array)$data) : false;
-    if (isset($data["categories"]) && $model) {
-      $model->categories()->sync(array_merge(Arr::get($data, 'categories', []), [$model->category_id]));
+    
+    if(isset($model->id)){
+      $model->update((array)$data);
+      //Event updated model
+      if (method_exists($model, 'updatedCrudModel'))
+        $model->updatedCrudModel(['data' => $data, 'params' => $params, 'criteria' => $criteria]);
+  
+      if (isset($data["categories"]) && $model) {
+        $model->categories()->sync(array_merge(Arr::get($data, 'categories', []), [$model->category_id]));
+      }
+      event(new PostWasUpdated($model, $data));
+      $model->setTags(Arr::get($data, 'tags', []));
     }
-    event(new PostWasUpdated($model, $data));
-    $model->setTags(Arr::get($data, 'tags', []));
   }
   
   /**
