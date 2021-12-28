@@ -366,8 +366,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       });
       
       $query->whereHas('category', function ($query) {
-        $query->where("iblog__categories.status", "!=", 0)
-        ->where("iblog__categories.internal", "!=", 1);
+        $query->where("iblog__categories.status", "!=", 0);
+        //->where("iblog__categories.internal", "!=", 1);
       });
       
       //pre-filter status
