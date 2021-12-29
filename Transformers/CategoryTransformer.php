@@ -48,6 +48,7 @@ class CategoryTransformer extends JsonResource
       'options' => $this->when($this->options, $this->options),
       'parent' => new CategoryTransformer($this->whenLoaded('parent')),
       'parentId' => $this->parent_id,
+      'layoutId' => $this->layout_id,
       'internal' => $this->when($this->internal, $this->internal),
       'children' => CategoryTransformer::collection($this->whenLoaded('children')),
       'posts' => PostTransformer::collection($this->whenLoaded('posts')),

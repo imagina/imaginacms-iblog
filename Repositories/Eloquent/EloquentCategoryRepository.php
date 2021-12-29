@@ -41,7 +41,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             })->with('translations', 'parent', 'children', 'posts')->firstOrFail();
         }
 
-        return $this->model->where('slug', $slug)->with('translations', 'parent', 'children', 'posts')->first();;
+        return $this->model->where('slug', $slug)->with('translations', 'parent', 'children', 'posts')->first();
     }
 
     /**
@@ -223,7 +223,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             // filter by translatable attributes
             if (isset($field) && in_array($field, $translatedAttributes))//Filter by slug
                 $query->whereHas('translations', function ($query) use ($criteria, $filter, $field) {
-                    $query->where('locale', $filter->locale)
+                    $query->where('locale', $filter->locale ?? \App::getLocale())
                         ->where($field, $criteria);
                 });
             else
@@ -246,9 +246,16 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
      */
     public function create($data)
     {
-
+      //Event creating model
+      if (method_exists($this->model, 'creatingCrudModel'))
+        $this->model->creatingCrudModel(['data' => $data]);
+      
         $category = $this->model->create($data);
-
+        
+      //Event created model
+      if (method_exists($category, 'createdCrudModel'))
+        $category->createdCrudModel(['data' => $data]);
+      
         event(new CategoryWasCreated($category, $data));
 
         return $this->find($category->id);
@@ -262,9 +269,12 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
      */
     public function update($category, $data)
     {
-        $category->update($data);
-    
-        event(new CategoryWasUpdated($category, $data));
+  
+  
+      $category->update($data);
+  
+
+      event(new CategoryWasUpdated($category, $data));
 
         return $category;
     }
@@ -289,8 +299,12 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     {
         /*== initialize query ==*/
         $query = $this->model->query();
-
-        /*== FILTER ==*/
+  
+      //Event updating model
+      if (method_exists($this->model, 'updatingCrudModel'))
+        $this->model->updatingCrudModel(['data' => $data, 'params' => $params, 'criteria' => $criteria]);
+  
+      /*== FILTER ==*/
         if (isset($params->filter)) {
             $filter = $params->filter;
 
@@ -301,8 +315,17 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 
         /*== REQUEST ==*/
         $model = $query->where($field ?? 'id', $criteria)->first();
-        $model ? $model->update((array)$data) : false;
-        event(new UpdateMedia($model, $data));
+        
+        if(isset($model->id)){
+          $model->update((array)$data);
+          //Event updated model
+          if (method_exists($model, 'updatedCrudModel'))
+            $model->updatedCrudModel(['data' => $data, 'params' => $params, 'criteria' => $criteria]);
+  
+          event(new UpdateMedia($model, $data));
+        }
+        
+        
     }
 
     /**
