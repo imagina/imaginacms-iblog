@@ -15,7 +15,7 @@
               {{$item->options->eventHour ?? ''}}
             </div>
           </h3>
-          <i class="icon fa fa-home {{$item->options->icon ?? ''}}" style=" opacity: 0.5;"></i>
+          <i class="icon fa fa-home {{$item->options->icon ?? ''}}"></i>
         </div>
         <div class="body">
           <hr>
@@ -29,4 +29,3 @@
     @endforeach
   </div>
 </div>
-
