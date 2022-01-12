@@ -120,9 +120,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   public function update($post, $data)
   {
 
-
     $post->update($data);
-
 
     $post->categories()->sync(array_merge(Arr::get($data, 'categories', []), [$post->category_id]));
 
@@ -324,12 +322,13 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->whereStatus($filter->status);
       }
 
-
       if (isset($filter->withoutInternal)) {
         $query->whereHas('category', function ($query) {
           $query->where('internal', false);
         });
+ 
       }
+
     }
 
     //Order by "Sort order"
