@@ -20,7 +20,7 @@ use Modules\Ihelpers\Events\UpdateMedia;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
-  
+
   /**
    * @inheritdoc
    */
@@ -31,10 +31,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $q->where('slug', $slug);
       })->with('translations', 'category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();
     }
-    
+
     return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();;
   }
-  
+
   /**
    * @param object $id
    * @return object
@@ -177,7 +177,6 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       
       // add filter by Categories 1 or more than 1, in array/*
       if (isset($filter->categories) && !empty($filter->categories)) {
-     
         is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
         $query->where(function ($query) use ($filter) {
           $query->whereHas('categories', function ($query) use ($filter) {
@@ -280,13 +279,14 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->leftJoin(\DB::raw(
           "(SELECT MATCH (title) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
           "from iblog__post_translations " .
-          "where `locale` = '{$filter->locale}') as ptrans"
+          "where `locale` = '".($filter->locale ?? locale())."') as ptrans"
         ), 'ptrans.post_id', 'iblog__posts.id')
           ->where('scoreSearch', '>', 0)
           ->orderBy('scoreSearch', 'desc');
         
         //Remove order by
         unset($filter->order);
+
       }
       
       //Filter by date
@@ -371,7 +371,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       });
       
       $query->whereHas('category', function ($query) {
-        $query->where("iblog__categories.status", 1);
+        $query->where("iblog__categories.status", "!=", 0);
         //->where("iblog__categories.internal", "!=", 1);
       });
       
@@ -402,7 +402,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== FIELDS ==*/
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
-  
+
 //      dd($params,$query->toSql(),$query->getBindings(),$query->get());
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
