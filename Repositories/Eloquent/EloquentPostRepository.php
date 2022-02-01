@@ -177,6 +177,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       
       // add filter by Categories 1 or more than 1, in array/*
       if (isset($filter->categories) && !empty($filter->categories)) {
+     
         is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
         $query->where(function ($query) use ($filter) {
           $query->whereHas('categories', function ($query) use ($filter) {
@@ -370,7 +371,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       });
       
       $query->whereHas('category', function ($query) {
-        $query->where("iblog__categories.status", "!=", 0);
+        $query->where("iblog__categories.status", 1);
         //->where("iblog__categories.internal", "!=", 1);
       });
       
@@ -401,9 +402,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== FIELDS ==*/
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
-    
-    
-    //  dd($params,$query->toSql(),$query->paginate($params->take));
+  
+//      dd($params,$query->toSql(),$query->getBindings(),$query->get());
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
       return $query;
