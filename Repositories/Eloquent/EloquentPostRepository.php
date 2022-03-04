@@ -260,10 +260,26 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         
         $query->whereTag($filter->tag);
       }
-      
+  
       
       // add filter by search
       if (isset($filter->search) && !empty($filter->search)) {
+  
+        //find search in columns
+        $query->where(function ($query) use ($filter) {
+          $query->whereHas('translations', function ($query) use ($filter) {
+            $query->where('locale', $filter->locale)
+               ->where(function ($query) use ($filter) {
+                 $query->where('title', 'like', '%' . $filter->search . '%')
+                 ->orWhere('description', 'like', '%' . $filter->search . '%');
+               });
+            
+          })->orWhere('iblog__posts.id', 'like', '%' . $filter->search . '%')
+            ->orWhere('updated_at', 'like', '%' . $filter->search . '%')
+            ->orWhere('created_at', 'like', '%' . $filter->search . '%');
+        });
+        
+      /**
         // removing symbols used by MySQL
         $filter->search = preg_replace("/[^a-zA-Z0-9]+/", " ", $filter->search);
         $words = explode(" ", $filter->search);//Explode
@@ -275,20 +291,22 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
           }
         }
         
-        //Search query
-        $query->leftJoin(\DB::raw(
-          "(SELECT MATCH (title) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
-          "from iblog__post_translations " .
-          "where `locale` = '".($filter->locale ?? locale())."') as ptrans"
-        ), 'ptrans.post_id', 'iblog__posts.id')
-          ->where('scoreSearch', '>', 0)
-          ->orderBy('scoreSearch', 'desc');
+          //Search query
+          $query->leftJoin(\DB::raw(
+            "(SELECT MATCH (title) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
+            "from iblog__post_translations " .
+            "where `locale` = '".($filter->locale ?? locale())."') as ptrans"
+          ), 'ptrans.post_id', 'iblog__posts.id')
+            ->where('scoreSearch', '>', 0)
+            ->orderBy('scoreSearch', 'desc');
+          
         
+        dd($params,$query->toSql(),$query->getBindings(),$query->get());
         //Remove order by
         unset($filter->order);
-
+**/
       }
-      
+     
       //Filter by date
       if (isset($filter->date) && !empty($filter->date)) {
         $date = $filter->date;//Short filter date
@@ -402,8 +420,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     /*== FIELDS ==*/
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
-
-//      dd($params,$query->toSql(),$query->getBindings(),$query->get());
+  
+   
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
       return $query;
