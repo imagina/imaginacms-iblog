@@ -19,7 +19,7 @@ class Category extends Model
     use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, BelongsToTenant, hasEventsWithBindings, Typeable;
 
     protected $table = 'iblog__categories';
-    
+
     protected $fillable = [
       'parent_id',
       'show_menu',
@@ -30,7 +30,7 @@ class Category extends Model
       'external_id',
       'options'
     ];
-    
+
 
     public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
 
@@ -42,7 +42,7 @@ class Category extends Model
     protected $casts = [
         'options' => 'array'
     ];
-    
+
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
@@ -114,25 +114,24 @@ class Category extends Model
 
     }
 
-  
+
   public function getUrlAttribute()
   {
     $url = "";
 
-    $currentLocale = \LaravelLocalization::getCurrentLocale();
-
     if($this->internal) return "";
     if(empty($this->slug)){
-  
+
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $category->slug ?? '';
     }
     if(empty($this->slug)) return "";
 
     if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
-      
-        $url = url($this->slug);
+
+        $url = \LaravelLocalization::localizeUrl('/' . $this->slug);
     }
+
     return $url;
   }
 
@@ -164,25 +163,25 @@ class Category extends Model
         #i: No relation found, return the call to parent (Eloquent) to handle it.
         return parent::__call($method, $parameters);
     }
-  
+
   public function getLftName()
   {
     return 'lft';
   }
-  
+
   public function getRgtName()
   {
     return 'rgt';
   }
-  
+
   public function getDepthName()
   {
     return 'depth';
   }
-  
+
   public function getParentIdName()
   {
     return 'parent_id';
   }
-  
+
 }
