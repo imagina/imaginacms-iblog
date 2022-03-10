@@ -157,7 +157,7 @@ class Post extends Model implements TaggableInterface
 
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
-        return url($this->slug);
+        return \LaravelLocalization::localizeUrl('/' . $this->slug);
       }
     }
     return \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug);
