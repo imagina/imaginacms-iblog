@@ -1,5 +1,6 @@
-<meta name="description" content="{{$post->summary}}">
+<meta name="description" content="{{$post->meta_description ?? strip_tags($post->summary) ?? strip_tags($post->description)}}">
 <!-- Schema.org para Google+ -->
+
 <meta itemprop="name" content="{{$post->meta_title ?? $post->title}}">
 <meta itemprop="description" content="{{$post->meta_description ?? strip_tags($post->summary) ?? strip_tags($post->description)}}">
 <meta itemprop="image" content=" {{url($post->mainimage->path) }}">
