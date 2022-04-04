@@ -19,11 +19,11 @@ use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 class Post extends Model implements TaggableInterface
 {
   use Translatable, PresentableTrait, NamespacedEntity, TaggableTrait, MediaRelation, BelongsToTenant, hasEventsWithBindings, Typeable;
-  
+
   protected static $entityNamespace = 'asgardcms/post';
-  
+
   protected $table = 'iblog__posts';
-  
+
   protected $fillable = [
     'options',
     'category_id',
@@ -45,30 +45,30 @@ class Post extends Model implements TaggableInterface
     'translatable_options'
   ];
   protected $presenter = PostPresenter::class;
-  
-  
+
+
   protected $casts = [
     'options' => 'array'
   ];
-  
-  
+
+
   public function categories()
   {
     return $this->belongsToMany(Category::class, 'iblog__post__category');
   }
-  
+
   public function category()
   {
     return $this->belongsTo(Category::class);
   }
-  
+
   public function user()
   {
     $driver = config('asgard.user.config.driver');
-    
+
     return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
   }
-  
+
   public function getOptionsAttribute($value)
   {
     try {
@@ -77,7 +77,7 @@ class Post extends Model implements TaggableInterface
       return json_decode($value);
     }
   }
-  
+
   public function getSecondaryImageAttribute()
   {
     $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
@@ -94,7 +94,7 @@ class Post extends Model implements TaggableInterface
     }
     return json_decode(json_encode($image));
   }
-  
+
   public function getMainImageAttribute()
   {
     $thumbnail = $this->files()->where('zone', 'mainimage')->first();
@@ -117,12 +117,12 @@ class Post extends Model implements TaggableInterface
       ];
     }
     return json_decode(json_encode($image));
-    
+
   }
-  
+
   public function getGalleryAttribute()
   {
-    
+
     $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
     if (count($images)) {
       $response = array();
@@ -138,34 +138,31 @@ class Post extends Model implements TaggableInterface
           'path' => $img->path_string
         ]);
       }
-      
+
     }
-    
+
     return json_decode(json_encode($response));
   }
-  
+
   /**
    * URL post
    * @return string
    */
   public function getUrlAttribute()
   {
-    
     if (empty($this->slug)) {
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug;
     }
-    
+
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
-        return url($this->slug);
+        return \LaravelLocalization::localizeUrl('/' . $this->slug);
       }
     }
-    
-    return url($this->category->slug . '/' . $this->slug);
-    
+    return \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug);
   }
-  
+
   /**
    * Magic Method modification to allow dynamic relations to other entities.
    * @return string
@@ -176,16 +173,16 @@ class Post extends Model implements TaggableInterface
   {
     #i: Convert array to dot notation
     $config = implode('.', ['asgard.iblog.config.relations.post', $method]);
-    
+
     #i: Relation method resolver
     if (config()->has($config)) {
       $function = config()->get($config);
-      
+
       return $function($this);
     }
-    
+
     #i: No relation found, return the call to parent (Eloquent) to handle it.
     return parent::__call($method, $parameters);
   }
-  
+
 }
