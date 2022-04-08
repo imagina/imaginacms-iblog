@@ -341,7 +341,17 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       if (isset($filter->status) && !empty($filter->status)) {
         $query->whereStatus($filter->status);
       }
-     
+  
+      // add filter by Categories Intersected 1 or more than 1, in array
+      if (isset($filter->categoriesIntersected) && !empty($filter->categoriesIntersected)) {
+        is_array($filter->categoriesIntersected) ? true : $filter->categoriesIntersected = [$filter->categoriesIntersected];
+        $query->where(function ($query) use ($filter) {
+          foreach ($filter->categoriesIntersected as $categoryId)
+            $query->whereHas('categories', function ($query) use ($categoryId) {
+              $query->where('iblog__post__category.category_id', $categoryId);
+            });
+        });
+      }
 
       if (isset($filter->withoutInternal)) {
         $query->whereHas('category', function ($query) {
