@@ -348,7 +348,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->where(function ($query) use ($filter) {
           foreach ($filter->categoriesIntersected as $categoryId)
             $query->whereHas('categories', function ($query) use ($categoryId) {
-              $query->where('iplaces__place_category.category_id', $categoryId);
+              $query->where('iblog__post__category.category_id', $categoryId);
             });
         });
       }
