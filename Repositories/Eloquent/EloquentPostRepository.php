@@ -175,7 +175,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       }
       
       
-      // add filter by Categories 1 or more than 1, in array/*
+      // add filter by Categories 1 or more than 1, in array
       if (isset($filter->categories) && !empty($filter->categories)) {
         is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
         $query->where(function ($query) use ($filter) {
@@ -264,17 +264,22 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       
       // add filter by search
       if (isset($filter->search) && !empty($filter->search)) {
-  
+
         //find search in columns
         $query->where(function ($query) use ($filter) {
           $query->whereHas('translations', function ($query) use ($filter) {
-            $query->where('locale', $filter->locale)
+            $query->where('locale', $filter->locale ?? locale())
                ->where(function ($query) use ($filter) {
                  $query->where('title', 'like', '%' . $filter->search . '%')
                  ->orWhere('description', 'like', '%' . $filter->search . '%');
                });
             
-          })->orWhere('iblog__posts.id', 'like', '%' . $filter->search . '%')
+          })->orWhere(function ($query) use ($filter){
+
+            $query->whereTag($filter->search,'name');
+          })
+          
+            ->orWhere('iblog__posts.id', 'like', '%' . $filter->search . '%')
             ->orWhere('updated_at', 'like', '%' . $filter->search . '%')
             ->orWhere('created_at', 'like', '%' . $filter->search . '%');
         });
@@ -426,12 +431,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     } else {
       $query->orderBy('sort_order', 'asc');//Add order to query
     }
-    
+
     /*== FIELDS ==*/
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
-  
-   
+
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
       return $query;
