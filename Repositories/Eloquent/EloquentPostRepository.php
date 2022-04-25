@@ -17,6 +17,7 @@ use Modules\Iblog\Entities\Category;
 use Modules\Ihelpers\Events\CreateMedia;
 use Modules\Ihelpers\Events\DeleteMedia;
 use Modules\Ihelpers\Events\UpdateMedia;
+use Illuminate\Support\Str;
 
 class EloquentPostRepository extends EloquentBaseRepository implements PostRepository
 {
@@ -272,6 +273,15 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                ->where(function ($query) use ($filter) {
                  $query->where('title', 'like', '%' . $filter->search . '%')
                  ->orWhere('description', 'like', '%' . $filter->search . '%');
+                 
+                 $words = explode(' ', trim($filter->search));
+                 foreach ($words as $index => $word) {
+                     if(strlen($word) >= $filter->minCharactersSearch ?? 3){
+                       $query->orWhere('title', 'like', "%" . $word . "%")
+                         ->orWhere('description', 'like', "%" . $word . "%");
+                     }
+                 }//foreach
+                
                });
             
           })->orWhere(function ($query) use ($filter){
