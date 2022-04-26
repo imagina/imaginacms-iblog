@@ -275,12 +275,15 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
                  ->orWhere('description', 'like', '%' . $filter->search . '%');
                  
                  $words = explode(' ', trim($filter->search));
-                 foreach ($words as $index => $word) {
-                     if(strlen($word) >= $filter->minCharactersSearch ?? 3){
-                       $query->orWhere('title', 'like', "%" . $word . "%")
-                         ->orWhere('description', 'like', "%" . $word . "%");
-                     }
-                 }//foreach
+                 
+                 //search word by word
+                 if(count($words)>1)
+                   foreach ($words as $index => $word) {
+                       if(strlen($word) >= ($filter->minCharactersSearch ?? 3)){
+                         $query->orWhere('title', 'like', "%" . $word . "%")
+                           ->orWhere('description', 'like', "%" . $word . "%");
+                       }
+                   }//foreach
                 
                });
             
@@ -446,6 +449,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
 
+   
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
       return $query;
