@@ -67,5 +67,9 @@ return [
   "crudFieldsHints" => [
     "urlCoder" => "Escoja con cuidado cómo se armaría la url final del post"
   ],
-
+  'layouts' => [
+    'group_name' => 'Plantillas',
+    'label_posts' => 'Plantilla para Entradas De Blog',
+    'label_categories' => 'Plantilla para Categorías De Blog',
+  ]
 ];
