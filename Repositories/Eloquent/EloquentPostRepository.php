@@ -216,6 +216,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->whereIn("iblog__posts.category_id", $filter->categoryId);
         
       }
+
       if (isset($filter->tagId)) {
         
         $query->whereTag($filter->tagId, "id");
