@@ -28,15 +28,15 @@ $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
 //      }
 //    }
 // // }
-  /** @var Router $router */
-  $router->group(['prefix' => trans('iblog::tag.uri'),
-    'middleware' => $customMiddlewares], function (Router $router) use ($locale) {
-    $router->get('{slug}', [
-      'as' => $locale . '.iblog.tag.slug',
-      'uses' => 'PublicController@tag',
-      //'middleware' => config('asgard.iblog.config.middleware'),
-    ]);
-  });
+//  /** @var Router $router */
+//  $router->group(['prefix' => trans('iblog::tag.uri'),
+//    'middleware' => $customMiddlewares], function (Router $router) use ($locale) {
+//    $router->get('{slug}', [
+//      'as' => $locale . '.iblog.tag.slug',
+//      'uses' => 'PublicController@tag',
+//      //'middleware' => config('asgard.iblog.config.middleware'),
+//    ]);
+//  });
   
   
   /** @var Router $router */
