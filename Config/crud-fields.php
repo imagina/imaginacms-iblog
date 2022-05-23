@@ -24,7 +24,21 @@ return [
         'entity' => "Modules\Iblog\Entities\Category",
         'entityId' => null
       ]
-    ]
+    ],
+    'layoutId' => [
+      'name' => 'layoutId',
+      'value' => null,
+      'type' => 'select',
+      'loadOptions' => [
+        'apiRoute' => '/isite/v1/layouts',
+        'select' => ['label' => 'title', 'id' => 'path'],
+        'requestParams' => ['filter' => ['entity_name' => 'Category', 'module_name' => 'Iblog']],
+      ],
+      'props' => [
+        'label' => 'iblog::common.layouts.label_categories',
+        'entityId' => null,
+      ],
+    ],
   ],
   //Extra field to crud post
   'posts' => [
@@ -54,6 +68,19 @@ return [
         'entityId' => null
       ]
     ],
-    
+    'layoutId' => [
+      'name' => 'layoutId',
+      'value' => null,
+      'type' => 'select',
+      'loadOptions' => [
+        'apiRoute' => '/isite/v1/layouts',
+        'select' => ['label' => 'title', 'id' => 'path'],
+        'requestParams' => ['filter' => ['entity_name' => 'Post', 'module_name' => 'Iblog']],
+      ],
+      'props' => [
+        'label' => 'iblog::common.layouts.label_posts',
+        'entityId' => null,
+      ],
+    ],
   ]
 ];
