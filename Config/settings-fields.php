@@ -32,7 +32,7 @@ return [
     'loadOptions' => [
       'apiRoute' => '/isite/v1/layouts',
       'select' => ['label' => 'title', 'id' => 'path'],
-      'requestParams' => ['filter' => ['entity_name' => 'Category', 'module_name' => 'Iblog']],
+      'requestParams' => ['filter' => ['entity_name' => 'Post', 'module_name' => 'Iblog']],
     ],
     'props' => [
       'label' => 'iblog::common.layouts.label_posts',
