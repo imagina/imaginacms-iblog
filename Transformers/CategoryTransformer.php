@@ -39,7 +39,7 @@ class CategoryTransformer extends JsonResource
       //'small_thumb' => $this->imagy->getThumbnail($this->mainimage, 'smallThumb'),
       //'medium_thumb' => $this->imagy->getThumbnail($this->mainimage, 'mediumThumb'),
       'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
-      'showMenu' => $this->when(isset($this->show_menu), ((boolean)$this->show_menu )),
+      'showMenu' => $this->show_menu ? '1' : '0',
       'featured' => $this->featured ? '1' : '0',
       'sortOrder' => !$this->sort_order ? "0": (string)$this->sort_order,
       'status' => $this->when(isset($this->status), $this->status),
