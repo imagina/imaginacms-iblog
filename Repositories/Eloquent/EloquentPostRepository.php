@@ -380,35 +380,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       }
 
     }
-  
 
-    //Order by "Sort order"
-    if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
-      $query->orderBy('sort_order', 'asc');//Add order to query
-    }
-    
-    
-    // ORDER
-    if (isset($params->order) && $params->order) {
-      
-      $order = is_array($params->order) ? $params->order : [$params->order];
-      
-      foreach ($order as $orderObject) {
-        if (isset($orderObject->field) && isset($orderObject->way)) {
-          if (in_array($orderObject->field, $this->model->translatedAttributes)) {
-            $query->join('iblog__post_translations as ptranslations', 'ptranslations.post_id', '=', 'iblog__posts.id');
-            $query->orderBy("translations.$orderObject->field", $orderObject->way);
-          } else
-            $query->orderBy($orderObject->field, $orderObject->way);
-        }
-        
-      }
-    } else {
-      $query->orderBy('sort_order', 'asc');//Add order to query
-    }
-    
     if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
-    
+
     } else {
       //Pre filters by default
       //pre-filter date_available
@@ -416,17 +390,22 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
         $query->orWhereNull("date_available");
       });
-      
+
       $query->whereHas('category', function ($query) {
         $query->where("iblog__categories.status", "!=", 0);
         //->where("iblog__categories.internal", "!=", 1);
       });
-      
+
       //pre-filter status
       $query->where("status", 2);
-      
+
     }
-    
+
+    //Order by "Sort order"
+    if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
+      $query->orderBy('sort_order', 'asc');//Add order to query
+    }
+
     // ORDER
     if (isset($params->order) && $params->order) {
       

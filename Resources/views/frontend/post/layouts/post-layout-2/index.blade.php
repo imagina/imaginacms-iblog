@@ -289,18 +289,7 @@
             </div>
           </div>
           <div class="tag pl-lg-5">
-            @if(!$tags->isEmpty())
-              <br>
-              <p>{{trans('icustom::common.post.titleTags')}}</p>
-              <span class="tags-links my-2">
-                                @foreach($tags as $tag)
-                  <a class="btn btn-primary m-1"
-                     href="{{route(locale(). '.iblog.tag.slug',['slug' => $tag->slug])}}"
-                     rel="tag">{{$tag->name}}
-                                    </a>
-                @endforeach
-                            </span>
-            @endif
+            <x-tag::tags :item="$post"/>
           </div>
         </div>
       </div>
