@@ -158,9 +158,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     /*== RELATIONSHIPS ==*/
     if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with(['translations', 'files']);
+      $query->with(['translations', 'files', 'category']);
     } else {//Especific relationships
-      $includeDefault = ['translations', 'files'];//Default relationships
+      $includeDefault = ['translations', 'files', 'category'];//Default relationships
       if (isset($params->include))//merge relations with default relationships
         $includeDefault = array_merge($includeDefault, $params->include);
       $query->with($includeDefault);//Add Relationships to query
@@ -450,7 +450,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
 
-   
+   //dd($params);
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
       return $query;
@@ -478,9 +478,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     /*== RELATIONSHIPS ==*/
     if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with(['translations']);
+      $query->with(['translations', 'files', 'category']);
     } else {//Especific relationships
-      $includeDefault = [];//Default relationships
+      $includeDefault = ['translations', 'files', 'category'];//Default relationships
       if (isset($params->include))//merge relations with default relationships
         $includeDefault = array_merge($includeDefault, $params->include);
       $query->with($includeDefault);//Add Relationships to query

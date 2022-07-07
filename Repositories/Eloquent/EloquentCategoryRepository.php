@@ -73,8 +73,20 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 
 
       if (isset($filter->id)) {
-        !is_array($filter->id) ? $filter->id = [$filter->id] : false;
-        $query->whereIn('id', $filter->id);
+        $ids = is_array($filter->id) ? $filter->id : [$filter->id];
+  
+        if (isset($filter->includeDescendants) && $filter->includeDescendants) {
+        foreach ($ids as $id) {
+            if (isset($filter->includeSelf) && $filter->includeSelf) {
+              $categories = Category::descendantsAndSelf($id);
+            }else {
+              $categories = Category::descendantsOf($id);
+            }
+            $ids = array_merge($ids, $categories->pluck("id")->toArray());
+          }
+        }
+        
+        $query->whereIn('id', $ids);
       }
 
       if (isset($filter->parentId)) {
@@ -210,9 +222,9 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 
     /*== RELATIONSHIPS ==*/
     if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with(['translations']);
+      $query->with(['translations','files']);
     } else {//Especific relationships
-      $includeDefault = [];//Default relationships
+      $includeDefault = ['translations','files'];//Default relationships
       if (isset($params->include))//merge relations with default relationships
         $includeDefault = array_merge($includeDefault, $params->include);
       $query->with($includeDefault);//Add Relationships to query
