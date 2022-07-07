@@ -401,11 +401,6 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
     }
 
-    //Order by "Sort order"
-    if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
-      $query->orderBy('sort_order', 'asc');//Add order to query
-    }
-
     // ORDER
     if (isset($params->order) && $params->order) {
       
@@ -422,7 +417,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         
       }
     } else {
-      $query->orderBy('sort_order', 'asc');//Add order to query
+      //Order by "Sort order"
+      if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
+        $query->orderBy('sort_order', 'asc');//Add order to query
+      }
     }
 
     /*== FIELDS ==*/
