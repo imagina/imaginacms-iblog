@@ -198,7 +198,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         if ($categories->isNotEmpty()) {
           $query->where(function ($query) use ($categories) {
             $query->where(function ($query) use ($categories) {
-              $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$categories->pluck("id")))."))")
+              $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$categories->pluck("id")->toArray()))."))")
                 ->orWhereIn('iblog__posts.category_id', $categories->pluck("id"));
             });
           });
