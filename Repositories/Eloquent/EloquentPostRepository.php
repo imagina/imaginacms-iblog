@@ -155,7 +155,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   {
     /*== initialize query ==*/
     $query = $this->model->query();
-    
+
     /*== RELATIONSHIPS ==*/
     if (in_array('*', $params->include ?? [])) {//If Request all relationships
       $query->with(['translations', 'files', 'category']);
@@ -175,18 +175,16 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->whereIn('iblog__posts.id', $filter->id);
       }
       
-      
-      // add filter by Categories 1 or more than 1, in array
+      // add filter by Categories 1 or more than 1, in array/*
       if (isset($filter->categories) && !empty($filter->categories)) {
         is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
-        $query->where(function ($query) use ($filter) {
-          $query->whereHas('categories', function ($query) use ($filter) {
-            $query->whereIn('iblog__post__category.category_id', $filter->categories);
-          })->orWhereIn('category_id', $filter->categories);
+        $query->where(function ($query) use ($filter){
+          $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$filter->categories))."))")
+            ->orWhereIn('iblog__posts.category_id', $filter->categories);
         });
-        
       }
-      
+
+  
       //Filter by featured
       if (isset($filter->featured) && is_bool($filter->featured)) {
         $query->where("featured", $filter->featured);
@@ -199,16 +197,15 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         
         if ($categories->isNotEmpty()) {
           $query->where(function ($query) use ($categories) {
-            
             $query->where(function ($query) use ($categories) {
-              $query->whereHas('categories', function ($query) use ($categories) {
-                $query->whereIn('iblog__post__category.category_id', $categories->pluck("id"));
-              })->orWhereIn('iblog__posts.category_id', $categories->pluck("id"));
+              $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$categories->pluck("id")))."))")
+                ->orWhereIn('iblog__posts.category_id', $categories->pluck("id"));
             });
           });
           
         }
       }
+      
       //Filter by category ID
       if (isset($filter->categoryId) && !empty($filter->categoryId)) {
         !is_array($filter->categoryId) ? $filter->categoryId = [$filter->categoryId] : false;
@@ -267,63 +264,28 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       // add filter by search
       if (isset($filter->search) && !empty($filter->search)) {
 
-        //find search in columns
-        $query->where(function ($query) use ($filter) {
-          $query->whereHas('translations', function ($query) use ($filter) {
-            $query->where('locale', $filter->locale ?? locale())
-               ->where(function ($query) use ($filter) {
-                 $query->where('title', 'like', '%' . $filter->search . '%')
-                 ->orWhere('description', 'like', '%' . $filter->search . '%');
-                 
-                 $words = explode(' ', trim($filter->search));
-                 
-                 //search word by word
-                 if(count($words)>1)
-                   foreach ($words as $index => $word) {
-                       if(strlen($word) >= ($filter->minCharactersSearch ?? 3)){
-                         $query->orWhere('title', 'like', "%" . $word . "%")
-                           ->orWhere('description', 'like', "%" . $word . "%");
-                       }
-                   }//foreach
-                
-               });
-            
-          })->orWhere(function ($query) use ($filter){
-
-            $query->whereTag($filter->search,'name');
-          })
-          
-            ->orWhere('iblog__posts.id', 'like', '%' . $filter->search . '%')
-            ->orWhere('updated_at', 'like', '%' . $filter->search . '%')
-            ->orWhere('created_at', 'like', '%' . $filter->search . '%');
-        });
         
-      /**
         // removing symbols used by MySQL
         $filter->search = preg_replace("/[^a-zA-Z0-9]+/", " ", $filter->search);
         $words = explode(" ", $filter->search);//Explode
         
-        //Validate words of minum 3 length
-        foreach ($words as $key => $word) {
-          if (strlen($word) >= 3) {
-            $words[$key] = '+' . $word . '*';
-          }
-        }
-        
           //Search query
           $query->leftJoin(\DB::raw(
-            "(SELECT MATCH (title) AGAINST ('(" . implode(" ", $words) . ") (" . $filter->search . ")' IN BOOLEAN MODE) scoreSearch, post_id, title " .
+            "(SELECT MATCH (title,description,summary) AGAINST ('(\"" . $filter->search . "\")' IN NATURAL LANGUAGE MODE) scoreSearch1, post_id, title, " .
+            " MATCH (title,description,summary) AGAINST ('(" . $filter->search . ")' IN NATURAL LANGUAGE MODE) scoreSearch2 " .
             "from iblog__post_translations " .
             "where `locale` = '".($filter->locale ?? locale())."') as ptrans"
           ), 'ptrans.post_id', 'iblog__posts.id')
-            ->where('scoreSearch', '>', 0)
-            ->orderBy('scoreSearch', 'desc');
-          
-        
-        dd($params,$query->toSql(),$query->getBindings(),$query->get());
-        //Remove order by
+            ->where(function ($query){
+              $query->where('scoreSearch1', '>', 0)
+              ->orWhere('scoreSearch2', '>', 0);
+              
+            })
+            ->orderBy('scoreSearch1', 'desc')
+            ->orderBy('iblog__posts.created_at', 'desc')
+            ->orderBy('scoreSearch2', 'desc');
+  
         unset($filter->order);
-**/
       }
      
       //Filter by date
@@ -351,7 +313,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
               $query->join('iblog__post_translations as ftranslations', 'ftranslations.post_id', '=', 'iblog__posts.id');
               $query->orderBy("translations.$orderObject->field", $orderObject->way);
             } else
-              $query->orderBy($orderObject->field, $orderObject->way);
+              $query->orderBy("iblog__posts.".$orderObject->field, $orderObject->way);
           }
           
         }
@@ -390,21 +352,16 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
         $query->orWhereNull("date_available");
       });
-
-      $query->whereHas('category', function ($query) {
-        $query->where("iblog__categories.status", "!=", 0);
-        //->where("iblog__categories.internal", "!=", 1);
-      });
+  
+      $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where status = 1)");
+      
 
       //pre-filter status
-      $query->where("status", 2);
+      $query->where("iblog__posts.status", 2);
 
     }
 
-    //Order by "Sort order"
-    if (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder) {
-      $query->orderBy('sort_order', 'asc');//Add order to query
-    }
+
 
     // ORDER
     if (isset($params->order) && $params->order) {
@@ -422,14 +379,18 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         
       }
     } else {
-      $query->orderBy('sort_order', 'asc');//Add order to query
+      //Order by "Sort order"
+      if (!isset($filter->search) && !isset($params->filter->order) && (!isset($params->filter->noSortOrder) || !$params->filter->noSortOrder)) {
+        $query->orderBy('sort_order', 'asc');//Add order to query
+      }
     }
 
     /*== FIELDS ==*/
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
 
-   //dd($params);
+   // if(isset($params->filter->categories))
+   //dd($params,$query->toSql(),$query->getBindings(),$query->get());
     /*== REQUEST ==*/
     if (isset($params->onlyQuery) && $params->onlyQuery) {
       return $query;
@@ -475,10 +436,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       // add filter by Categories 1 or more than 1, in array/*
       if (isset($filter->categories) && !empty($filter->categories)) {
         is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
-        $query->where(function ($query) use ($filter) {
-          $query->whereHas('categories', function ($query) use ($filter) {
-            $query->whereIn('iblog__post__category.category_id', $filter->categories);
-          })->orWhereIn('category_id', $filter->categories);
+        $query->where(function ($query) use ($filter){
+          $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$filter->categories))."))")
+            ->orWhereIn('iblog__posts.category_id', $filter->categories);
         });
       }
       
