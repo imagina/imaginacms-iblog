@@ -24,7 +24,7 @@
       content="{{$post->meta_description ?? strip_tags($post->summary) ?? strip_tags($post->description)}}">
 <meta name="twitter:creator" content="{{Setting::get('iblog::twitter') }}">
 <meta name="twitter:image:src" content="{{url($post->mainimage->path)}}">
-<meta name="keywords" content="{{implode("," ,$post->meta_keywords) ?? ""}},
+<meta name="keywords" content="{{ isset($post) && isset($post->meta_keywords) ? implode("," ,$post->meta_keywords) ?? "" : ""}},
 @foreach($post->tags as $tag)
 <?php echo $tag->name. "," ?>
 @endforeach
