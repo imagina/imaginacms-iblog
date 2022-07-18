@@ -182,9 +182,10 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
           $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$filter->categories))."))")
             ->orWhereIn('iblog__posts.category_id', $filter->categories);
         });
+        
       }
 
-  
+
       //Filter by featured
       if (isset($filter->featured) && is_bool($filter->featured)) {
         $query->where("featured", $filter->featured);
@@ -205,7 +206,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
           
         }
       }
-      
+
       //Filter by category ID
       if (isset($filter->categoryId) && !empty($filter->categoryId)) {
         !is_array($filter->categoryId) ? $filter->categoryId = [$filter->categoryId] : false;
@@ -264,11 +265,11 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       // add filter by search
       if (isset($filter->search) && !empty($filter->search)) {
 
-        
+
         // removing symbols used by MySQL
         $filter->search = preg_replace("/[^a-zA-Z0-9]+/", " ", $filter->search);
         $words = explode(" ", $filter->search);//Explode
-        
+
           //Search query
           $query->leftJoin(\DB::raw(
             "(SELECT MATCH (title,description,summary) AGAINST ('(\"" . $filter->search . "\")' IN NATURAL LANGUAGE MODE) scoreSearch1, post_id, title, " .
@@ -279,12 +280,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
             ->where(function ($query){
               $query->where('scoreSearch1', '>', 0)
               ->orWhere('scoreSearch2', '>', 0);
-              
+
             })
             ->orderBy('scoreSearch1', 'desc')
             ->orderBy('iblog__posts.created_at', 'desc')
             ->orderBy('scoreSearch2', 'desc');
-  
+
         unset($filter->order);
       }
      
@@ -352,9 +353,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
         $query->orWhereNull("date_available");
       });
-  
+
       $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where status = 1)");
-      
+
 
       //pre-filter status
       $query->where("iblog__posts.status", 2);

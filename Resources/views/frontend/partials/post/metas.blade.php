@@ -26,5 +26,5 @@
 <meta name="twitter:image:src" content="{{url($post->mainimage->path)}}">
 
 <meta name="keywords" content="
-      {{isset($post) && isset($post->meta_keywords) ? implode("," ,$post->meta_keywords) ?? "" : ""}},
+      {{isset($post) && isset($post->meta_keywords) && !is_null($post->meta_keywords) ? implode("," ,$post->meta_keywords) ?? "" : ""}},
       {{join(",", $post->tags->pluck('name')->toArray())}}">
