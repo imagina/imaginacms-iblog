@@ -15,7 +15,8 @@ class PostTranslation extends Model
     protected $fillable = ['title','description','slug','summary','meta_title','meta_description','meta_keywords','translatable_options'];
 
     protected $casts = [
-        'translatable_options' => 'array'
+        'translatable_options' => 'array',
+        'meta_keywords' => 'array'
     ];
 
     /**
