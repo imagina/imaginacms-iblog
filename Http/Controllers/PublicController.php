@@ -131,8 +131,12 @@ class PublicController extends BasePublicController
     if (view()->exists($ctpl)) $tpl = $ctpl;
 
     $this->addAlternateUrls(alternate($post));
+    
+    //meta keywords
+    $metaKeywords = (implode("," ,$post->meta_keywords ?? [])).
+      join(",", $post->tags->pluck('name')->toArray());
 
-    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb'));
+    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords'));
 
 
   }
