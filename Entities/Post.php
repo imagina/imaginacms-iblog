@@ -33,6 +33,7 @@ class Post extends Model implements TaggableInterface
     'sort_order',
     'external_id',
     'created_at',
+    'date_available'
   ];
   public $translatedAttributes = [
     'title',
