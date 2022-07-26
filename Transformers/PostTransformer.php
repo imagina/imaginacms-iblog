@@ -16,6 +16,7 @@ class PostTransformer extends JsonResource
       'title' => $this->when($this->title, $this->title),
       'slug' => $this->when($this->slug, $this->slug),
       'summary' => $this->when($this->summary, $this->summary),
+      'dateAvailable' => $this->when($this->date_available, $this->date_available),
       'description' => $this->when($this->description, $this->description),
       'status' => $this->when($this->status, intval($this->status)),
       'statusName' => $this->when($this->status, $this->present()->status),
