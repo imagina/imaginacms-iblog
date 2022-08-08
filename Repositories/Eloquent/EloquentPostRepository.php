@@ -246,9 +246,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       if (isset($filter->exclude_categories) && !empty($filter->exclude_categories)) {
         
         $exclude_categories = is_array($filter->exclude_categories) ? $filter->exclude_categories : [$filter->exclude_categories];
-        $query->whereHas('categories', function ($q) use ($exclude_categories) {
-          $q->whereNotIn('category_id', $exclude_categories);
-        });
+        $query->whereRaw("iblog__posts.id NOT IN (SELECT post_id from iblog__post__category where category_id IN (".(join(",",$exclude_categories))."))");
+        
       }
       
       if (isset($filter->exclude_users) && !empty($filter->exclude_users)) {
@@ -329,17 +328,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         is_array($filter->categoriesIntersected) ? true : $filter->categoriesIntersected = [$filter->categoriesIntersected];
         $query->where(function ($query) use ($filter) {
           foreach ($filter->categoriesIntersected as $categoryId)
-            $query->whereHas('categories', function ($query) use ($categoryId) {
-              $query->where('iblog__post__category.category_id', $categoryId);
-            });
+            $query->whereRaw("iblog__posts.id IN (SELECT post_id from iblog__post__category where category_id = $categoryId)");
         });
       }
 
       if (isset($filter->withoutInternal)) {
-        $query->whereHas('category', function ($query) {
-          $query->where('internal', false);
-        });
- 
+        $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where internal = 0)");
       }
 
     }
@@ -348,18 +342,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
     } else {
       //Pre filters by default
-      //pre-filter date_available
-      $query->where(function ($query) {
-        $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
-        $query->orWhereNull("date_available");
-      });
-
-      $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where status = 1)");
-
-
-      //pre-filter status
-      $query->where("iblog__posts.status", 2);
-
+    $this->defaultPreFilters($query,$params);
     }
 
 
@@ -372,8 +355,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       foreach ($order as $orderObject) {
         if (isset($orderObject->field) && isset($orderObject->way)) {
           if (in_array($orderObject->field, $this->model->translatedAttributes)) {
-            $query->join('iblog__post_translations as translations', 'translations.post_id', '=', 'iblog__posts.id');
-            $query->orderBy("translations.$orderObject->field", $orderObject->way);
+            $query->orderByTranslation($orderObject->field, $orderObject->way);
           } else
             $query->orderBy($orderObject->field, $orderObject->way);
         }
@@ -406,6 +388,22 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       }
   }
   
+  
+  public function defaultPreFilters($query, $params){
+  
+    //pre-filter date_available
+    $query->where(function ($query) {
+      $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
+      $query->orWhereNull("date_available");
+    });
+  
+    $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where status = 1)");
+  
+  
+    //pre-filter status
+    $query->where("iblog__posts.status", 2);
+
+  }
   /**
    * Standard Api Method
    * @param $criteria
@@ -461,14 +459,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     
     } else {
       //Pre filters by default
-      //pre-filter date_available
-      $query->where(function ($query) {
-        $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
-        $query->orWhereNull("date_available");
-      });
-      
-      //pre-filter status
-      $query->where("status", 2);
+      $this->defaultPreFilters($query,$params);
       
     }
     
