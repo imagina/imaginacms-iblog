@@ -46,8 +46,11 @@ class Post extends Model implements TaggableInterface
     'translatable_options'
   ];
   protected $presenter = PostPresenter::class;
-
-
+  
+  protected $dates = [
+    'date_available'
+  ];
+  
   protected $casts = [
     'options' => 'array'
   ];
