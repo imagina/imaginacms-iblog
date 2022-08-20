@@ -5,6 +5,7 @@ namespace Modules\Iblog\Transformers;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\User\Transformers\UserProfileTransformer;
 use Modules\Media\Image\Imagy;
+use Modules\Ifillable\Transformers\FieldTransformer;
 
 class CategoryTransformer extends JsonResource
 {
@@ -75,7 +76,14 @@ class CategoryTransformer extends JsonResource
           $this->translate("$lang")['meta_description'] : '';
       }
     }
-    
+  
+    $fields = $this->fields;
+  
+    if (!empty($fields) && method_exists($this->resource, 'formatFillableToModel')) {
+      //Merge fillable to main level of response
+      $data = array_merge_recursive($data, $this->formatFillableToModel( FieldTransformer::collection($fields)));
+    }
+  
     return $data;
   }
 }

@@ -154,10 +154,12 @@ class Post extends Model implements TaggableInterface
    */
   public function getUrlAttribute()
   {
+    
     if (empty($this->slug)) {
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
-      $this->slug = $post->slug;
+      $this->slug = $post->slug ?? "";
     }
+    if(empty($this->slug)) return "";
 
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {

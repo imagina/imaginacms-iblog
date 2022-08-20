@@ -13,10 +13,11 @@ use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 use Modules\Isite\Traits\Typeable;
 use Modules\Core\Icrud\Traits\hasEventsWithBindings;
+use Modules\Ifillable\Traits\isFillable;
 
 class Category extends Model
 {
-    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, BelongsToTenant, hasEventsWithBindings, Typeable;
+    use Translatable, MediaRelation, PresentableTrait, NamespacedEntity, NodeTrait, BelongsToTenant, hasEventsWithBindings, Typeable, isFillable;
 
     protected $table = 'iblog__categories';
 
@@ -42,7 +43,10 @@ class Category extends Model
     protected $casts = [
         'options' => 'array'
     ];
-
+  
+  protected $with = [
+    'fields'
+  ];
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
