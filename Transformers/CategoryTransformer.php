@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\User\Transformers\UserProfileTransformer;
 use Modules\Media\Image\Imagy;
 use Modules\Ifillable\Transformers\FieldTransformer;
+use Modules\Isite\Transformers\RevisionTransformer;
 
 class CategoryTransformer extends JsonResource
 {
@@ -53,7 +54,8 @@ class CategoryTransformer extends JsonResource
       'internal' => $this->when($this->internal, $this->internal),
       'children' => CategoryTransformer::collection($this->whenLoaded('children')),
       'posts' => PostTransformer::collection($this->whenLoaded('posts')),
-      'mediaFiles' => $this->mediaFiles()
+      'mediaFiles' => $this->mediaFiles(),
+      'revisions' => RevisionTransformer::collection($this->whenLoaded('revisions')),
     ];
     
     $filter = json_decode($request->filter);

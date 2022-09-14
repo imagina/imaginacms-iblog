@@ -14,13 +14,20 @@ use Modules\Tag\Traits\TaggableTrait;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 use Modules\Isite\Traits\Typeable;
 use Modules\Core\Icrud\Traits\hasEventsWithBindings;
+use Modules\Isite\Traits\RevisionableTrait;
 
 
 class Post extends Model implements TaggableInterface
 {
-  use Translatable, PresentableTrait, NamespacedEntity, TaggableTrait, MediaRelation, BelongsToTenant, hasEventsWithBindings, Typeable;
+  use Translatable, PresentableTrait, NamespacedEntity,
+    TaggableTrait, MediaRelation, BelongsToTenant,
+    hasEventsWithBindings, Typeable, RevisionableTrait;
 
   protected static $entityNamespace = 'asgardcms/post';
+
+  public $transformer = 'Modules\Iblog\Transformers\PostTransformer';
+  public $entity = 'Modules\Iblog\Entities\Post';
+  public $repository = 'Modules\Iblog\Repositories\PostRepository';
 
   protected $table = 'iblog__posts';
 
@@ -46,15 +53,19 @@ class Post extends Model implements TaggableInterface
     'translatable_options'
   ];
   protected $presenter = PostPresenter::class;
-  
+
   protected $dates = [
     'date_available'
   ];
-  
+
   protected $casts = [
     'options' => 'array'
   ];
 
+  protected $revisionEnabled = true;
+  protected $revisionCleanup = true;
+  protected $historyLimit = 100;
+  protected $revisionCreationsEnabled = true;
 
   public function categories()
   {
@@ -154,12 +165,12 @@ class Post extends Model implements TaggableInterface
    */
   public function getUrlAttribute()
   {
-    
+
     if (empty($this->slug)) {
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug ?? "";
     }
-    if(empty($this->slug)) return "";
+    if (empty($this->slug)) return "";
 
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
