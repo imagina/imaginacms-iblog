@@ -5,7 +5,9 @@ namespace Modules\Iblog\Transformers;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Tag\Transformers\TagTransformer;
 use Modules\User\Transformers\UserProfileTransformer;
+use Modules\Iblog\Entities\Post;
 use Illuminate\Support\Arr;
+use  Modules\Isite\Transformers\RevisionTransformer;
 
 class PostTransformer extends JsonResource
 {
@@ -29,7 +31,7 @@ class PostTransformer extends JsonResource
       'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
       'gallery' => $this->gallery,
       'featured' => $this->when($this->featured, $this->featured),
-      'sortOrder' => !$this->sort_order ? "0": (string)$this->sort_order,
+      'sortOrder' => !$this->sort_order ? "0" : (string)$this->sort_order,
       'updatedAt' => $this->when($this->updated_at, $this->updated_at),
       'createdAt' => $this->when($this->created_at, $this->created_at),
       'options' => $this->when($this->options, $this->options),
@@ -37,19 +39,20 @@ class PostTransformer extends JsonResource
       'categoryId' => $this->when($this->category_id, $this->category_id),
       'editor' => new UserProfileTransformer($this->whenLoaded('user')),
       'categories' => CategoryTransformer::collection($this->whenLoaded('categories')),
-      'mediaFiles' => $this->mediaFiles()
+      'mediaFiles' => $this->mediaFiles(),
+      'revisions' => RevisionTransformer::collection($this->whenLoaded('revisions')),
     ];
-    
+
     foreach ($this->tags as $tag) {
       $data['tags'][] = $tag->name;
     }
     $filter = json_decode($request->filter);
-    
+
     // Return data with available translations
     if (isset($filter->allTranslations) && $filter->allTranslations) {
       // Get langs avaliables
       $languages = \LaravelLocalization::getSupportedLocales();
-      
+
       foreach ($languages as $lang => $value) {
         $data[$lang]['title'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['title'] : '';
@@ -67,8 +70,8 @@ class PostTransformer extends JsonResource
           $this->translate("$lang")['meta_keywords'] : '';
       }
     }
-    
+
     return $data;
-    
+
   }
 }
