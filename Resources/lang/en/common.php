@@ -59,5 +59,10 @@ return [
   'social' => [
     'share' => 'Share'
   ],
-
+  "groups" => [
+    "searcher" => "Searcher engine"
+  ],
+  "settings" => [
+    "searcherOrder" => "Search sorting"
+  ]
 ];

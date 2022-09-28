@@ -55,4 +55,26 @@ return [
       'entityId' => null,
     ],
   ],
+  'orderSearchResults' => [
+    'value' => ['scoreSearch1','iblog__posts.created_at','scoreSearch2'],
+    'name' => 'iblog::orderSearchResults',
+    'groupName' => 'searcher',
+    'groupTitle' => 'iblog::common.groups.searcher',
+    "onlySuperAdmin" => true,
+    'type' => 'select',
+    'columns' => 'col-6',
+    'props' => [
+      'label' => 'iblog::common.settings.searcherOrder',
+      'useInput' => false,
+      'useChips' => true,
+      'multiple' => true,
+      'hideDropdownIcon' => true,
+      'newValueMode' => 'add-unique',
+      'options' => [
+        ['label' => 'Palabra completa', 'value' => 'scoreSearch1'],
+        ['label' => 'Fecha de Creación', 'value' => 'iblog__posts.created_at'],
+        ['label' => 'Palabras individuales', 'value' => 'scoreSearch2'],
+      ]
+    ]
+  ],
 ];

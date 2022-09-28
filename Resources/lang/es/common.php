@@ -71,5 +71,11 @@ return [
     'group_name' => 'Plantillas',
     'label_posts' => 'Plantilla para Entradas De Blog',
     'label_categories' => 'Plantilla para Categorías De Blog',
+  ],
+  "groups" => [
+    "searcher" => "Motor de búsqueda"
+  ],
+  "settings" => [
+    "searcherOrder" => "Ordenamiento de búsqueda"
   ]
 ];
