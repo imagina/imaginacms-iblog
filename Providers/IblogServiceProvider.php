@@ -61,7 +61,7 @@ class IblogServiceProvider extends ServiceProvider
 
     $this->app[TagManager::class]->registerNamespace(new Post());
 
-    $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+    //$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
     $this->registerComponents();
   }
