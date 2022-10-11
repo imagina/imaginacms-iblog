@@ -10,18 +10,7 @@
 
 @section('content')
   <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
-    @component('iblog.partials.blog-breadcrumb')
-      @slot('title')
-        {{$category->title}}
-      @endslot
-      @slot('image')
-        {{$category->mainimage->path}}
-      @endslot
-      <li class="breadcrumb-item">
-        <a href="{{url($category->slug)}}">{{$category->title}}</a>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page">{{$post->title}}</li>
-    @endcomponent
+    @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
       {{-- article --}}
       <div class="row">
@@ -44,7 +33,8 @@
               </div>
             </div>
           </div>
-          <h5 class="row justify-content-center font-weight-bold mt-5 mb-3">Artículos relacionados</h5>
+          <h5
+            class="row justify-content-center font-weight-bold mt-5 mb-3">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
           <x-isite::carousel.owl-carousel
             id="Articles"
             repository="Modules\Iblog\Repositories\PostRepository"
@@ -91,7 +81,7 @@
                                     'buttonIcon'=>'fa fa-angle-right',
                                     'buttonIconLR'=>'left',
                                     'buttonColor'=>'dark',
-                                    'viewMoreButtonLabel'=>'icustom::common.post.labelViewMore',
+                                    'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                     'withImageOpacity'=>false,
                                     'imageOpacityColor'=>'opacity-dark',
                                     'imageOpacityDirection'=>'opacity-all',
@@ -170,7 +160,7 @@
           </div>
           <div class="row mx-1">
             <div class="col-12">
-              <h4 class="mt-1 mb-3 ml-3">{{trans('icustom::common.post.titlePostRecent')}}</h4>
+              <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
               <livewire:isite::items-list
                 moduleName="Iblog"
                 itemComponentName="isite::item-list"

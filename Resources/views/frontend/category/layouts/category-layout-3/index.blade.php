@@ -72,7 +72,7 @@
                                     'buttonIcon'=>'fa fa-angle-right',
                                     'buttonIconLR'=>'left',
                                     'buttonColor'=>'dark',
-                                    'viewMoreButtonLabel'=>'icustom::common.post.viewMore',
+                                    'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                     'withImageOpacity'=>'false',
                                     'imageOpacityColor'=>'opacity-dark',
                                     'imageOpacityDirection'=>'opacity-all',
