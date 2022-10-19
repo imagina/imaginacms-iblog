@@ -71,6 +71,10 @@ return [
     'group_name' => 'Plantillas',
     'label_posts' => 'Plantilla para Entradas De Blog',
     'label_categories' => 'Plantilla para Categorías De Blog',
+    'titlePostRecent' => 'Artículos recientes',
+    'viewMore' => 'Ver más',
+    'titleRelatedPosts' => 'Artículos relacionados',
+    'titleArticles' => 'Artículos',
   ],
   "groups" => [
     "searcher" => "Motor de búsqueda"

@@ -31,7 +31,7 @@ return [
       'type' => 'select',
       'loadOptions' => [
         'apiRoute' => '/isite/v1/layouts',
-        'select' => ['label' => 'title', 'id' => 'path'],
+        'select' => ['label' => 'title', 'id' => 'id'],
         'requestParams' => ['filter' => ['entity_name' => 'Category', 'module_name' => 'Iblog']],
       ],
       'props' => [
@@ -74,7 +74,7 @@ return [
       'type' => 'select',
       'loadOptions' => [
         'apiRoute' => '/isite/v1/layouts',
-        'select' => ['label' => 'title', 'id' => 'path'],
+        'select' => ['label' => 'title', 'id' => 'id'],
         'requestParams' => ['filter' => ['entity_name' => 'Post', 'module_name' => 'Iblog']],
       ],
       'props' => [

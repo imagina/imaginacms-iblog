@@ -11,7 +11,7 @@
 @section('content')
 
   <section id="layout1"
-           class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
+           class="{{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
     <div id="content_index_blog"
          class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
       <div class="container">
@@ -50,7 +50,7 @@
             </div>
             <div class="row mx-1">
               <div class="col-12">
-                <h4 class="mt-1 mb-3 ml-3">{{trans('icustom::common.post.titlePostRecent')}}</h4>
+                <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
                 <livewire:isite::items-list
                   moduleName="Iblog"
                   itemComponentName="isite::item-list"
@@ -212,7 +212,7 @@
                                     'buttonIcon'=>'fa fa-angle-right',
                                     'buttonIconLR'=>'left',
                                     'buttonColor'=>'dark',
-                                    'viewMoreButtonLabel'=>'icustom::common.post.labelViewMore',
+                                    'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                     'withImageOpacity'=>false,
                                     'imageOpacityColor'=>'opacity-dark',
                                     'imageOpacityDirection'=>'opacity-all',

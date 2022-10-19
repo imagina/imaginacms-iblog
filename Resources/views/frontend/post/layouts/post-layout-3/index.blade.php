@@ -46,7 +46,7 @@
             {{--sidebar--}}
             <div class="col-12 col-md-3 px-4 px-md-0">
               <div class="mb-4">
-                <h4 class="ml-3 mb-2">{{trans('icustom::common.post.titleArticles')}}</h4>
+                <h4 class="ml-3 mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
                 <livewire:isite::items-list
                   moduleName="Iblog"
                   itemComponentName="isite::item-list"
@@ -94,7 +94,7 @@
                                         'buttonIcon'=>'',
                                         'buttonIconLR'=>'left',
                                         'buttonColor'=>'primary',
-                                        'viewMoreButtonLabel'=>'isite::common.menu.viewMore',
+                                        'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                         'withImageOpacity'=>false,
                                         'imageOpacityColor'=>'opacity-dark',
                                         'imageOpacityDirection'=>'opacity-all',

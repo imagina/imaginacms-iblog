@@ -10,20 +10,7 @@
 
 @section('content')
   <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
-
-    @component('iblog.partials.blog-breadcrumb')
-      @slot('title')
-        {{$category->title}}
-      @endslot
-      @slot('image')
-        {{$category->mainimage->path}}
-      @endslot
-      <li class="breadcrumb-item">
-        <a href="{{url($category->slug)}}">{{$category->title}}</a>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page">{{$post->title}}</li>
-    @endcomponent
-
+    @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
       <div class="row justify-content-end">
         {{--article--}}
@@ -47,7 +34,7 @@
         </div>
         {{--sidebar--}}
         <div class="col-12 col-md-3">
-          <h4 class="mb-2">{{trans('icustom::common.post.titleArticles')}}</h4>
+          <h4 class="mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
           <livewire:isite::items-list
             moduleName="Iblog"
             itemComponentName="isite::item-list"
@@ -95,7 +82,7 @@
                                         'buttonIcon'=>'',
                                         'buttonIconLR'=>'left',
                                         'buttonColor'=>'primary',
-                                        'viewMoreButtonLabel'=>'isite::common.menu.viewMore',
+                                        'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                         'withImageOpacity'=>false,
                                         'imageOpacityColor'=>'opacity-dark',
                                         'imageOpacityDirection'=>'opacity-all',
