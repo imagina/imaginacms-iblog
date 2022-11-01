@@ -272,15 +272,14 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
 
           //Search query
           $query->leftJoin(\DB::raw(
-            "(SELECT MATCH (title,description,summary) AGAINST ('(\"" . $filter->search . "\")' IN NATURAL LANGUAGE MODE) scoreSearch1, post_id, title, " .
-            " MATCH (title,description,summary) AGAINST ('(" . $filter->search . ")' IN NATURAL LANGUAGE MODE) scoreSearch2 " .
+            "(SELECT MATCH (" . implode(',',json_decode(setting('iblog::selectSearchFieldsPosts'))) . ") AGAINST ('(\"" . $filter->search . "\")' IN NATURAL LANGUAGE MODE) scoreSearch1, post_id, title, " .
+            " MATCH (" . implode(',',json_decode(setting('iblog::selectSearchFieldsPosts'))) . ") AGAINST ('(" . $filter->search . ")' IN NATURAL LANGUAGE MODE) scoreSearch2 " .
             "from iblog__post_translations " .
             "where `locale` = '".($filter->locale ?? locale())."') as ptrans"
           ), 'ptrans.post_id', 'iblog__posts.id')
             ->where(function ($query){
               $query->where('scoreSearch1', '>', 0)
               ->orWhere('scoreSearch2', '>', 0);
-
             });
     
           foreach ($orderSearchResults ?? [] as $orderSearch){

@@ -77,4 +77,26 @@ return [
       ]
     ]
   ],
+  'selectSearchFieldsPosts' => [
+    'value' => ['title','summary','description'],
+    'name' => 'iblog::selectSearchFieldsPosts',
+    'groupName' => 'searcher',
+    'groupTitle' => 'iblog::common.groups.searcher',
+    "onlySuperAdmin" => true,
+    'type' => 'select',
+    'columns' => 'col-6',
+    'props' => [
+      'label' => 'iblog::common.settings.searchFields',
+      'useInput' => false,
+      'useChips' => true,
+      'multiple' => true,
+      'hideDropdownIcon' => true,
+      'newValueMode' => 'add-unique',
+      'options' => [
+        ['label' => 'iblog::common.settings.options.title', 'value' => 'title'],
+        ['label' => 'iblog::common.settings.options.summary', 'value' => 'summary'],
+        ['label' => 'iblog::common.settings.options.description', 'value' => 'description'],
+      ]
+    ]
+  ],
 ];

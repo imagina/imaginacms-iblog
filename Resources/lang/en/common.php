@@ -72,6 +72,12 @@ return [
     "searcher" => "Searcher engine"
   ],
   "settings" => [
-    "searcherOrder" => "Search sorting"
+    "searcherOrder" => "Search sorting",
+    "searchFields" => "Search fields for articles",
+    "options" => [
+      "title" => "Article title",
+      "summary" => "Article Summary",
+      "description" => "Description of the article",
+    ]
   ]
 ];
