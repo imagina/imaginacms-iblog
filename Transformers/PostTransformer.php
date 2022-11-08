@@ -5,7 +5,9 @@ namespace Modules\Iblog\Transformers;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Tag\Transformers\TagTransformer;
 use Modules\User\Transformers\UserProfileTransformer;
+use Modules\Iblog\Entities\Post;
 use Illuminate\Support\Arr;
+use  Modules\Isite\Transformers\RevisionTransformer;
 
 class PostTransformer extends JsonResource
 {
@@ -37,7 +39,8 @@ class PostTransformer extends JsonResource
       'categoryId' => $this->when($this->category_id, $this->category_id),
       'editor' => new UserProfileTransformer($this->whenLoaded('user')),
       'categories' => CategoryTransformer::collection($this->whenLoaded('categories')),
-      'mediaFiles' => $this->mediaFiles()
+      'mediaFiles' => $this->mediaFiles(),
+      'revisions' => RevisionTransformer::collection($this->whenLoaded('revisions')),
     ];
     
     foreach ($this->tags as $tag) {

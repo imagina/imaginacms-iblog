@@ -73,7 +73,7 @@
                                     'buttonIcon'=>'fa fa-angle-right',
                                     'buttonIconLR'=>'left',
                                     'buttonColor'=>'dark',
-                                    'viewMoreButtonLabel'=>'icustom::common.post.viewMore',
+                                    'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                     'withImageOpacity'=>'false',
                                     'imageOpacityColor'=>'opacity-dark',
                                     'imageOpacityDirection'=>'opacity-all',
@@ -155,7 +155,7 @@
               </div>
               <div class="row">
                 <div class="col-12 pl-lg-5">
-                  <h4 class="mt-1 mb-2 mx-3">{{trans('icustom::common.post.titlePostRecent')}}</h4>
+                  <h4 class="mt-1 mb-2 mx-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
                   <livewire:isite::items-list
                     moduleName="Iblog"
                     itemComponentName="isite::item-list"
@@ -203,7 +203,7 @@
                                         'buttonIcon'=>'',
                                         'buttonIconLR'=>'left',
                                         'buttonColor'=>'primary',
-                                        'viewMoreButtonLabel'=>'isite::common.menu.viewMore',
+                                        'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                         'withImageOpacity'=>false,
                                         'imageOpacityColor'=>'opacity-dark',
                                         'imageOpacityDirection'=>'opacity-all',

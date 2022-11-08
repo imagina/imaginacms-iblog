@@ -264,6 +264,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       // add filter by search
       if (isset($filter->search) && !empty($filter->search)) {
 
+        $orderSearchResults = json_decode(setting("iblog::orderSearchResults"));
 
         // removing symbols used by MySQL
         $filter->search = preg_replace("/[^a-zA-Z0-9]+/", " ", $filter->search);
@@ -280,10 +281,12 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
               $query->where('scoreSearch1', '>', 0)
               ->orWhere('scoreSearch2', '>', 0);
 
-            })
-            ->orderBy('scoreSearch1', 'desc')
-            ->orderBy('iblog__posts.created_at', 'desc')
-            ->orderBy('scoreSearch2', 'desc');
+            });
+    
+          foreach ($orderSearchResults ?? [] as $orderSearch){
+            $query->orderBy($orderSearch, 'desc');
+          }
+          
 
         unset($filter->order);
       }

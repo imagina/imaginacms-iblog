@@ -59,5 +59,19 @@ return [
   'social' => [
     'share' => 'Share'
   ],
-
+  'layouts' => [
+    'group_name' => 'Templates',
+    'label_posts' => 'Blog Post Template',
+    'label_categories' => 'Blog Categories Template',
+    'titlePostRecent' => 'Recent Articles',
+    'viewMore' => 'View more',
+    'titleRelatedPosts' => 'Related posts',
+    'titleArticles' => 'Posts',
+  ],
+  "groups" => [
+    "searcher" => "Searcher engine"
+  ],
+  "settings" => [
+    "searcherOrder" => "Search sorting"
+  ]
 ];

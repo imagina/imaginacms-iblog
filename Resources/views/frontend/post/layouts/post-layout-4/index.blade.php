@@ -60,7 +60,7 @@
                 <div class="sharethis-inline-share-buttons"></div>
               </div>
               <div class="mb-5">
-                <h5>Artículos relacionados</h5>
+                <h5>{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
                 <x-isite::carousel.owl-carousel
                   id="Articles"
                   repository="Modules\Iblog\Repositories\PostRepository"
@@ -105,7 +105,7 @@
                   buttonIcon=""
                   buttonIconLR="left"
                   buttonColor="dark"
-                  viewMoreButtonLabel="isite::common.menu.viewMore"
+                  viewMoreButtonLabel="iblog::common.layouts.viewMore"
                   :withImageOpacity="false"
                   imageOpacityColor="opacity-dark"
                   imageOpacityDirection="opacity-top"
