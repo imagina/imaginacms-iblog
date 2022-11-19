@@ -80,6 +80,12 @@ return [
     "searcher" => "Motor de búsqueda"
   ],
   "settings" => [
-    "searcherOrder" => "Ordenamiento de búsqueda"
+    "searcherOrder" => "Ordenamiento de búsqueda",
+    "searchFields" => "Campos de búsqueda para artículos",
+    "options" => [
+      "title" => "Título del artículo",
+      "summary" => "Resumen del artículo",
+      "description" => "Descripción del artículo",
+    ]
   ]
 ];

@@ -53,11 +53,11 @@ class Post extends Model implements TaggableInterface
     'translatable_options'
   ];
   protected $presenter = PostPresenter::class;
-  
+
   protected $dates = [
     'date_available'
   ];
-  
+
   protected $casts = [
     'options' => 'array'
   ];
@@ -165,12 +165,12 @@ class Post extends Model implements TaggableInterface
    */
   public function getUrlAttribute()
   {
-    
+
     if (empty($this->slug)) {
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug ?? "";
     }
-    if(empty($this->slug)) return "";
+    if (empty($this->slug)) return "";
 
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {

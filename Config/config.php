@@ -197,6 +197,41 @@ return [
       ],
     ]
   ],
+
+  /*
+ |--------------------------------------------------------------------------
+ | Define config to the orderBy in the index page
+ |--------------------------------------------------------------------------
+ */
+  'orderBy' => [
+    'default' => 'recently',
+    'options' => [
+      'nameaz' => [
+        'title' => 'isite::common.sort.name_a_z',
+        'name' => 'nameaz',
+        'order' => [
+          'field' => "title",
+          'way' => "asc",
+        ]
+      ],
+      'nameza' => [
+        'title' => 'isite::common.sort.name_z_a',
+        'name' => 'nameza',
+        'order' => [
+          'field' => "name",
+          'way' => "desc",
+        ]
+      ],
+      'recently' => [
+        'title' => 'isite::common.sort.recently',
+        'name' => 'recently',
+        'order' => [
+          'field' => "created_at",
+          'way' => "desc",
+        ]
+      ]
+    ],
+  ],
   
   "indexItemListAttributes" => [
     'withCreatedDate' => true,
