@@ -68,6 +68,8 @@ class PostTransformer extends JsonResource
           $this->translate("$lang")['meta_description'] : '';
         $data[$lang]['metaKeywords'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['meta_keywords'] : '';
+        $data[$lang]['status'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['status'] : '';
       }
     }
 
