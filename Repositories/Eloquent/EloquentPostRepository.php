@@ -322,7 +322,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       }
       
       if (isset($filter->status) && !empty($filter->status)) {
-        $query->whereStatus($filter->status);
+        !is_array($filter->status) ? $filter->status = [$filter->status] : false;
+        $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = ".join($filter->status)." and locale = ".($filter->locale ?? locale()).")");
       }
   
       // add filter by Categories Intersected 1 or more than 1, in array
@@ -403,7 +404,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   
   
     //pre-filter status
-    $query->where("iblog__posts.status", 2);
+      $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = 2 and locale = ".($params->filter->locale ?? locale()).")");
+
 
   }
   /**
