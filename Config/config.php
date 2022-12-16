@@ -78,7 +78,7 @@ return [
  |
  */
   
-  'localeTime' => 'es_CO.UTF-8',
+  'localeTime' => 'es_CO.utf8',
   
   /*
    |--------------------------------------------------------------------------
@@ -329,5 +329,53 @@ return [
   *  infiniteScroll
   */
     "type" => "normal"
+  ],
+
+   /*
+  |--------------------------------------------------------------------------
+  | Pages Base 
+  |--------------------------------------------------------------------------
+  */
+  'pagesBase' => [
+
+    //Iblog Index
+    'blog' => [
+      'template' => 'default',
+      'is_home' => 0,
+      'system_name' => 'blog',
+      'type' => 'internal',
+      'en' => [
+        'title' => 'Blog',
+        'slug' => 'blog',
+        'body' => '<p>Blog</p>',
+        'meta_title' => 'Blog',
+      ],
+      'es' => [
+        'title' => 'Blog',
+        'slug' => 'blog',
+        'body' => '<p>blog</p>',
+        'meta_title' => 'Blog',
+      ], 
+    ],//Iblog Show
+    'blog-show' => [
+      'template' => 'default',
+      'is_home' => 0,
+      'system_name' => 'blog-show',
+      'type' => 'internal',
+      'en' => [
+        'title' => 'Blog Show',
+        'slug' => 'blog-show',
+        'body' => '<p>Blog Show</p>',
+        'meta_title' => 'Blog show',
+      ],
+      'es' => [
+        'title' => 'Blog Show',
+        'slug' => 'blog-show',
+        'body' => '<p>Blog Show</p>',
+        'meta_title' => 'Blog Show',
+      ],
+  
+    ],
+
   ],
 ];

@@ -166,18 +166,27 @@ class Post extends Model implements TaggableInterface
   public function getUrlAttribute()
   {
 
+
     if (empty($this->slug)) {
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug ?? "";
     }
     if (empty($this->slug)) return "";
 
+    $currentLocale = locale();
+    $tenantDomain = isset(tenant()->id) ? tenant()->domain : (tenancy()->find($this->organization_id)->domain ?? parse_url(env('APP_URL', 'localhost'),PHP_URL_HOST));
+
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
-        return \LaravelLocalization::localizeUrl('/' . $this->slug);
+          $url = !is_null($tenantDomain) ? "https://".$tenantDomain.'/' . $this->slug : \LaravelLocalization::localizeUrl('/' . $this->slug);
+          return $url;
       }
     }
-    return \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug);
+
+    $url = !is_null($tenantDomain) ? "https://".$tenantDomain.'/' . $this->category->slug . '/' . $this->slug : \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug);
+    
+    return $url;
+    
   }
 
   /**

@@ -16,6 +16,8 @@ use Route;
 use Modules\Page\Http\Controllers\PublicController as PageController;
 use Illuminate\Support\Str;
 
+use Modules\Page\Repositories\PageRepository;
+
 class PublicController extends BasePublicController
 {
   /**
@@ -24,13 +26,19 @@ class PublicController extends BasePublicController
   private $post;
   private $category;
   private $tag;
+  private $pageRepository;
 
-  public function __construct(PostRepository $post, CategoryRepository $category, TagRepository $tag)
-  {
+  public function __construct(
+    PostRepository $post, 
+    CategoryRepository $category, 
+    TagRepository $tag,
+    PageRepository $pageRepository
+    ){
     parent::__construct();
     $this->post = $post;
     $this->category = $category;
     $this->tag = $tag;
+    $this->pageRepository = $pageRepository;
   }
 
   public function index($category)
@@ -86,7 +94,10 @@ class PublicController extends BasePublicController
 
     config(["asgard.iblog.config.filters" => $configFilters]);
 
-    return view($tpl, compact('posts', 'category', 'categoryBreadcrumb'));
+    //Send page to detect in master layout
+    $page = $this->pageRepository->where('system_name',"blog")->first();
+
+    return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','page'));
 
   }
 
@@ -136,7 +147,10 @@ class PublicController extends BasePublicController
     $metaKeywords = (implode("," ,$post->meta_keywords ?? [])).
       join(",", $post->tags->pluck('name')->toArray());
 
-    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords'));
+    //Send page to detect in master layout
+    $page = $this->pageRepository->where('system_name',"blog-show")->first();
+
+    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','page'));
 
 
   }
