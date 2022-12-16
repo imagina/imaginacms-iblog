@@ -35,7 +35,6 @@ class Post extends Model implements TaggableInterface
     'options',
     'category_id',
     'user_id',
-    'status',
     'featured',
     'sort_order',
     'external_id',
@@ -50,7 +49,8 @@ class Post extends Model implements TaggableInterface
     'meta_title',
     'meta_description',
     'meta_keywords',
-    'translatable_options'
+    'translatable_options',
+    'status',
   ];
   protected $presenter = PostPresenter::class;
 

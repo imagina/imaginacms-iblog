@@ -30,10 +30,15 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     if (method_exists($this->model, 'translations')) {
       return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
         $q->where('slug', $slug);
-      })->with('translations', 'category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();
+      })->with('translations', 'category', 'categories', 'tags', 'user')
+        ->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = ".(Status::PUBLISHED)." and locale = '".($params->filter->locale ?? locale())."')")
+        ->firstOrFail();
     }
 
-    return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')->whereStatus(Status::PUBLISHED)->firstOrFail();;
+    return $this->model->where('slug', $slug)->with('category', 'categories', 'tags', 'user')
+  ->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = ".(Status::PUBLISHED)." and locale = '".($params->filter->locale ?? locale())."')")
+
+      ->firstOrFail();;
   }
 
   /**
@@ -45,7 +50,9 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
     $query = $this->model->with('categories', 'category', 'tags', 'user', 'translations');
     $query->whereHas('categories', function ($q) use ($id) {
       $q->where('category_id', $id);
-    })->whereStatus(Status::PUBLISHED)->where('created_at', '<=', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC');
+    })
+      ->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = ".(Status::PUBLISHED)." and locale = '".($params->filter->locale ?? locale())."')")
+      ->where('created_at', '<=', date('Y-m-d H:i:s'))->orderBy('created_at', 'DESC');
     
     return $query->paginate(setting('iblog::posts-per-page'));
   }
@@ -175,7 +182,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
         $query->whereIn('iblog__posts.id', $filter->id);
       }
       
-      // add filter by Categories 1 or more than 1, in array/*
+      // add filter by Categories 1 or more than 1, in array
       if (isset($filter->categories) && !empty($filter->categories)) {
         is_array($filter->categories) ? true : $filter->categories = [$filter->categories];
         $query->where(function ($query) use ($filter){
@@ -322,7 +329,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       }
       
       if (isset($filter->status) && !empty($filter->status)) {
-        $query->whereStatus($filter->status);
+        !is_array($filter->status) ? $filter->status = [$filter->status] : false;
+        $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = ".join($filter->status)." and locale = '".($filter->locale ?? locale())."')");
       }
   
       // add filter by Categories Intersected 1 or more than 1, in array
@@ -403,7 +411,8 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
   
   
     //pre-filter status
-    $query->where("iblog__posts.status", 2);
+      $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = 2 and locale = '".($params->filter->locale ?? locale())."')");
+
 
   }
   /**
