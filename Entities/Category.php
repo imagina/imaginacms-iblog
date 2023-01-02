@@ -138,9 +138,11 @@ class Category extends Model
     }
     if (empty($this->slug)) return "";
 
-    if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
+    $currentLocale = locale();
+    $tenantDomain = isset(tenant()->id) ? tenant()->domain : (tenancy()->find($this->organization_id)->domain ?? parse_url(env('APP_URL', 'localhost'),PHP_URL_HOST));
 
-      $url = \LaravelLocalization::localizeUrl('/' . $this->slug);
+    if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
+      $url = !is_null($tenantDomain) ? "https://".$tenantDomain.'/' . $this->slug : \LaravelLocalization::localizeUrl('/' . $this->slug);
     }
 
     return $url;

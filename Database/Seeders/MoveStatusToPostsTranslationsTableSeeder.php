@@ -18,7 +18,8 @@ class MoveStatusToPostsTranslationsTableSeeder extends Seeder
   {
     $seedUniquesUse = DB::table('isite__seeds')->where("name", 'MoveStatusToPostsTranslationsTableSeeder')->first();
     if (empty($seedUniquesUse)) {
-      $posts = Post::all();
+      $posts = DB::table('iblog__posts')->get();
+
       $availableLocales = json_decode(setting('core::locales'));
       foreach ($posts as $post) {
         foreach ($availableLocales as $locale) {
