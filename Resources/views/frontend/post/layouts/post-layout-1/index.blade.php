@@ -33,107 +33,6 @@
               </div>
             </div>
           </div>
-          <h5
-            class="row justify-content-center font-weight-bold mt-5 mb-3">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
-          <x-isite::carousel.owl-carousel
-            id="Articles"
-            repository="Modules\Iblog\Repositories\PostRepository"
-            :params="['take' => 20,'filter' => ['category' => $category->id]]"
-            :margin="25"
-            :loops="false"
-            :dots="false"
-            :nav="true"
-            :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
-            mediaImage="mainimage"
-            :autoplay="false"
-            :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 2]]"
-            :componentItemAttributes="[
-                                    'withViewMoreButton'=>true,
-                                    'withCategory'=>false,
-                                    'withSummary'=>true,
-                                    'withCreatedDate'=>true,
-                                    'layout'=>'item-list-layout-6',
-                                    'imageAspect'=>'4/3',
-                                    'imageObject'=>'cover',
-                                    'imageBorderRadio'=>'0',
-                                    'imageBorderStyle'=>'solid',
-                                    'imageBorderWidth'=>'0',
-                                    'imageBorderColor'=>'#000000',
-                                    'imagePadding'=>'0',
-                                    'withTitle'=>true,
-                                    'titleAlign'=>'',
-                                    'titleTextSize'=>'18',
-                                    'titleTextWeight'=>'font-weight-bold',
-                                    'titleTextTransform'=>'',
-                                    'formatCreatedDate'=>'d/m/Y',
-                                    'summaryAlign'=>'text-left',
-                                    'summaryTextSize'=>'16',
-                                    'summaryTextWeight'=>'font-weight-normal',
-                                    'numberCharactersSummary'=>'100',
-                                    'categoryAlign'=>'text-left',
-                                    'categoryTextSize'=>'18',
-                                    'categoryTextWeight'=>'font-weight-normal',
-                                    'createdDateAlign'=>'text-left',
-                                    'createdDateTextSize'=>'12',
-                                    'createdDateTextWeight'=>'font-weight-normal',
-                                    'buttonAlign'=>'text-left',
-                                    'buttonLayout'=>'',
-                                    'buttonIcon'=>'fa fa-angle-right',
-                                    'buttonIconLR'=>'left',
-                                    'buttonColor'=>'dark',
-                                    'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
-                                    'withImageOpacity'=>false,
-                                    'imageOpacityColor'=>'opacity-dark',
-                                    'imageOpacityDirection'=>'opacity-all',
-                                    'orderClasses'=>[
-                                    'photo'=>'order-0',
-                                    'title'=>'order-2',
-                                    'date'=>'order-1',
-                                    'categoryTitle'=>'order-3',
-                                    'summary'=>'order-3',
-                                    'viewMoreButton'=>'order-5'
-                                    ],
-                                    'imagePosition'=>'1',
-                                    'imagePositionVertical'=>'align-self-center',
-                                    'contentPositionVertical'=>'align-self-center',
-                                    'contentPadding'=>'0',
-                                    'contentBorder'=>'0',
-                                    'contentBorderColor'=>'#ffffff',
-                                     'contentBorderRounded'=>'0',
-                                    'contentMarginInsideX'=>'mx-lg-4 mx-md-1 mx-0',
-                                    'contentBorderShadows'=>'none',
-                                    'contentBorderShadowsHover'=>'',
-                                    'titleColor'=>'text-dark',
-                                    'summaryColor'=>'text-dark',
-                                    'categoryColor'=>'text-primary',
-                                    'createdDateColor'=>'text-dark',
-                                    'titleMarginT'=>'mt-3 mt-md-4 mt-lg-3',
-                                    'titleMarginB'=>'mb-3 mb-md-4 mb-md-2',
-                                    'summaryMarginT'=>'mt-lg-2 mt-0',
-                                    'summaryMarginB'=>'mb-0',
-                                    'categoryMarginT'=>'mt-0',
-                                    'categoryMarginB'=>'mb-0',
-                                    'categoryOrder'=>'3',
-                                    'createdDateMarginT'=>'mt-1',
-                                    'createdDateMarginB'=>'mb-0',
-                                    'createdDateOrder'=>'1',
-                                    'buttonMarginT'=>'mt-md-1 mt-0',
-                                    'buttonMarginB'=>'mb-2',
-                                    'buttonOrder'=>'5',
-                                    'titleLetterSpacing'=>'0',
-                                    'summaryLetterSpacing'=>'0',
-                                    'categoryLetterSpacing'=>'0',
-                                    'createdDateLetterSpacing'=>'0',
-                                    'titleVineta'=>'',
-                                    'titleVinetaColor'=>'text-dark',
-                                    'buttonSize'=>'button-normal',
-                                    'buttonTextSize'=>'14',
-                                    'itemBackgroundColor'=>'#ffffff',
-                                    'itemBackgroundColorHover'=>'#ffffff',
-                                    'titleHeight'=>'20',
-                                    'summaryHeight'=>'90'
-                                    ]"
-          />
         </div>
         {{-- Sidebar --}}
         <div class="col-12 col-md-4 px-1">
@@ -270,6 +169,23 @@
             </div>
           </div>
         </div>
+        <div
+          class="col-12 d-flex justify-content-center h5 font-weight-bold mt-5 mb-3">
+          {{trans('iblog::common.layouts.titleRelatedPosts')}}
+        </div>
+        <x-isite::carousel.owl-carousel
+          id="Articles"
+          repository="Modules\Iblog\Repositories\PostRepository"
+          :params="['take' => 20,'filter' => ['category' => $category->id]]"
+          :margin="25"
+          :loops="false"
+          :dots="false"
+          :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
+          mediaImage="mainimage"
+          :autoplay="false"
+          :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
+          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+        />
       </div>
     </div>
   </div>

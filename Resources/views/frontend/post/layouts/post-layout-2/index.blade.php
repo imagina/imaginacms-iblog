@@ -37,111 +37,6 @@
               </div>
             </div>
           </div>
-          <div class="mb-5">
-            <h5 class="mt-5 mb-3">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
-            <x-isite::carousel.owl-carousel
-              id="Articles"
-              repository="Modules\Iblog\Repositories\PostRepository"
-              :params="['take' => 20,'filter' => ['category' => $category->id]]"
-              :margin="25"
-              :loops="false"
-              :dots="false"
-              :nav="true"
-              :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
-              mediaImage="mainimage"
-              :autoplay="false"
-              :withViewMoreButton="false"
-              :withSummary="false"
-              :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
-              :withCategory="true"
-              :withCreatedDate="true"
-              layout="item-list-layout-6"
-              imageAspect="3/2"
-              imageObject="cover"
-              imageBorderRadio="0"
-              imageBorderStyle="solid"
-              imageBorderWidth="0"
-              imageBorderColor="#000000"
-              imagePadding="0"
-              :withTitle="true"
-              titleAlign=""
-              titleTextSize="14"
-              titleTextWeight="font-weight-bold"
-              titleTextTransform=""
-              formatCreatedDate="d \d\e M,Y"
-              summaryAlign="text-left"
-              summaryTextSize="16"
-              summaryTextWeight="font-weight-normal"
-              numberCharactersSummary="88"
-              categoryAlign="text-left"
-              categoryTextSize="10"
-              categoryTextWeight="font-weight-normal"
-              createdDateAlign="text-left"
-              createdDateTextSize="11"
-              createdDateTextWeight="font-weight-normal"
-              buttonAlign="text-left"
-              buttonLayout="rounded-pill"
-              buttonIcon=""
-              buttonIconLR="left"
-              buttonColor="dark"
-              viewMoreButtonLabel="iblog::common.layouts.viewMore"
-              :withImageOpacity="false"
-              imageOpacityColor="opacity-dark"
-              imageOpacityDirection="opacity-top"
-              :orderClasses="[ 'photo'=>'order-0',
-                                                'title'=>'order-3',
-                                                'date'=>'order-3',
-                                                'categoryTitle'=>'order-1',
-                                                'summary'=>'order-2',
-                                                'viewMoreButton'=>'order-5'
-                                                ]"
-              imagePosition="1"
-              imagePositionVertical="align-self-center"
-              contentPositionVertical="align-self-center"
-              contentPadding="0"
-              contentBorder="0"
-              contentBorderColor="#dddddd"
-              contentBorderRounded="0"
-              contentMarginInsideX="mx-1"
-              contentBorderShadows="none"
-              contentBorderShadowsHover=""
-              titleColor="text-dark"
-              summaryColor="text-dark"
-              categoryColor="text-dark"
-              createdDateColor="text-dark"
-              titleMarginT="mt-1"
-              titleMarginB="mb-1"
-              summaryMarginT="mt-0"
-              summaryMarginB="mb-2"
-              categoryMarginT="mt-3"
-              categoryMarginB="mb-1"
-              categoryOrder="1"
-              createdDateMarginT="mt-1"
-              createdDateMarginB="mb-2"
-              createdDateOrder="3"
-              buttonMarginT="mt-1"
-              buttonMarginB="mb-1"
-              buttonOrder="5"
-              titleLetterSpacing="0"
-              summaryLetterSpacing="0"
-              categoryLetterSpacing="0"
-              createdDateLetterSpacing="0"
-              titleVineta=""
-              titleVinetaColor="text-dark"
-              buttonSize="button-normal"
-              buttonTextSize="16"
-              itemBackgroundColor="#ffffff"
-              itemBackgroundColorHover="#ffffff"
-              titleHeight=30
-              summaryHeight=80
-              columnLeft=col-lg-6
-              columnRight=col-lg-6
-              titleTextDecoration=none
-              summaryTextDecoration=none
-              categoryTextDecoration=none
-              createdDateTextDecoration=none
-            />
-          </div>
         </div>
         {{-- Sidebar --}}
         <div class="sidebar col-12 col-md-4 px-5">
@@ -270,7 +165,6 @@
                   entityName="Post"
                   :showTitle="false"
                   :pagination="['show'=>false]"
-
                   :params="['take'=>3,'filter' => ['category' => $category->id ?? null]]"
                   :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
                 />
@@ -281,6 +175,20 @@
             <x-tag::tags :item="$post"/>
           </div>
         </div>
+      </div>
+      <div class="mb-5">
+        <h5 class="mt-5 mb-3">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
+        <x-isite::carousel.owl-carousel
+          id="Articles"
+          repository="Modules\Iblog\Repositories\PostRepository"
+          :params="['take' => 20,'filter' => ['category' => $category->id]]"
+          :margin="25"
+          :loops="false"
+          :dots="false"
+          mediaImage="mainimage"
+          :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
+          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+        />
       </div>
     </div>
   </div>

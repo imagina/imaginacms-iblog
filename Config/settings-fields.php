@@ -99,4 +99,17 @@ return [
       ]
     ]
   ],
+  'arrayItemComponentsAttributesBlog' => [
+    'value' => [],
+    'name' => 'iblog::arrayItemComponentsAttributesBlog',
+    'type' => 'json',
+    'onlySuperAdmin' => true,
+    'groupName' => 'layouts',
+    'groupTitle' => 'iblog::common.layouts.group_name',
+    'colClass' => 'col-12 col-md-12',
+    'props' => [
+      'label' => 'iblog::common.layouts.labelArrayItemComponentsAttributesBlog',
+      'rows' => 12,
+    ],
+  ],
 ];
