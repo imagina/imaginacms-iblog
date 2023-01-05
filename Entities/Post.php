@@ -174,7 +174,7 @@ class Post extends Model implements TaggableInterface
     if (empty($this->slug)) return "";
 
     $currentLocale = locale();
-    $tenantDomain = isset(tenant()->id) ? tenant()->domain : (tenancy()->find($this->organization_id)->domain ?? parse_url(env('APP_URL', 'localhost'),PHP_URL_HOST));
+    $tenantDomain = isset(tenant()->id) ? tenant()->domain : (tenancy()->find($this->organization_id)->domain ?? parse_url(config("app.url"),PHP_URL_HOST));
 
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
