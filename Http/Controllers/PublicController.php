@@ -94,10 +94,13 @@ class PublicController extends BasePublicController
 
     config(["asgard.iblog.config.filters" => $configFilters]);
 
-    //Send page to detect in master layout
-    $page = $this->pageRepository->where('system_name',"blog")->first();
+    // Get organization
+    $organization = null;
+    if (isset(tenant()->id)) {
+      $organization = tenant();
+    }
 
-    return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','page'));
+    return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','organization'));
 
   }
 
@@ -147,10 +150,13 @@ class PublicController extends BasePublicController
     $metaKeywords = (implode("," ,$post->meta_keywords ?? [])).
       join(",", $post->tags->pluck('name')->toArray());
 
-    //Send page to detect in master layout
-    $page = $this->pageRepository->where('system_name',"blog-show")->first();
+    // Get organization
+    $organization = null;
+    if (isset(tenant()->id)) {
+      $organization = tenant();
+    }
 
-    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','page'));
+    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','organization'));
 
 
   }
