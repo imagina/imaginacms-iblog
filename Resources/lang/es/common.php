@@ -75,6 +75,12 @@ return [
     'viewMore' => 'Ver más',
     'titleRelatedPosts' => 'Artículos relacionados',
     'titleArticles' => 'Artículos',
+    'labelArrayItemComponentsAttributesBlog' => 'Configuración Del Item Para Plantillas Del Blog (Array)',
+    'posts' => [
+      'layout6' => [
+        'titleCarousel' => 'Artículos Relacionados',
+      ]
+    ]
   ],
   "groups" => [
     "searcher" => "Motor de búsqueda"
