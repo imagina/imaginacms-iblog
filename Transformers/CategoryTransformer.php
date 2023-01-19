@@ -76,6 +76,8 @@ class CategoryTransformer extends JsonResource
           $this->translate("$lang")['meta_title'] : '';
         $data[$lang]['metaDescription'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['meta_description'] : '';
+        $data[$lang]['status'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['status'] : '';
       }
     }
   

@@ -195,13 +195,12 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     } else {
 
       //pre-filter status
-      $query->where("status", 1);
+      $query->whereRaw("iblog__categories.id IN (SELECT category_id from iblog__category_translations where status = 1)");
     }
 
 
     /*== REQUEST ==*/
     if (isset($params->page) && $params->page) {
-      // dd($query->toSql(),$query->getBindings(),$query->get(), $params);
       return $query->paginate($params->take);
     } else {
       isset($params->take) && $params->take ? $query->take($params->take) : false;//Take

@@ -407,7 +407,7 @@ class EloquentPostRepository extends EloquentBaseRepository implements PostRepos
       $query->orWhereNull("date_available");
     });
   
-    $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where status = 1)");
+    $query->whereRaw("iblog__posts.category_id IN (SELECT category_id from iblog__category_translations where status = 1)");
   
   
     //pre-filter status
