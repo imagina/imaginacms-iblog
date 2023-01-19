@@ -20,5 +20,6 @@ class IblogDatabaseSeeder extends Seeder
     $this->call(SlugCheckerTableSeeder::class);
     $this->call(LayoutsBlogTableSeeder::class);
     $this->call(MoveStatusToPostsTranslationsTableSeeder::class);
+    $this->call(MoveStatusToCategoryTranslationsTable::class);
   }
 }
