@@ -9,29 +9,27 @@
   {{isset($category->title)? $category->title: trans("iblog::routes.blog.index.index")}}  | @parent
 @stop
 @section('content')
-  <section id="layout2"
-           class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
-    <div id="content_index_blog"
-         class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
-      <div class="container">
-        <div class="row">
-          @include('iblog::frontend.partials.breadcrumb')
-        </div>
+  <div id="categoryLayout5"
+       class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
+    <div class="container">
+      <div class="row">
+        @include('iblog::frontend.partials.breadcrumb')
       </div>
-      <div class="container">
-        <div class="title my-1">
-          <h4 class="title">{{isset($category->title) ? $category->title : ""}}</h4>
-        </div>
-        <div class="description pt-3">
-          {!! isset($category->description) ? $category->description : "" !!}
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <livewire:isite::items-list
-              moduleName="Iblog"
-              itemComponentName="isite::item-list"
-              itemComponentNamespace="Modules\Isite\View\Components\ItemList"
-              :configLayoutIndex="['default' => 'three',
+    </div>
+    <div class="container">
+      <div class="title my-1">
+        <h4 class="title">{{isset($category->title) ? $category->title : ""}}</h4>
+      </div>
+      <div class="description pt-3">
+        {!! isset($category->description) ? $category->description : "" !!}
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <livewire:isite::items-list
+            moduleName="Iblog"
+            itemComponentName="isite::item-list"
+            itemComponentNamespace="Modules\Isite\View\Components\ItemList"
+            :configLayoutIndex="['default' => 'three',
                                                         'options' => [
                                                             'three'=> [
                                                                 'name' => 'three',
@@ -40,15 +38,14 @@
                                                                 'status' => true],
                                                                 ]
                                                                 ]"
-              :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
-              entityName="Post"
-              :showTitle="false"
-              :params="['filter' => ['category' => $category->id ?? null],'take' => 12]"
-              :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
-            />
-          </div>
+            :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+            entityName="Post"
+            :showTitle="false"
+            :params="['filter' => ['category' => $category->id ?? null],'take' => 12]"
+            :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
+          />
         </div>
       </div>
     </div>
-  </section>
+  </div>
 @stop

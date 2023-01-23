@@ -9,7 +9,7 @@
 @stop
 
 @section('content')
-  <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
+  <div id="postLayout1" class="page blog single single-{{$category->slug}} single-{{$category->id}}">
     @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
       {{-- article --}}

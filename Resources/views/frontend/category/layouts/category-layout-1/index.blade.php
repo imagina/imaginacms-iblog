@@ -9,27 +9,24 @@
   {{isset($category->title)? $category->title: trans("iblog::routes.blog.index.index")}}  | @parent
 @stop
 @section('content')
-
-  <section id="layout1"
-           class="{{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
-    <div id="content_index_blog"
-         class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
-      <div class="container">
-        <div class="row">
-          @include('iblog::frontend.partials.breadcrumb')
-        </div>
+  <div id="categoryLayout1"
+       class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
+    <div class="container">
+      <div class="row">
+        @include('iblog::frontend.partials.breadcrumb')
       </div>
-      <div class="container">
-        <div class="title h4 my-1">
-          <h1>
-            {{isset($category->title) ? $category->title : ""}}
-          </h1>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-4 px-1 order-1">
-            <div class="row mx-1">
-              <div class="col-12 my-2">
-                <livewire:isite::filters :filters="['categories' => [
+    </div>
+    <div class="container">
+      <div class="title h4 my-1">
+        <h1>
+          {{isset($category->title) ? $category->title : ""}}
+        </h1>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-4 px-1 order-1">
+          <div class="row mx-1">
+            <div class="col-12 my-2">
+              <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
                                                                 'name' => 'categories',
                                                                 'typeTitle' => 'titleOfTheConfig',
@@ -46,16 +43,16 @@
                                                                 'layout' => 'default',
                                                                 'classes' => 'col-12'
                                                             ]]"/>
-              </div>
             </div>
-            <div class="row mx-1">
-              <div class="col-12">
-                <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
-                <livewire:isite::items-list
-                  moduleName="Iblog"
-                  itemComponentName="isite::item-list"
-                  itemComponentNamespace="Modules\Isite\View\Components\ItemList"
-                  :configLayoutIndex="['default' => 'one',
+          </div>
+          <div class="row mx-1">
+            <div class="col-12">
+              <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+              <livewire:isite::items-list
+                moduleName="Iblog"
+                itemComponentName="isite::item-list"
+                itemComponentNamespace="Modules\Isite\View\Components\ItemList"
+                :configLayoutIndex="['default' => 'one',
                                                             'options' => [
                                                                 'one' => [
                                                                     'name' => 'one',
@@ -64,7 +61,7 @@
                                                                     'status' => true],
                                                         ],
                                                         ]"
-                  :itemComponentAttributes="[
+                :itemComponentAttributes="[
                                         'withViewMoreButton'=>false,
                                         'withCategory'=>false,
                                         'withSummary'=>false,
@@ -150,26 +147,26 @@
                                         'titleHeight'=>40,
                                         'summaryHeight'=>100,
                                             ]"
-                  entityName="Post"
-                  :showTitle="false"
-                  :pagination="['show'=>false]"
-                  :params="['take'=>5,'filter' => ['category' => $category->id ?? null]]"
-                  :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
-                />
-              </div>
-
+                entityName="Post"
+                :showTitle="false"
+                :pagination="['show'=>false]"
+                :params="['take'=>5,'filter' => ['category' => $category->id ?? null]]"
+                :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
+              />
             </div>
+
           </div>
-          {{-- Top Content , Products, Pagination --}}
-          <div class="posts col-12 col-md-8">
-            @if(setting("iblog::showCategoryChildrenIndexHeader"))
-              @include('iblog::frontend.partials.children-categories-index-section',["category" => $category ?? null])
-            @endif
-            <livewire:isite::items-list
-              moduleName="Iblog"
-              itemComponentName="isite::item-list"
-              itemComponentNamespace="Modules\Isite\View\Components\ItemList"
-              :configLayoutIndex="['default' => 'two',
+        </div>
+        {{-- Top Content , Products, Pagination --}}
+        <div class="posts col-12 col-md-8">
+          @if(setting("iblog::showCategoryChildrenIndexHeader"))
+            @include('iblog::frontend.partials.children-categories-index-section',["category" => $category ?? null])
+          @endif
+          <livewire:isite::items-list
+            moduleName="Iblog"
+            itemComponentName="isite::item-list"
+            itemComponentNamespace="Modules\Isite\View\Components\ItemList"
+            :configLayoutIndex="['default' => 'two',
                                                         'options' => [
                                                             'two'=> [
                                                                 'name' => 'two',
@@ -178,16 +175,15 @@
                                                                 'status' => true],
                                                                 ]
                                                                 ]"
-              :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
-              entityName="Post"
-              :showTitle="false"
-              :params="['filter' => ['category' => $category->id ?? null],'take'=>8]"
-              :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
-            />
-          </div>
-          <!-- /.row -->
+            :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+            entityName="Post"
+            :showTitle="false"
+            :params="['filter' => ['category' => $category->id ?? null],'take'=>8]"
+            :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
+          />
         </div>
+        <!-- /.row -->
       </div>
     </div>
-  </section>
+  </div>
 @stop
