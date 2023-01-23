@@ -68,6 +68,17 @@ return [
         'entityId' => null
       ]
     ],
+    'secondaryimage' => [
+      'value' => (object)[],
+      'name' => 'mediasSingle',
+      'type' => 'media',
+      'props' => [
+        'label' => 'Imagen Secundaria',
+        'zone' => 'secondaryimage',
+        'entity' => "Modules\Iblog\Entities\Post",
+        'entityId' => null
+      ]
+    ],
     'layoutId' => [
       'name' => 'layoutId',
       'value' => null,
