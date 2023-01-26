@@ -1,7 +1,9 @@
 <?php
 $item = (array)json_decode(setting('iblog::arrayItemComponentsAttributesBlog'));
 if (!empty($item)) {
-  $item['orderClasses'] = (array)$item['orderClasses'];
+    if (!empty($item['orderClasses'])) {
+        $item['orderClasses'] = (array)$item['orderClasses'];
+    }
 } else {
   $item = [
     'withViewMoreButton' => false,
@@ -39,8 +41,8 @@ if (!empty($item)) {
     'buttonColor' => 'dark',
     'viewMoreButtonLabel' => 'iblog::common.layouts.viewMore',
     'withImageOpacity' => 'false',
-    'imageOpacityColor' => 'opacity-dark',
-    'imageOpacityDirection' => 'opacity-all',
+    'imageOpacityColor' => ' ',
+    'imageOpacityDirection' => ' ',
     'orderClasses' => [
       'photo' => 'order-0',
       'title' => 'order-1',
