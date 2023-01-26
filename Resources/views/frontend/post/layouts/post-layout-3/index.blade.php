@@ -8,50 +8,48 @@
   {{ $post->title }} | @parent
 @stop
 @section('content')
-  <section id="layout3"
-           class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-2">
-    <div id="content_index_blog"
-         class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-2">
+  <div id="postLayout3"
+       class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-2">
+    <div class="container">
+      <div class="row">
+        @include('iblog::frontend.partials.breadcrumb')
+      </div>
+    </div>
+    <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
       <div class="container">
         <div class="row">
-          @include('iblog::frontend.partials.breadcrumb')
+          <div class="col-9">
+            <h3 class="title">{{ $post->title }}</h3>
+          </div>
         </div>
-      </div>
-      <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
-        <div class="container">
-          <div class="row">
-            <div class="col-9">
-              <h3 class="title">{{ $post->title }}</h3>
+        <div class="row">
+          {{-- article --}}
+          <div class="col-12 col-md-9">
+            <div class="my-1">
+              <x-media::single-image imgClasses=""
+                                     :mediaFiles="$post->mediaFiles()"
+                                     :isMedia="true" :alt="$post->title"/>
+            </div>
+            <div class="create-date my-4">
+              {{ $post->created_at->format('d/M/Y')}}
+            </div>
+            <div class="page-body description my-4 text-justify">
+              {!! $post->description !!}
+            </div>
+            <div class="social-share d-flex justify-content-start align-items-center my-5">
+              <div class="mr-2">{{trans('iblog::common.social.share')}}:</div>
+              <div class="sharethis-inline-share-buttons"></div>
             </div>
           </div>
-          <div class="row">
-            {{-- article --}}
-            <div class="col-12 col-md-9">
-              <div class="my-1">
-                <x-media::single-image imgClasses=""
-                                       :mediaFiles="$post->mediaFiles()"
-                                       :isMedia="true" :alt="$post->title"/>
-              </div>
-              <div class="create-date my-4">
-                {{ $post->created_at->format('d/M/Y')}}
-              </div>
-              <div class="page-body description my-4 text-justify">
-                {!! $post->description !!}
-              </div>
-              <div class="social-share d-flex justify-content-start align-items-center my-5">
-                <div class="mr-2">{{trans('iblog::common.social.share')}}:</div>
-                <div class="sharethis-inline-share-buttons"></div>
-              </div>
-            </div>
-            {{--sidebar--}}
-            <div class="col-12 col-md-3 px-4 px-md-0">
-              <div class="mb-4">
-                <h4 class="ml-3 mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
-                <livewire:isite::items-list
-                  moduleName="Iblog"
-                  itemComponentName="isite::item-list"
-                  itemComponentNamespace="Modules\Isite\View\Components\ItemList"
-                  :configLayoutIndex="['default' => 'one',
+          {{--sidebar--}}
+          <div class="col-12 col-md-3 px-4 px-md-0">
+            <div class="mb-4">
+              <h4 class="ml-3 mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+              <livewire:isite::items-list
+                moduleName="Iblog"
+                itemComponentName="isite::item-list"
+                itemComponentNamespace="Modules\Isite\View\Components\ItemList"
+                :configLayoutIndex="['default' => 'one',
                                                             'options' => [
                                                                 'one' => [
                                                                     'name' => 'one',
@@ -60,7 +58,7 @@
                                                                     'status' => true],
                                                         ],
                                                         ]"
-                  :itemComponentAttributes="[
+                :itemComponentAttributes="[
                                         'withViewMoreButton'=>false,
                                         'withCategory'=>false,
                                         'withSummary'=>false,
@@ -146,17 +144,16 @@
                                         'titleHeight'=>60,
                                         'summaryHeight'=>100,
                                             ]"
-                  entityName="Post"
-                  :showTitle="false"
-                  :pagination="['show'=>false]"
-                  :params="['take'=>4,'filter' => ['category' => $category->id ?? null]]"
-                  :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
-                />
-              </div>
+                entityName="Post"
+                :showTitle="false"
+                :pagination="['show'=>false]"
+                :params="['take'=>4,'filter' => ['category' => $category->id ?? null]]"
+                :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 @stop
