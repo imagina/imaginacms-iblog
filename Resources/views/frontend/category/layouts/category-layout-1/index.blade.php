@@ -11,11 +11,7 @@
 @section('content')
   <div id="categoryLayout1"
        class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
-    <div class="container">
-      <div class="row">
-        @include('iblog::frontend.partials.breadcrumb')
-      </div>
-    </div>
+    @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
       <div class="title h4 my-1">
         <h1>
@@ -97,8 +93,6 @@
                                         'buttonColor'=>'primary',
                                         'viewMoreButtonLabel'=>'isite::common.menu.labelViewMore',
                                         'withImageOpacity'=>false,
-                                        'imageOpacityColor'=>'opacity-dark',
-                                        'imageOpacityDirection'=>'opacity-all',
                                         'orderClasses'=>[
                                         'photo'=>'order-0',
                                         'title'=>'order-1',
