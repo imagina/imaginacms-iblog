@@ -59,7 +59,7 @@
                                                                 'repository' => 'Modules\Iblog\Repositories\CategoryRepository',
                                                                 'entityClass' => 'Modules\Iblog\Entities\Category',
                                                                 'params' => ['filter' => ['internal' => false]],
-                                                                'emitTo' => 'itemsListGetData',
+                                                                'emitTo' => false,
                                                                 'repoAction' => null,
                                                                 'repoAttribute' => null,
                                                                 'listener' => null,
