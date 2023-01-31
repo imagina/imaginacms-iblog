@@ -50,7 +50,7 @@
       <div class="container">
         <div class="row justify-content-center">
           @if(isset($post->mediaFiles()->mainimage)&&!empty($post->mediaFiles()->mainimage))
-            <div class="col-10">
+            <div class="col-8">
               <x-media::single-image :mediaFiles="$post->mediaFiles()"
                                      imgClasses="image-internal"
                                      :isMedia="true"
@@ -67,7 +67,7 @@
             </div>
             <div class="mb-5">
               {{--          trans('iblog::common.layouts.posts.layout6.titleCarousel')--}}
-              <div class="mt-5 mb-3 title-carousel-page h1 text-primary d-flex">
+              <div class="mt-2 mb-3 title-carousel-page h1 text-primary d-flex">
                 {{trans('iblog::common.layouts.posts.layout6.titleCarousel')}}
               </div>
               <x-isite::carousel.owl-carousel
