@@ -15,6 +15,9 @@
         <div class="position-absolute h-100 w-100 content-title">
           <div class="container d-flex flex-column align-items-center w-100 h-100 justify-content-center">
             <div class="content-breadcrumb-center">
+              <h2 class="text-white text-center">
+                {{$category->title}}
+              </h2>
               @include('iblog::frontend.partials.breadcrumb')
             </div>
           </div>
@@ -27,6 +30,16 @@
               :isMedia="true"
               width="100%"
               :mediaFiles="$category->mediaFiles()"
+              zone="breadcrumbimage"
+            />
+          </div>
+        @elseif (isset($post) && empty($post->breadcrumb) && strpos($post->mediaFiles()->breadcrumbimage->extraLargeThumb, 'default.jpg') == false)
+          <div class="content-image h-100">
+            <x-media::single-image
+              :title="$post->title"
+              :isMedia="true"
+              width="100%"
+              :mediaFiles="$post->mediaFiles()"
               zone="breadcrumbimage"
             />
           </div>
@@ -81,40 +94,50 @@
     #layoutPost6 .page-banner {
         height: 200px;
     }
+
     #layoutPost6 .page-banner .content-title {
         z-index: 8;
     }
+
     #layoutPost6 .page-banner .content-title-hidden {
         position: absolute;
         height: 100%;
         width: 100%;
         background-color: var(--primary);
+        z-index: -1;
     }
+
     #layoutPost6 .page-banner .content-image:before {
         content: " ";
-        background: #0a0a0a;
+        /*background: #0a0a0a;*/
         position: absolute;
         left: 0;
         height: 100%;
         width: 100%;
     }
+
     #layoutPost6 .page-banner img {
         height: 100%;
         object-fit: cover;
         object-position: left;
     }
+
     #layoutPost6 .page-banner h1 {
         font-size: 36px;
     }
+
     #layoutPost6 .page-banner .page-breadcrumb .breadcrumb, #layoutPost6 .page-banner #breadcrumbSection .breadcrumb {
         margin-bottom: 0 !important;
     }
+
     #layoutPost6 .page-banner .page-breadcrumb .breadcrumb .breadcrumb-item::before, #layoutPost6 .page-banner #breadcrumbSection .breadcrumb .breadcrumb-item::before {
         padding-right: 0;
     }
+
     #layoutPost6 .page-banner .page-breadcrumb .breadcrumb li:first-child:before, #layoutPost6 .page-banner #breadcrumbSection .breadcrumb li:first-child:before {
         display: none;
     }
+
     #layoutPost6 .page-banner .page-breadcrumb .breadcrumb li, #layoutPost6 .page-banner #breadcrumbSection .breadcrumb li {
         display: flex;
         align-items: center;
@@ -122,56 +145,70 @@
         color: #fff;
         padding: 0;
     }
+
     #layoutPost6 .page-banner .page-breadcrumb .breadcrumb li:before, #layoutPost6 .page-banner #breadcrumbSection .breadcrumb li:before {
         margin: 0 4px;
         color: #fff;
     }
+
     #layoutPost6 .page-banner .page-breadcrumb .breadcrumb a, #layoutPost6 .page-banner #breadcrumbSection .breadcrumb a {
         font-size: 14px;
         color: #fff;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-top ol.breadcrumb {
         margin-bottom: 0 !important;
         margin-top: 10px;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-top ol.breadcrumb li {
         color: #656d72 !important;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-top ol.breadcrumb li:before {
         color: #656d72 !important;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-top ol.breadcrumb a {
         color: #656d72 !important;
         font-weight: bolder;
     }
+
     @media (max-width: 767.98px) {
         #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-top {
             display: none !important;
         }
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category h1 {
         color: #fff !important;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-center ol.breadcrumb li {
         color: var(--primary) !important;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-center ol.breadcrumb li:before {
         color: var(--primary) !important;
     }
+
     #layoutPost6 .page-banner.banner-breadcrumb-category div.content-breadcrumb-center ol.breadcrumb a {
         color: var(--primary) !important;
         font-weight: bolder;
     }
+
     #layoutPost6.pages-internal .image-internal {
         position: relative;
         top: -57px;
         margin-bottom: -57px;
     }
+
     #layoutPost6.pages-internal .info-section .title-page {
         position: relative;
         font-weight: bold;
         font-size: 45px;
     }
+
     #layoutPost6.pages-internal .info-section .title-page:before {
         background: var(--secondary);
         content: " ";

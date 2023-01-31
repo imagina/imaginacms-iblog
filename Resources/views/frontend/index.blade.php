@@ -51,7 +51,7 @@
           itemComponentName="isite::item-list"
           itemComponentNamespace="Modules\Isite\View\Components\ItemList"
           :configLayoutIndex="config('asgard.iblog.config.layoutIndex')"
-          :itemComponentAttributes="config('asgard.iblog.config.indexItemListAttributes')"
+          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
           entityName="Post"
           :showTitle="true"
           :params="['filter' => ['category' => $category->id ?? null, 'tagId' => $tag->id ?? null,'withoutInternal' => true]]"
