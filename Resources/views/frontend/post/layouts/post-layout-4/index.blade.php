@@ -8,20 +8,14 @@
   {{ $post->title }} | @parent
 @stop
 @section('content')
-  <div id="postLayout4"
-       class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-2">
+  <div id="postLayout4" class="page blog single single-{{$category->slug}} single-{{$category->id}}">
+    @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
-      <div class="row">
-        @include('iblog::frontend.partials.breadcrumb')
-      </div>
-    </div>
-    <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
-
-      <div class="container">
         <div class="row">
           {{--sidebar--}}
           <div class="col-12 col-md-3">
-            <livewire:isite::filters :filters="['categories' => [
+            <div class="blog-categories">
+              <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
                                                                 'name' => 'categories',
                                                                 'typeTitle' => 'titleOfTheConfig',
@@ -38,6 +32,7 @@
                                                                 'layout' => 'default',
                                                                 'classes' => 'col-12'
                                                             ]]"/>
+            </div>
           </div>
           {{--article--}}
           <div class="col-12 col-md-9 p-md-4">
@@ -59,7 +54,7 @@
             </div>
           </div>
         </div>
-        <div class="mb-5">
+        <div class="blog-related mb-5">
           <h5>{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
           <x-isite::carousel.owl-carousel
             id="Articles"
@@ -76,6 +71,5 @@
           />
         </div>
       </div>
-    </div>
   </div>
 @stop
