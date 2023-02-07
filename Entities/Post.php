@@ -163,7 +163,7 @@ class Post extends Model implements TaggableInterface
    * URL post
    * @return string
    */
-  public function getUrlAttribute()
+  public function getUrlAttribute($locale = null)
   {
 
 
@@ -171,21 +171,33 @@ class Post extends Model implements TaggableInterface
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug ?? "";
     }
+    
+    $currentLocale = $locale ?? locale();
+    if(!is_null($locale)){
+       $this->slug = $this->getTranslation($currentLocale)->slug;
+       $this->category = $this->category->getTranslation($currentLocale);
+    }
+  
     if (empty($this->slug)) return "";
-
-    $currentLocale = locale();
-    $tenantDomain = (!empty(config("tenancy.mode")) || !empty($this->organization_id)) ? (
-       isset(tenant()->id) ? tenant()->domain : tenancy()->find($this->organization_id)->domain
-    ) : parse_url(config("app.url"),PHP_URL_HOST);
-
+  
+    $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
+      parse_url(config('app.url'),PHP_URL_HOST);
+  
+    if(config("app.url") != $currentDomain){
+      $savedDomain = config("app.url");
+      config(["app.url" => "https://".$currentDomain]);
+    }
+    
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
-          $url = !is_null($tenantDomain) ? "https://".$tenantDomain.'/' . $this->slug : \LaravelLocalization::localizeUrl('/' . $this->slug);
-          return $url;
+        $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
       }
+    }else{
+      if(empty($this->category->slug)) $url = "";
+      else $url = \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug, $currentLocale);
     }
-
-    $url = !is_null($tenantDomain) ? "https://".$tenantDomain.'/' . $this->category->slug . '/' . $this->slug : \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug);
+    
+    if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
     
     return $url;
     
