@@ -41,9 +41,15 @@ class PublicController extends BasePublicController
     $this->pageRepository = $pageRepository;
   }
 
-  public function index($category)
+  public function index($category,$request)
   {
 
+    //Validation with lang from URL
+    $result = validateLocaleFromUrl($request,['entity' => $category]);
+    if(isset($result["reedirect"]))
+      return redirect()->to($result["url"]);
+    
+    
     //Default Template
     $tpl = 'iblog::frontend.index';
     $ttpl = 'iblog.index';
@@ -104,10 +110,17 @@ class PublicController extends BasePublicController
 
   }
 
-  public function show($post)
+  public function show($post,$request)
   {
 
     $category = $post->category;
+
+    //Validation with lang from URL
+    $result = validateLocaleFromUrl($request,['entity' => $post]);
+    if(isset($result["reedirect"]))
+      return redirect()->to($result["url"]);
+    
+   
 
     $tpl = 'iblog::frontend.show';
     $ttpl = 'iblog.show';
