@@ -1,92 +1,192 @@
 @extends('layouts.master')
 
 @section('meta')
-    @include('iblog::frontend.partials.post.metas')
+  @include('iblog::frontend.partials.post.metas')
 @stop
 
 @section('title')
-    {{ $post->title }} | @parent
+  {{ $post->title }} | @parent
 @stop
 
 @section('content')
-
-
-   <article id="post{{$post->id}}" class="post blog single single-{{$category->slug}} single-{{$category->id}}">
-        <div class="container" id="body-wrapper">
-            <div class="row">
-                <div class="col-xs-12 col-sm-9 column1">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="bgimg">
-                                <img class="image img-responsive" src="{{url($post->mainimage->path)}}"
-                                     alt="{{$post->title}}"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="content col-xs-12 col-sm-10 ">
-                            <h1>{{ $post->title }}</h1>
-                            {!! $post->description !!}
-
-                            @if(!$tags->isEmpty())
-                                <div class="tag">
-                                <span class="tags-links">
-                                    @foreach($tags as $tag)
-                                        <a href="{{$tag->url}}" rel="tag">{{$tag->title}}</a>
-                                    @endforeach
-                                </span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="content col-xs-12 col-sm-10">
-                            @include('iblog::frontend.gallery.viewline')
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="social">
-                                {{trans('iblog::common.social.share')}}
-                                <div class="sharethis-inline-share-buttons"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="facebook-comments">
-                        <div class="fb-comments"
-                             data-href="{{url($post->url)}}"
-                             data-numposts="5" data-width="100%">
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="col-xs-12 col-sm-3 column2">
-                    <div class="sidebar-revista">
-                        <div class="cate">
-                            <h3>Categorias</h3>
-
-                            <div class="listado-cat">
-                                <ul>
-                                    @php
-                                        $categories=get_categories();
-                                    @endphp
-
-                                    @if(isset($categories))
-                                        @foreach($categories as $index=>$category)
-                                            <li><a href="{{url($category->slug)}}">{{$category->title}}</a></li>
-                                        @endforeach
-                                    @endif
-                                </ul>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+  <div id="postLayoutDefault" class="page blog single single-{{$category->slug}} single-{{$category->id}}">
+    @include('iblog::frontend.partials.breadcrumb')
+    <div class="container">
+      {{-- article --}}
+      <div class="row">
+        <div class="col-12 col-md-8">
+          <x-media::single-image imgClasses=""
+                                 :mediaFiles="$post->mediaFiles()"
+                                 :isMedia="true" :alt="$post->title"/>
+          <div class="row mx-1 mx-md-3 mx-lg-4">
+            <spam class="title mt-3 mb-2">{{ $post->created_at->format('d/m/Y')}}</spam>
+          </div>
+          <div class="row mx-1 mx-md-3 mx-lg-4">
+            <h2 class="title">{{ $post->title }}</h2>
+            <div class="page-body description mb-4 text-justify">
+              {!! $post->description !!}
             </div>
+            <div>
+              <div class="social-share d-flex justify-content-end align-items-center">
+                <div class="mr-2">{{trans('iblog::common.social.share')}}:</div>
+                <div class="sharethis-inline-share-buttons"></div>
+              </div>
+            </div>
+          </div>
         </div>
-    </article>
-@stop
+        {{-- Sidebar --}}
+        <div class="col-12 col-md-4 px-1">
+          <div class="row mx-1">
+            <div class="col-12 my-2">
+              <livewire:isite::filters :filters="['categories' => [
+                                                                'title' => 'iblog::category.plural',
+                                                                'name' => 'categories',
+                                                                'typeTitle' => 'titleOfTheConfig',
+                                                                'status' => true,
+                                                                'isExpanded' => true,
+                                                                'type' => 'tree',
+                                                                'repository' => 'Modules\Iblog\Repositories\CategoryRepository',
+                                                                'entityClass' => 'Modules\Iblog\Entities\Category',
+                                                                'params' => ['filter' => ['internal' => false]],
+                                                                'emitTo' => 'itemsListGetData',
+                                                                'repoAction' => null,
+                                                                'repoAttribute' => null,
+                                                                'listener' => null,
+                                                                'layout' => 'default',
+                                                                'classes' => 'col-12'
+                                                            ]]"/>
+            </div>
+          </div>
+          <div class="row mx-1">
+            <div class="col-12">
+              <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+              <livewire:isite::items-list
+                moduleName="Iblog"
+                itemComponentName="isite::item-list"
+                itemComponentNamespace="Modules\Isite\View\Components\ItemList"
+                :configLayoutIndex="['default' => 'one',
+                                                            'options' => [
+                                                                'one' => [
+                                                                    'name' => 'one',
+                                                                    'class' => 'col-12 my-3 pl-md-5',
+                                                                    'icon' => 'fa fa-align-justify',
+                                                                    'status' => true],
+                                                        ],
+                                                        ]"
+                :itemComponentAttributes="[
+                                        'withViewMoreButton'=>false,
+                                        'withCategory'=>false,
+                                        'withSummary'=>false,
+                                        'withCreatedDate'=>true,
+                                        'layout'=>'item-list-layout-7',
+                                        'imageAspect'=>'4/3',
+                                        'imageObject'=>'cover',
+                                        'imageBorderRadio'=>'0',
+                                        'imageBorderStyle'=>'solid',
+                                        'imageBorderWidth'=>'0',
+                                        'imageBorderColor'=>'#000000',
+                                        'imagePadding'=>'0',
+                                        'withTitle'=>true,
+                                        'titleAlign'=>'',
+                                        'titleTextSize'=>'14',
+                                        'titleTextWeight'=>'font-weight-bold',
+                                        'titleTextTransform'=>'',
+                                        'formatCreatedDate'=>'d.m.Y',
+                                        'summaryAlign'=>'text-left',
+                                        'summaryTextSize'=>'16',
+                                        'summaryTextWeight'=>'font-weight-normal',
+                                        'numberCharactersSummary'=>'100',
+                                        'categoryAlign'=>'text-left',
+                                        'categoryTextSize'=>'18',
+                                        'categoryTextWeight'=>'font-weight-normal',
+                                        'createdDateAlign'=>'text-left',
+                                        'createdDateTextSize'=>'11',
+                                        'createdDateTextWeight'=>'font-weight-normal',
+                                        'buttonAlign'=>'text-left',
+                                        'buttonLayout'=>'rounded',
+                                        'buttonIcon'=>'',
+                                        'buttonIconLR'=>'left',
+                                        'buttonColor'=>'primary',
+                                        'viewMoreButtonLabel'=>'isite::common.menu.labelViewMore',
+                                        'withImageOpacity'=>false,
+                                        'imageOpacityColor'=>'opacity-dark',
+                                        'imageOpacityDirection'=>'opacity-all',
+                                        'orderClasses'=>[
+                                        'photo'=>'order-0',
+                                        'title'=>'order-1',
+                                        'date'=>'order-4',
+                                        'categoryTitle'=>'order-3',
+                                        'summary'=>'order-2',
+                                        'viewMoreButton'=>'order-5'
+                                        ],
+                                        'imagePosition'=>'2',
+                                        'imagePositionVertical'=>'align-self-star',
+                                        'contentPositionVertical'=>'align-self-star',
+                                        'contentPadding'=>'0',
+                                        'contentBorder'=>'0',
+                                        'contentBorderColor'=>'#dddddd',
+                                        'contentBorderRounded'=>'0',
+                                        'contentMarginInsideX'=>'mx-0',
+                                        'contentBorderShadows'=>'none',
+                                        'contentBorderShadowsHover'=>'',
+                                        'titleColor'=>'text-dark',
+                                        'summaryColor'=>'text-dark',
+                                        'categoryColor'=>'text-primary',
+                                        'createdDateColor'=>'text-dark',
+                                        'titleMarginT'=>'mt-0',
+                                        'titleMarginB'=>'mb-0 mb-md-2',
+                                        'summaryMarginT'=>'mt-0',
+                                        'summaryMarginB'=>'mb-2',
+                                        'categoryMarginT'=>'mt-0',
+                                        'categoryMarginB'=>'mb-2',
+                                        'categoryOrder'=>'3',
+                                        'createdDateMarginT'=>'mt-0 mt-md-3',
+                                        'createdDateMarginB'=>'mb-0 mb-md-2',
+                                        'createdDateOrder'=>'4',
+                                        'buttonMarginT'=>'mt-0',
+                                        'buttonMarginB'=>'mb-0',
+                                        'buttonOrder'=>'5',
+                                        'titleLetterSpacing'=>'0',
+                                        'summaryLetterSpacing'=>'0',
+                                        'categoryLetterSpacing'=>'0',
+                                        'createdDateLetterSpacing'=>'0',
+                                        'titleVineta'=>'',
+                                        'titleVinetaColor'=>'text-dark',
+                                        'buttonSize'=>'button-normal',
+                                        'buttonTextSize'=>'16',
+                                        'itemBackgroundColor'=>'#ffffff',
+                                        'itemBackgroundColorHover'=>'#ffffff',
+                                        'titleHeight'=>40,
+                                        'summaryHeight'=>100,
+                                            ]"
+                entityName="Post"
+                :showTitle="false"
+                :pagination="['show'=>false]"
 
-@section('scripts')
-    @parent
-    @include('iblog::frontend.partials.post.script')
+                :params="['take'=>5,'filter' => ['category' => $category->id ?? null]]"
+                :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-12 d-flex justify-content-center h5 font-weight-bold mt-5 mb-3">
+          {{trans('iblog::common.layouts.titleRelatedPosts')}}
+        </div>
+        <x-isite::carousel.owl-carousel
+          id="Articles"
+          repository="Modules\Iblog\Repositories\PostRepository"
+          :params="['take' => 20,'filter' => ['category' => $category->id]]"
+          :margin="25"
+          :loops="false"
+          :dots="false"
+          :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
+          mediaImage="mainimage"
+          :autoplay="false"
+          :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
+          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+        />
+      </div>
+    </div>
+  </div>
 @stop
