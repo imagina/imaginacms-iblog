@@ -15,13 +15,13 @@
       {{-- article --}}
       <div class="row">
         <div class="col-12 col-md-8">
-          <x-media::single-image imgClasses=""
+          <div class="blog-image">
+          <x-media::single-image imgClasses="img-fluid"
                                  :mediaFiles="$post->mediaFiles()"
                                  :isMedia="true" :alt="$post->title"/>
-          <div class="row mx-1 mx-md-3 mx-lg-4">
-            <spam class="title mt-3 mb-2">{{ $post->created_at->format('d/m/Y')}}</spam>
           </div>
-          <div class="row mx-1 mx-md-3 mx-lg-4">
+          <div class="blog-content pb-4">
+            <p class="date mt-3 mb-2">{{ $post->created_at->format('d/m/Y')}}</p>
             <h2 class="title">{{ $post->title }}</h2>
             <div class="page-body description mb-4 text-justify">
               {!! $post->description !!}
@@ -35,9 +35,8 @@
           </div>
         </div>
         {{-- Sidebar --}}
-        <div class="col-12 col-md-4 px-1">
-          <div class="row mx-1">
-            <div class="col-12 my-2">
+        <div class="col-12 col-md-4 pl-md-4">
+          <div class="blog-categories">
               <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
                                                                 'name' => 'categories',
@@ -55,11 +54,10 @@
                                                                 'layout' => 'default',
                                                                 'classes' => 'col-12'
                                                             ]]"/>
-            </div>
+
           </div>
-          <div class="row mx-1">
-            <div class="col-12">
-              <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+          <div class="blog-recent mb-5">
+              <h4 class="mb-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
               <livewire:isite::items-list
                 moduleName="Iblog"
                 itemComponentName="isite::item-list"
@@ -68,7 +66,7 @@
                                                             'options' => [
                                                                 'one' => [
                                                                     'name' => 'one',
-                                                                    'class' => 'col-12 my-3 pl-md-5',
+                                                                    'class' => 'col-6 col-md-12 my-2',
                                                                     'icon' => 'fa fa-align-justify',
                                                                     'status' => true],
                                                         ],
@@ -134,13 +132,13 @@
                                         'categoryColor'=>'text-primary',
                                         'createdDateColor'=>'text-dark',
                                         'titleMarginT'=>'mt-0',
-                                        'titleMarginB'=>'mb-0 mb-md-2',
+                                        'titleMarginB'=>'mb-1 mb-md-2',
                                         'summaryMarginT'=>'mt-0',
                                         'summaryMarginB'=>'mb-2',
                                         'categoryMarginT'=>'mt-0',
                                         'categoryMarginB'=>'mb-2',
                                         'categoryOrder'=>'3',
-                                        'createdDateMarginT'=>'mt-0 mt-md-3',
+                                        'createdDateMarginT'=>'mt-2',
                                         'createdDateMarginB'=>'mb-0 mb-md-2',
                                         'createdDateOrder'=>'4',
                                         'buttonMarginT'=>'mt-0',
@@ -156,24 +154,23 @@
                                         'buttonTextSize'=>'16',
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
-                                        'titleHeight'=>40,
                                         'summaryHeight'=>100,
+                                        'numberCharactersTitle'=>50,
+                                        'columnLeft'=>'col-4 col-sm-5',
+                                        'columnRight'=>'col-8 col-sm-7 pr-0',
                                             ]"
                 entityName="Post"
                 :showTitle="false"
                 :pagination="['show'=>false]"
 
-                :params="['take'=>5,'filter' => ['category' => $category->id ?? null]]"
+                :params="['take'=>4,'filter' => ['category' => $category->id ?? null]]"
                 :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
               />
-            </div>
           </div>
         </div>
-        <div
-          class="col-12 d-flex justify-content-center h5 font-weight-bold mt-5 mb-3">
-          {{trans('iblog::common.layouts.titleRelatedPosts')}}
-        </div>
-        <x-isite::carousel.owl-carousel
+        <div class="blog-related col-12 pb-5">
+          <h4 class="text-center h5 font-weight-bold">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h4>
+          <x-isite::carousel.owl-carousel
           id="Articles"
           repository="Modules\Iblog\Repositories\PostRepository"
           :params="['take' => 20,'filter' => ['category' => $category->id]]"
@@ -186,6 +183,7 @@
           :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
           :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
         />
+        </div>
       </div>
     </div>
   </div>

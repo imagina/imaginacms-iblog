@@ -8,23 +8,17 @@
   {{ $post->title }} | @parent
 @stop
 @section('content')
-  <div id="postLayout3"
-       class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-2">
+  <div id="postLayout3" class="page blog single single-{{$category->slug}} single-{{$category->id}}">
+    @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
-      <div class="row">
-        @include('iblog::frontend.partials.breadcrumb')
-      </div>
-    </div>
-    <div class="page blog single single-{{$category->slug}} single-{{$category->id}}">
-      <div class="container">
         <div class="row">
-          <div class="col-9">
+          <div class="col-12 col-md-8 col-lg-9 pr-md-5">
             <h3 class="title">{{ $post->title }}</h3>
           </div>
         </div>
         <div class="row">
           {{-- article --}}
-          <div class="col-12 col-md-9">
+          <div class="col-12 col-md-8 col-lg-9 pr-md-5">
             <div class="my-1">
               <x-media::single-image imgClasses=""
                                      :mediaFiles="$post->mediaFiles()"
@@ -42,9 +36,9 @@
             </div>
           </div>
           {{--sidebar--}}
-          <div class="col-12 col-md-3 px-4 px-md-0">
-            <div class="mb-4">
-              <h4 class="ml-3 mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+          <div class="col-12 col-md-4 col-lg-3 px-md-0">
+            <div class="blog-recent mb-4">
+              <h4 class="mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
               <livewire:isite::items-list
                 moduleName="Iblog"
                 itemComponentName="isite::item-list"
@@ -53,7 +47,7 @@
                                                             'options' => [
                                                                 'one' => [
                                                                     'name' => 'one',
-                                                                    'class' => 'col-12 my-2  pl-md-5',
+                                                                    'class' => 'col-6 col-md-12 my-2',
                                                                     'icon' => 'fa fa-align-justify',
                                                                     'status' => true],
                                                         ],
@@ -61,7 +55,7 @@
                 :itemComponentAttributes="[
                                         'withViewMoreButton'=>false,
                                         'withCategory'=>false,
-                                        'withSummary'=>false,
+                                        'withSummary'=>true,
                                         'withCreatedDate'=>false,
                                         'layout'=>'item-list-layout-7',
                                         'imageAspect'=>'4/3',
@@ -78,9 +72,9 @@
                                         'titleTextTransform'=>'',
                                         'formatCreatedDate'=>'d/m/Y',
                                         'summaryAlign'=>'text-left',
-                                        'summaryTextSize'=>'16',
+                                        'summaryTextSize'=>'13',
                                         'summaryTextWeight'=>'font-weight-normal',
-                                        'numberCharactersSummary'=>'100',
+                                        'numberCharactersSummary'=>'60',
                                         'categoryAlign'=>'text-left',
                                         'categoryTextSize'=>'18',
                                         'categoryTextWeight'=>'font-weight-normal',
@@ -94,8 +88,8 @@
                                         'buttonColor'=>'primary',
                                         'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                         'withImageOpacity'=>false,
-                                        'imageOpacityColor'=>'opacity-dark',
-                                        'imageOpacityDirection'=>'opacity-all',
+                                        'imageOpacityColor'=>'',
+                                        'imageOpacityDirection'=>' ',
                                         'orderClasses'=>[
                                         'photo'=>'order-0',
                                         'title'=>'order-1',
@@ -105,8 +99,8 @@
                                         'viewMoreButton'=>'order-5'
                                         ],
                                         'imagePosition'=>'2',
-                                        'imagePositionVertical'=>'align-self-star',
-                                        'contentPositionVertical'=>'align-self-star',
+                                        'imagePositionVertical'=>'align-self-start',
+                                        'contentPositionVertical'=>'align-self-start',
                                         'contentPadding'=>'0',
                                         'contentBorder'=>'0',
                                         'contentBorderColor'=>'#dddddd',
@@ -119,7 +113,7 @@
                                         'categoryColor'=>'text-primary',
                                         'createdDateColor'=>'text-dark',
                                         'titleMarginT'=>'mt-1',
-                                        'titleMarginB'=>'mb-0 mb-md-2',
+                                        'titleMarginB'=>'mb-1 mb-md-2',
                                         'summaryMarginT'=>'mt-0',
                                         'summaryMarginB'=>'mb-2',
                                         'categoryMarginT'=>'mt-0',
@@ -141,9 +135,12 @@
                                         'buttonTextSize'=>'16',
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
-                                        'titleHeight'=>60,
-                                        'summaryHeight'=>100,
-                                            ]"
+                                        'summaryHeight'=>70,
+                                        'numberCharactersTitle'=>30,
+                                        'summaryLineHeight'=>14,
+                                        'columnLeft'=>'col-4 col-sm-5',
+                                        'columnRight'=>'col-8 col-sm-7 pr-0',
+                                        ]"
                 entityName="Post"
                 :showTitle="false"
                 :pagination="['show'=>false]"
@@ -154,6 +151,5 @@
           </div>
         </div>
       </div>
-    </div>
   </div>
 @stop

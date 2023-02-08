@@ -11,11 +11,7 @@
 @section('content')
   <div id="categoryLayout3"
        class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
-    <div class="container">
-      <div class="row">
-        @include('iblog::frontend.partials.breadcrumb')
-      </div>
-    </div>
+    @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
       <div class="title my-1">
         <h4>
