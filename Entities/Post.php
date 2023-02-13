@@ -188,12 +188,9 @@ class Post extends Model implements TaggableInterface
       config(["app.url" => "https://" . $currentDomain]);
     }
 
-    if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
-      if ($this->options->urlCoder == "onlyPost") {
-        $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
-      } else {
-        $url = \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug, $currentLocale);
-      }
+    if (isset($this->options->urlCoder) && !empty($this->options->urlCoder) && $this->options->urlCoder == "onlyPost") {
+
+      $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
 
     } else {
       if (empty($this->category->slug)) $url = "";
