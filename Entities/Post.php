@@ -171,36 +171,39 @@ class Post extends Model implements TaggableInterface
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug ?? "";
     }
-    
+
     $currentLocale = $locale ?? locale();
-    if(!is_null($locale)){
-       $this->slug = $this->getTranslation($currentLocale)->slug;
-       $this->category = $this->category->getTranslation($currentLocale);
+    if (!is_null($locale)) {
+      $this->slug = $this->getTranslation($currentLocale)->slug;
+      $this->category = $this->category->getTranslation($currentLocale);
     }
-  
+
     if (empty($this->slug)) return "";
-  
+
     $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
-      parse_url(config('app.url'),PHP_URL_HOST);
-  
-    if(config("app.url") != $currentDomain){
+      parse_url(config('app.url'), PHP_URL_HOST);
+
+    if (config("app.url") != $currentDomain) {
       $savedDomain = config("app.url");
-      config(["app.url" => "https://".$currentDomain]);
+      config(["app.url" => "https://" . $currentDomain]);
     }
-    
+
     if (isset($this->options->urlCoder) && !empty($this->options->urlCoder)) {
       if ($this->options->urlCoder == "onlyPost") {
         $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
+      } else {
+        $url = \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug, $currentLocale);
       }
-    }else{
-      if(empty($this->category->slug)) $url = "";
+
+    } else {
+      if (empty($this->category->slug)) $url = "";
       else $url = \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug, $currentLocale);
     }
-    
-    if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
-    
+
+    if (isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
+
     return $url;
-    
+
   }
 
   /**
