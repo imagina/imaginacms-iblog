@@ -125,7 +125,7 @@ class Category extends Model
   }
 
 
-  public function getUrlAttribute()
+  public function getUrlAttribute($locale = null)
   {
     $url = "";
 
@@ -135,13 +135,25 @@ class Category extends Model
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $category->slug ?? '';
     }
+    
+    $currentLocale = $locale ?? locale();
+    if(!is_null($currentLocale)){
+       $this->slug = $this->getTranslation($currentLocale)->slug;
+    }
+
     if (empty($this->slug)) return "";
-
-    $currentLocale = locale();
-    $tenantDomain = isset(tenant()->id) ? tenant()->domain : (tenancy()->find($this->organization_id)->domain ?? parse_url(env('APP_URL', 'localhost'),PHP_URL_HOST));
-
+  
+    $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
+      parse_url(config('app.url'),PHP_URL_HOST);
+      
     if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
-      $url = !is_null($tenantDomain) ? "https://".$tenantDomain.'/' . $this->slug : \LaravelLocalization::localizeUrl('/' . $this->slug);
+      if(config("app.url") != $currentDomain){
+        $savedDomain = config("app.url");
+        config(["app.url" => "https://".$currentDomain]);
+      }
+      $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
+  
+      if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
     }
 
     return $url;

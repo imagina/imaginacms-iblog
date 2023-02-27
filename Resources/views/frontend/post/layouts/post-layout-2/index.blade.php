@@ -28,7 +28,7 @@
             {{ $post->created_at->format('d \d\e M,Y')}}
           </div>
           <div class="row">
-            <div class="col-12 col-lg-2 px-lg-5 mb-3">
+            <div class="col-12 col-lg-2 px-lg-4 mb-3">
               <x-isite::social/>
             </div>
             <div class="col-12 col-lg-10">
@@ -39,9 +39,8 @@
           </div>
         </div>
         {{-- Sidebar --}}
-        <div class="sidebar col-12 col-md-4 px-5">
-          <div class="row">
-            <div class="col-12 my-2 pl-lg-5">
+        <div class="sidebar col-12 col-md-4 pl-md-5">
+          <div class="blog-categories">
               <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
                                                                 'name' => 'categories',
@@ -60,10 +59,9 @@
                                                                 'classes' => 'col-12'
                                                             ]]"/>
             </div>
-            <div class="row">
-              <div class="col-12 pl-lg-5">
-                <h4 class="mt-1 mb-2 mx-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
-                <livewire:isite::items-list
+          <div class="blog-recent mb-4">
+             <h4 class="mb-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+             <livewire:isite::items-list
                   moduleName="Iblog"
                   itemComponentName="isite::item-list"
                   itemComponentNamespace="Modules\Isite\View\Components\ItemList"
@@ -71,7 +69,7 @@
                                                             'options' => [
                                                                 'one' => [
                                                                     'name' => 'one',
-                                                                    'class' => 'col-12 my-3 pl-md-5',
+                                                                    'class' => 'col-12 my-2',
                                                                     'icon' => 'fa fa-align-justify',
                                                                     'status' => true],
                                                         ],
@@ -159,8 +157,10 @@
                                         'buttonTextSize'=>'16',
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
-                                        'titleHeight'=>40,
                                         'summaryHeight'=>100,
+                                        'numberCharactersTitle'=>50,
+                                        'columnLeft'=>'col-4 col-sm-5',
+                                        'columnRight'=>'col-8 col-sm-7 pr-0',
                                             ]"
                   entityName="Post"
                   :showTitle="false"
@@ -168,16 +168,14 @@
                   :params="['take'=>3,'filter' => ['category' => $category->id ?? null]]"
                   :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
                 />
-              </div>
-            </div>
           </div>
-          <div class="tag pl-lg-5">
+          <div class="blog-tag mb-4">
             <x-tag::tags :item="$post"/>
           </div>
         </div>
       </div>
-      <div class="mb-5">
-        <h5 class="mt-5 mb-3">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
+      <div class="blog-related my-5">
+        <h5 class="mb-3 font-weight-bold">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h5>
         <x-isite::carousel.owl-carousel
           id="Articles"
           repository="Modules\Iblog\Repositories\PostRepository"
