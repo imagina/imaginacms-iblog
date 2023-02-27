@@ -112,7 +112,7 @@
                                         'summaryColor'=>'text-dark',
                                         'categoryColor'=>'text-primary',
                                         'createdDateColor'=>'text-dark',
-                                        'titleMarginT'=>'mt-1',
+                                        'titleMarginT'=>'mt-2 mt-sm-0',
                                         'titleMarginB'=>'mb-1 mb-md-2',
                                         'summaryMarginT'=>'mt-0',
                                         'summaryMarginB'=>'mb-2',
@@ -135,11 +135,12 @@
                                         'buttonTextSize'=>'16',
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
-                                        'summaryHeight'=>70,
+                                        'summaryHeight'=>'auto',
                                         'numberCharactersTitle'=>30,
                                         'summaryLineHeight'=>14,
-                                        'columnLeft'=>'col-4 col-sm-5',
-                                        'columnRight'=>'col-8 col-sm-7 pr-0',
+                                        'columnLeft'=>'col-sm-5',
+                                        'columnRight'=>'col-sm-7 px-0 pr-sm-0 pl-sm-2',
+                                        'titleTextSizeMobile'=>'13',
                                         ]"
                 entityName="Post"
                 :showTitle="false"
