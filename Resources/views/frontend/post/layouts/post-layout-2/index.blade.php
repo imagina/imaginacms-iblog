@@ -25,10 +25,10 @@
                                    :isMedia="true" :alt="$post->title"/>
           </div>
           <div class="create-date my-4">
-            {{ $post->created_at->format('d \d\e M,Y')}}
+            {{ $post->created_at->format('d \d\e M, Y')}}
           </div>
           <div class="row">
-            <div class="col-12 col-lg-2 px-lg-4 mb-3">
+            <div class="col-12 col-lg-2 px-lg-5 mb-3">
               <x-isite::social/>
             </div>
             <div class="col-12 col-lg-10">
@@ -39,7 +39,7 @@
           </div>
         </div>
         {{-- Sidebar --}}
-        <div class="sidebar col-12 col-md-4 pl-md-5">
+        <div class="sidebar col-12 col-md-4 pl-lg-5">
           <div class="blog-categories">
               <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
@@ -92,7 +92,7 @@
                                         'titleTextSize'=>'14',
                                         'titleTextWeight'=>'font-weight-bold',
                                         'titleTextTransform'=>'',
-                                        'formatCreatedDate'=>'d \d\e M,Y',
+                                        'formatCreatedDate'=>'d \d\e M, Y',
                                         'summaryAlign'=>'text-left',
                                         'summaryTextSize'=>'16',
                                         'summaryTextWeight'=>'font-weight-normal',
@@ -135,7 +135,7 @@
                                         'categoryColor'=>'text-primary',
                                         'createdDateColor'=>'text-dark',
                                         'titleMarginT'=>'mt-0',
-                                        'titleMarginB'=>'mb-0 mb-md-2',
+                                        'titleMarginB'=>'mb-1 mb-lg-0',
                                         'summaryMarginT'=>'mt-0',
                                         'summaryMarginB'=>'mb-2',
                                         'categoryMarginT'=>'mt-0',
@@ -161,6 +161,7 @@
                                         'numberCharactersTitle'=>50,
                                         'columnLeft'=>'col-4 col-sm-5',
                                         'columnRight'=>'col-8 col-sm-7 pr-0',
+                                        'titleTextSizeMobile'=>'14',
                                             ]"
                   entityName="Post"
                   :showTitle="false"

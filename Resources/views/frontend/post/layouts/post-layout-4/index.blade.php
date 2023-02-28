@@ -35,7 +35,7 @@
             </div>
           </div>
           {{--article--}}
-          <div class="col-12 col-md-9 p-md-4">
+          <div class="col-12 col-md-9 px-md-4 pb-4">
             <h3 class="title">{{ $post->title }}</h3>
             <div class="my-1">
               <x-media::single-image imgClasses=""
@@ -43,7 +43,7 @@
                                      :isMedia="true" :alt="$post->title"/>
             </div>
             <div class="create-date my-4">
-              {{ $post->created_at->format('d \d\e M,Y')}}
+              {{ $post->created_at->format('d \d\e M, Y')}}
             </div>
             <div class="page-body description my-4 text-justify">
               {!! $post->description !!}
