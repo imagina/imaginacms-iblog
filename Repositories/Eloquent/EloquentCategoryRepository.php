@@ -74,7 +74,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
 
       if (isset($filter->id)) {
         $ids = is_array($filter->id) ? $filter->id : [$filter->id];
-  
+
         if (isset($filter->includeDescendants) && $filter->includeDescendants) {
         foreach ($ids as $id) {
             if (isset($filter->includeSelf) && $filter->includeSelf) {
@@ -85,7 +85,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
             $ids = array_merge($ids, $categories->pluck("id")->toArray());
           }
         }
-        
+
         $query->whereIn('id', $ids);
       }
 
@@ -149,10 +149,19 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
         }
       }
       //Order by
-      if (isset($filter->order)) {
-        $orderByField = $filter->order->field ?? 'created_at';//Default field
-        $orderWay = $filter->order->way ?? 'desc';//Default way
-        $query->orderBy($orderByField, $orderWay);//Add order to query
+      if (isset($filter->order) && !empty($filter->order)) {
+        $order = is_array($filter->order) ? $filter->order : [$filter->order];
+
+        foreach ($order as $orderObject) {
+          if (isset($orderObject->field) && isset($orderObject->way)) {
+            if (in_array($orderObject->field, $this->model->translatedAttributes)) {
+              $query->join('iblog__category_translations as ftranslations', 'ftranslations.category_id', '=', 'iblog__categories.id');
+              $query->orderBy("ftranslations.$orderObject->field", $orderObject->way);
+            } else
+              $query->orderBy("iblog__categories.".$orderObject->field, $orderObject->way);
+          }
+
+        }
       }
 
       //internal

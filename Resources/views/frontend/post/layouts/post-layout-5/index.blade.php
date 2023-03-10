@@ -12,9 +12,9 @@
   <div id="postLayout5" class="page blog single single-{{$category->slug}} single-{{$category->id}}">
     @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
-      <div class="row justify-content-end">
+      <div class="row justify-content-center">
         {{--article--}}
-        <div class="col-12 col-md-8 px-md-4">
+        <div class="col-12 col-md-8 col-lg-8 px-md-4">
           <div class="my-1">
             <x-media::single-image imgClasses=""
                                    :mediaFiles="$post->mediaFiles()"
@@ -22,7 +22,7 @@
           </div>
           <h3 class="title mt-4">{{ $post->title }}</h3>
           <div class="create-date my-4">
-            {{ $post->created_at->format('d \d\e M,Y')}}
+            {{ $post->created_at->format('d \d\e M, Y')}}
           </div>
           <div class="page-body description my-4 text-justify">
             {!! $post->description !!}
@@ -33,7 +33,7 @@
           </div>
         </div>
         {{--sidebar--}}
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-4 col-lg-3">
           <div class="blog-recent mb-4">
             <h4 class="mb-2">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
             <livewire:isite::items-list
@@ -44,7 +44,7 @@
                                                               'options' => [
                                                                   'one' => [
                                                                       'name' => 'one',
-                                                                      'class' => 'col-12 my-2',
+                                                                      'class' => 'col-6 col-md-12 my-2',
                                                                       'icon' => 'fa fa-align-justify',
                                                                       'status' => true],
                                                           ],
@@ -134,14 +134,15 @@
                                           'itemBackgroundColorHover'=>'#ffffff',
                                           'summaryHeight'=>100,
                                           'numberCharactersTitle'=>50,
-                                          'columnLeft'=>'col-4 col-sm-5',
-                                          'columnRight'=>'col-8 col-sm-7 pr-0',
+                                          'columnLeft'=>'col-sm-5',
+                                          'columnRight'=>'col-sm-7 px-0 pr-sm-0 pl-sm-2',
+                                          'titleTextSizeMobile'=>'13',
                                               ]"
               entityName="Post"
               :showTitle="false"
               :pagination="['show'=>false]"
 
-              :params="['take'=>3,'filter' => ['category' => $category->id ?? null]]"
+              :params="['take'=>4,'filter' => ['category' => $category->id ?? null]]"
               :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
 
             />
