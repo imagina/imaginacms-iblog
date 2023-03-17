@@ -174,7 +174,7 @@
           <x-isite::carousel.owl-carousel
           id="Articles"
           repository="Modules\Iblog\Repositories\PostRepository"
-          :params="['take' => 20,'filter' => ['category' => $category->id]]"
+          :params="['take' => 20,'filter' => ['category' => $category->id,'exclude'=>$post->id]]"
           :margin="25"
           :loops="false"
           :dots="false"
