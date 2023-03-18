@@ -17,9 +17,6 @@
       </div>
     </div>
     <div class="container">
-      <div class="category-description py-3">
-        {!! $category->description !!}
-      </div>
       <div class="row">
         {{-- Sidebar --}}
         <div class="sidebar {{config('asgard.iblog.config.customClassesToTheIndexCols.sidebar')}}">
@@ -60,6 +57,8 @@
             :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
             :configOrderBy="config('asgard.iblog.config.orderBy')"
             :pagination="config('asgard.iblog.config.pagination')"
+            :title="$category->title"
+            :description="$category->description"
           />
 
         </div>
