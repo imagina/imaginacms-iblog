@@ -60,6 +60,21 @@
         </div>
         <div class="post-description text-justify">
           {!! $post->description !!}
+        <div class="blog-related col-12 pb-5">
+          <h4 class="text-center h5 font-weight-bold">{{trans('iblog::common.layouts.titleRelatedPosts')}}</h4>
+          <x-isite::carousel.owl-carousel
+          id="Articles"
+          repository="Modules\Iblog\Repositories\PostRepository"
+          :params="['take' => 20,'filter' => ['category' => $category->id,'exclude'=>$post->id]]"
+          :margin="25"
+          :loops="false"
+          :dots="false"
+          :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
+          mediaImage="mainimage"
+          :autoplay="false"
+          :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
+          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+        />
         </div>
       </div>
     </div>
