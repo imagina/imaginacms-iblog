@@ -57,6 +57,7 @@ class IblogServiceProvider extends ServiceProvider
     $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'permissions'), "asgard.iblog.permissions");
     $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'cmsPages'), "asgard.iblog.cmsPages");
     $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'cmsSidebar'), "asgard.iblog.cmsSidebar");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'gamification'), "asgard.iblog.gamification");
     $this->publishConfig('iblog', 'crud-fields');
 
     $this->app[TagManager::class]->registerNamespace(new Post());
