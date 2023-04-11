@@ -475,4 +475,10 @@ return [
       ],
     ],
   ],
+
+  /*Translate keys of each entity. Based on the permission string*/
+  'documentation' => [
+    'posts' => "iblog::cms.documentation.posts",
+    'categories' => "iblog::cms.documentation.categories",
+  ]
 ];
