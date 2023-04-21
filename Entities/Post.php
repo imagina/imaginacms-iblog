@@ -16,12 +16,13 @@ use Modules\Isite\Traits\Typeable;
 use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 use Modules\Isite\Traits\RevisionableTrait;
 
+use Modules\Core\Support\Traits\AuditTrait;
 
 class Post extends Model implements TaggableInterface
 {
   use Translatable, PresentableTrait, NamespacedEntity,
     TaggableTrait, MediaRelation, BelongsToTenant,
-    hasEventsWithBindings, Typeable, RevisionableTrait;
+    hasEventsWithBindings, Typeable, RevisionableTrait, AuditTrait;
 
   protected static $entityNamespace = 'asgardcms/post';
 
