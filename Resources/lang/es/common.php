@@ -93,5 +93,8 @@ return [
       "summary" => "Resumen del artículo",
       "description" => "Descripción del artículo",
     ]
-  ]
+  ],
+  'crudFields' => [
+    'labelValueIdFieldTimeLine' => 'Valor Campo Identificador Para Artículos De Linea De Tiempo',
+  ],
 ];
