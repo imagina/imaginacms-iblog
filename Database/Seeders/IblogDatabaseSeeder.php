@@ -5,6 +5,7 @@ namespace Modules\Iblog\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Iblog\Database\Seeders\RoleTableSeeder;
+use Modules\Isite\Jobs\ProcessSeeds;
 
 class IblogDatabaseSeeder extends Seeder
 {
@@ -15,11 +16,11 @@ class IblogDatabaseSeeder extends Seeder
    */
   public function run()
   {
-    $this->call(IblogModuleTableSeeder::class);
-    $this->call(RoleTableSeeder::class);
-    $this->call(SlugCheckerTableSeeder::class);
-    $this->call(LayoutsBlogTableSeeder::class);
-    $this->call(MoveStatusToPostsTranslationsTableSeeder::class);
-    $this->call(MoveStatusToCategoryTranslationsTable::class);
+    Model::unguard();
+    ProcessSeeds::dispatch([
+      "baseClass" => "\Modules\Iblog\Database\Seeders",
+      "seeds" => ["IblogModuleTableSeeder", "RoleTableSeeder", "SlugCheckerTableSeeder", "LayoutsBlogTableSeeder",
+        "MoveStatusToPostsTranslationsTableSeeder", "MoveStatusToCategoryTranslationsTable"]
+    ]);
   }
 }
