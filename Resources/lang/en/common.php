@@ -89,9 +89,9 @@ return [
     "searcherOrder" => "Search Ordering",
     "searchFields" => "Search fields for articles",
     "options" => [
-      "title" => "Search fields for articles",
-      "summary" => "Summary of the article",
-      "description" => "Item description",
+      "title" => "Item Title",
+      "summary" => "Item Summary",
+      "description" => "Item Description",
     ]
   ]
 ];
