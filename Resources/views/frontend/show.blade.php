@@ -190,3 +190,9 @@
     </div>
   </div>
 @stop
+
+@section("scripts")
+  <script defer type="text/javascript"
+          src="https://platform-api.sharethis.com/js/sharethis.js#property=5fd9384eb64d610011fa8357&product=inline-share-buttons"
+          async="async"></script>
+@stop
