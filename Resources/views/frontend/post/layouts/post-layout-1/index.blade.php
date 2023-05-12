@@ -15,9 +15,9 @@
         <div class="position-absolute h-100 w-100 content-title">
           <div class="container d-flex flex-column align-items-center w-100 h-100 justify-content-center">
             <div class="content-breadcrumb-center">
-              <h2 class="text-white text-center">
+              <h1 class="h2 text-white text-center">
                 {{$category->title}}
-              </h2>
+              </h1>
               @include('iblog::frontend.partials.breadcrumb')
             </div>
           </div>

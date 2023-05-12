@@ -20,7 +20,7 @@
                                    :mediaFiles="$post->mediaFiles()"
                                    :isMedia="true" :alt="$post->title"/>
           </div>
-          <h3 class="title mt-4">{{ $post->title }}</h3>
+          <h1 class="title mt-4 h3">{{ $post->title }}</h1>
           <div class="create-date my-4">
             {{ $post->created_at->format('d \d\e M, Y')}}
           </div>
