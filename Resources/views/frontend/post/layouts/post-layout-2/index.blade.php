@@ -15,7 +15,7 @@
       <div class="row">
         <div class="col-12 col-md-8">
           <h5 class="title-category">{{ $category->title }}</h5>
-          <h3 class="title">{{ $post->title }}</h3>
+          <h1 class="title h3">{{ $post->title }}</h1>
           <div class="mb-3 mt-2">
             {{$post->summary }}
           </div>

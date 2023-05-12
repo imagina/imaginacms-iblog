@@ -36,7 +36,7 @@
           </div>
           {{--article--}}
           <div class="col-12 col-md-9 px-md-4 pb-4">
-            <h3 class="title">{{ $post->title }}</h3>
+            <h1 class="title h3">{{ $post->title }}</h1>
             <div class="my-1">
               <x-media::single-image imgClasses=""
                                      :mediaFiles="$post->mediaFiles()"

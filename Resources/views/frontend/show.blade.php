@@ -22,7 +22,7 @@
             <spam class="title mt-3 mb-2">{{ $post->created_at->format('d/m/Y')}}</spam>
           </div>
           <div class="row mx-1 mx-md-3 mx-lg-4">
-            <h2 class="title">{{ $post->title }}</h2>
+            <h1 class="title h2">{{ $post->title }}</h1>
             <div class="page-body description mb-4 text-justify">
               {!! $post->description !!}
             </div>
@@ -189,4 +189,11 @@
       </div>
     </div>
   </div>
+@stop
+
+@section("scripts")
+  @parent
+  <script defer type="text/javascript"
+          src="https://platform-api.sharethis.com/js/sharethis.js#property=5fd9384eb64d610011fa8357&product=inline-share-buttons"
+          async="async"></script>
 @stop

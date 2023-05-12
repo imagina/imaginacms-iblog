@@ -13,8 +13,10 @@
        class="  {{isset($category->id) ? 'iblog-index-category iblog-index-category-'.$category->id.' blog-category-'.$category->id : ''}} py-5">
     @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
+      <h1>
+        {{ $category->title }}
+      </h1>
       <div class="row">
-
         <div class="sidebar col-12 col-md-3">
           <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
@@ -58,7 +60,6 @@
             :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
           />
         </div>
-
       </div>
     </div>
     <!-- /.row -->

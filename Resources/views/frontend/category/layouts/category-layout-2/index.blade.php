@@ -17,9 +17,9 @@
         {{-- Top Content , Products, Pagination --}}
         <div class="posts col-12 col-md-8">
           <div class="title h4 my-3">
-            <h4>
+            <h1 class="h4">
               {{isset($category->title) ? $category->title : ""}}
-            </h4>
+            </h1>
           </div>
           <livewire:isite::items-list
             moduleName="Iblog"

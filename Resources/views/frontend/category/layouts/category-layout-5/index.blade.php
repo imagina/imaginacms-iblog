@@ -14,7 +14,7 @@
     @include('iblog::frontend.partials.breadcrumb')
     <div class="container">
       <div class="title my-1">
-        <h4 class="title">{{isset($category->title) ? $category->title : ""}}</h4>
+        <h1 class="title h4">{{isset($category->title) ? $category->title : ""}}</h1>
       </div>
       <div class="description pt-3">
         {!! isset($category->description) ? $category->description : "" !!}

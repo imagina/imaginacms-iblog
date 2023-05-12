@@ -13,7 +13,7 @@
     <div class="container">
         <div class="row">
           <div class="col-12 col-md-8 col-lg-9 pr-md-5">
-            <h3 class="title">{{ $post->title }}</h3>
+            <h1 class="title h3">{{ $post->title }}</h1>
           </div>
         </div>
         <div class="row">
