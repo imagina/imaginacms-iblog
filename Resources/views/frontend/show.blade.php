@@ -14,30 +14,30 @@
     <div class="container">
       {{-- article --}}
       <div class="row">
-        <div class="col-12 col-md-8">
+        <div class="col-12 col-md-8 mb-3">
           <x-media::single-image imgClasses=""
                                  :mediaFiles="$post->mediaFiles()"
                                  :isMedia="true" :alt="$post->title"/>
-          <div class="row mx-1 mx-md-3 mx-lg-4">
-            <spam class="title mt-3 mb-2">{{ $post->created_at->format('d/m/Y')}}</spam>
+          <div class="mx-1 mx-md-3 mx-lg-4 mt-3">
+            <span class="title mt-3 mb-2">{{ $post->created_at->format('d/m/Y')}}</span>
           </div>
-          <div class="row mx-1 mx-md-3 mx-lg-4">
+          <div class="mx-1 mx-md-3 mx-lg-4">
             <h1 class="title h2">{{ $post->title }}</h1>
             <div class="page-body description mb-4 text-justify">
               {!! $post->description !!}
             </div>
-            <div>
-              <div class="social-share d-flex justify-content-end align-items-center">
-                <div class="mr-2">{{trans('iblog::common.social.share')}}:</div>
-                <div class="sharethis-inline-share-buttons"></div>
-              </div>
+            <div class="social-share d-flex justify-content-end align-items-center">
+              <div class="mr-2">{{trans('iblog::common.social.share')}}:</div>
+              <div class="sharethis-inline-share-buttons"></div>
+              <style>
+                #st-1 { z-index: 8; }
+              </style>
             </div>
           </div>
         </div>
         {{-- Sidebar --}}
-        <div class="col-12 col-md-4 px-1">
-          <div class="row mx-1">
-            <div class="col-12 my-2">
+        <div class="col-12 col-md-4 pl-lg-5">
+          <div class="categories-blog">
               <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
                                                                 'name' => 'categories',
@@ -56,23 +56,21 @@
                                                                 'classes' => 'col-12'
                                                             ]]"/>
             </div>
-          </div>
-          <div class="row mx-1">
-            <div class="col-12">
-              <h4 class="mt-1 mb-3 ml-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
+          <div class="recent-blog my-3">
+              <h4 class="mt-1 mb-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
               <livewire:isite::items-list
                 moduleName="Iblog"
                 itemComponentName="isite::item-list"
                 itemComponentNamespace="Modules\Isite\View\Components\ItemList"
                 :configLayoutIndex="['default' => 'one',
-                                                            'options' => [
-                                                                'one' => [
-                                                                    'name' => 'one',
-                                                                    'class' => 'col-12 my-3 pl-md-5',
-                                                                    'icon' => 'fa fa-align-justify',
-                                                                    'status' => true],
-                                                        ],
-                                                        ]"
+                                      'options' => [
+                                          'one' => [
+                                              'name' => 'one',
+                                              'class' => 'col-12 my-2',
+                                              'icon' => 'fa fa-align-justify',
+                                              'status' => true],
+                                        ],
+                                    ]"
                 :itemComponentAttributes="[
                                         'withViewMoreButton'=>false,
                                         'withCategory'=>false,
@@ -89,26 +87,17 @@
                                         'withTitle'=>true,
                                         'titleAlign'=>'',
                                         'titleTextSize'=>'14',
-                                        'titleTextSizeMobile'=>'14',
                                         'titleTextWeight'=>'font-weight-bold',
                                         'titleTextTransform'=>'',
                                         'formatCreatedDate'=>'d.m.Y',
                                         'summaryAlign'=>'text-left',
                                         'summaryTextSize'=>'16',
                                         'summaryTextWeight'=>'font-weight-normal',
-                                        'numberCharactersSummary'=>'100',
-                                        'categoryAlign'=>'text-left',
-                                        'categoryTextSize'=>'18',
-                                        'categoryTextWeight'=>'font-weight-normal',
+                                        'numberCharactersSummary'=>'150',
                                         'createdDateAlign'=>'text-left',
                                         'createdDateTextSize'=>'11',
                                         'createdDateTextWeight'=>'font-weight-normal',
-                                        'buttonAlign'=>'text-left',
-                                        'buttonLayout'=>'rounded',
-                                        'buttonIcon'=>'',
-                                        'buttonIconLR'=>'left',
-                                        'buttonColor'=>'primary',
-                                        'viewMoreButtonLabel'=>'isite::common.menu.labelViewMore',
+                                        'viewMoreButtonLabel'=>'iblog::common.layouts.viewMore',
                                         'withImageOpacity'=>false,
                                         'imageOpacityColor'=>'opacity-dark',
                                         'imageOpacityDirection'=>'opacity-all',
@@ -132,24 +121,17 @@
                                         'contentBorderShadowsHover'=>'',
                                         'titleColor'=>'text-dark',
                                         'summaryColor'=>'text-dark',
-                                        'categoryColor'=>'text-primary',
                                         'createdDateColor'=>'text-dark',
-                                        'titleMarginT'=>'mt-0',
-                                        'titleMarginB'=>'mb-0 mb-md-2',
+                                        'titleMarginT'=>'mt-2 mt-lg-0',
+                                        'titleMarginB'=>'mb-1 mb-lg-0',
                                         'summaryMarginT'=>'mt-0',
                                         'summaryMarginB'=>'mb-2',
-                                        'categoryMarginT'=>'mt-0',
-                                        'categoryMarginB'=>'mb-2',
-                                        'categoryOrder'=>'3',
                                         'createdDateMarginT'=>'mt-0 mt-md-3',
                                         'createdDateMarginB'=>'mb-0 mb-md-2',
                                         'createdDateOrder'=>'4',
-                                        'buttonMarginT'=>'mt-0',
-                                        'buttonMarginB'=>'mb-0',
                                         'buttonOrder'=>'5',
                                         'titleLetterSpacing'=>'0',
                                         'summaryLetterSpacing'=>'0',
-                                        'categoryLetterSpacing'=>'0',
                                         'createdDateLetterSpacing'=>'0',
                                         'titleVineta'=>'',
                                         'titleVinetaColor'=>'text-dark',
@@ -158,8 +140,10 @@
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
                                         'titleHeight'=>51,
-                                        'summaryHeight'=>100,
-                                            ]"
+                                        'columnLeft'=>'col-lg-5',
+                                        'columnRight'=>'col-lg-7',
+                                        'titleTextSizeMobile'=>'18',
+                                       ]"
                 entityName="Post"
                 :showTitle="false"
                 :pagination="['show'=>false]"
@@ -168,25 +152,29 @@
                 :responsiveTopContent="['mobile'=>false,'desktop'=>false]"
               />
             </div>
-          </div>
         </div>
-        <div
-          class="col-12 d-flex justify-content-center h5 font-weight-bold mt-5 mb-3">
-          {{trans('iblog::common.layouts.titleRelatedPosts')}}
+        {{-- Carousel --}}
+        <div class="col-12 mb-4">
+            <x-isite::carousel.owl-carousel
+            id="Articles"
+            :title="trans('iblog::common.layouts.titleRelatedPosts')"
+            owlTitleSize="18"
+            owlTitleMarginT="mt-5"
+            owlTitleMarginB="mb-3"
+            owlTextAlign="text-center"
+            owlTitleWeight="font-weight-bold"
+            repository="Modules\Iblog\Repositories\PostRepository"
+            :params="['take' => 20,'filter' => ['category' => $category->id,'exclude'=>$post->id]]"
+            :margin="25"
+            :loops="false"
+            :dots="false"
+            :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
+            mediaImage="mainimage"
+            :autoplay="false"
+            :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
+            :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+          />
         </div>
-        <x-isite::carousel.owl-carousel
-          id="Articles"
-          repository="Modules\Iblog\Repositories\PostRepository"
-          :params="['take' => 20,'filter' => ['category' => $category->id,'exclude'=>$post->id]]"
-          :margin="25"
-          :loops="false"
-          :dots="false"
-          :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
-          mediaImage="mainimage"
-          :autoplay="false"
-          :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
-          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
-        />
       </div>
     </div>
   </div>
