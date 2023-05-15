@@ -14,7 +14,7 @@
     <div class="container">
       {{-- article --}}
       <div class="row">
-        <div class="col-md-8 mb-3">
+        <div class="col-12 col-md-8 mb-3">
           <x-media::single-image imgClasses=""
                                  :mediaFiles="$post->mediaFiles()"
                                  :isMedia="true" :alt="$post->title"/>
@@ -36,7 +36,7 @@
           </div>
         </div>
         {{-- Sidebar --}}
-        <div class="col-md-4 pl-lg-5">
+        <div class="col-12 col-md-4 pl-lg-5">
           <div class="categories-blog">
               <livewire:isite::filters :filters="['categories' => [
                                                                 'title' => 'iblog::category.plural',
@@ -114,7 +114,7 @@
                                         'contentPositionVertical'=>'align-self-star',
                                         'contentPadding'=>'0',
                                         'contentBorder'=>'0',
-                                        'contentBorderColor'=>'#e3e3e3',
+                                        'contentBorderColor'=>'#dddddd',
                                         'contentBorderRounded'=>'0',
                                         'contentMarginInsideX'=>'mx-0',
                                         'contentBorderShadows'=>'none',
@@ -139,8 +139,7 @@
                                         'buttonTextSize'=>'16',
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
-                                        'summaryHeight'=>100,
-                                        'numberCharactersTitle'=>50,
+                                        'titleHeight'=>51,
                                         'columnLeft'=>'col-lg-5',
                                         'columnRight'=>'col-lg-7',
                                         'titleTextSizeMobile'=>'18',
@@ -156,26 +155,26 @@
         </div>
         {{-- Carousel --}}
         <div class="col-12 mb-4">
-        <x-isite::carousel.owl-carousel
-          id="Articles"
-          :title="trans('iblog::common.layouts.titleRelatedPosts')"
-          owlTitleSize="18"
-          owlTitleMarginT="mt-5"
-          owlTitleMarginB="mb-3"
-          owlTextAlign="text-center"
-          owlTitleWeight="font-weight-bold"
-          repository="Modules\Iblog\Repositories\PostRepository"
-          :params="['take' => 20,'filter' => ['category' => $category->id,'exclude'=>$post->id]]"
-          :margin="25"
-          :loops="false"
-          :dots="false"
-          :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
-          mediaImage="mainimage"
-          :autoplay="false"
-          :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
-          :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
-        />
-      </div>
+            <x-isite::carousel.owl-carousel
+            id="Articles"
+            :title="trans('iblog::common.layouts.titleRelatedPosts')"
+            owlTitleSize="18"
+            owlTitleMarginT="mt-5"
+            owlTitleMarginB="mb-3"
+            owlTextAlign="text-center"
+            owlTitleWeight="font-weight-bold"
+            repository="Modules\Iblog\Repositories\PostRepository"
+            :params="['take' => 20,'filter' => ['category' => $category->id,'exclude'=>$post->id]]"
+            :margin="25"
+            :loops="false"
+            :dots="false"
+            :navText="['<i class=\'fa fa-chevron-left\'></i>','<i class=\'fa fa fa-chevron-right\'></i>']"
+            mediaImage="mainimage"
+            :autoplay="false"
+            :responsive="[300 => ['items' =>  1],700 => ['items' =>  2], 1024 => ['items' => 3]]"
+            :itemComponentAttributes="config('asgard.iblog.config.itemComponentAttributesBlog')"
+          />
+        </div>
       </div>
     </div>
   </div>
