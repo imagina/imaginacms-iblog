@@ -89,6 +89,7 @@
                                         'withTitle'=>true,
                                         'titleAlign'=>'',
                                         'titleTextSize'=>'14',
+                                        'titleTextSizeMobile'=>'14',
                                         'titleTextWeight'=>'font-weight-bold',
                                         'titleTextTransform'=>'',
                                         'formatCreatedDate'=>'d.m.Y',
@@ -156,7 +157,7 @@
                                         'buttonTextSize'=>'16',
                                         'itemBackgroundColor'=>'#ffffff',
                                         'itemBackgroundColorHover'=>'#ffffff',
-                                        'titleHeight'=>40,
+                                        'titleHeight'=>51,
                                         'summaryHeight'=>100,
                                             ]"
                 entityName="Post"
