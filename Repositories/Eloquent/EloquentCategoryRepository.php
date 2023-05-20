@@ -76,10 +76,10 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
         $ids = is_array($filter->id) ? $filter->id : [$filter->id];
 
         if (isset($filter->includeDescendants) && $filter->includeDescendants) {
-        foreach ($ids as $id) {
+          foreach ($ids as $id) {
             if (isset($filter->includeSelf) && $filter->includeSelf) {
               $categories = Category::descendantsAndSelf($id);
-            }else {
+            } else {
               $categories = Category::descendantsOf($id);
             }
             $ids = array_merge($ids, $categories->pluck("id")->toArray());
@@ -158,7 +158,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
               $query->join('iblog__category_translations as ftranslations', 'ftranslations.category_id', '=', 'iblog__categories.id');
               $query->orderBy("ftranslations.$orderObject->field", $orderObject->way);
             } else
-              $query->orderBy("iblog__categories.".$orderObject->field, $orderObject->way);
+              $query->orderBy("iblog__categories." . $orderObject->field, $orderObject->way);
           }
 
         }
@@ -227,18 +227,20 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
    */
   public function getItem($criteria, $params = false)
   {
+
     //Initialize query
     $query = $this->model->query();
 
     /*== RELATIONSHIPS ==*/
     if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with(['translations','files']);
+      $query->with(['translations', 'files']);
     } else {//Especific relationships
-      $includeDefault = ['translations','files'];//Default relationships
+      $includeDefault = ['translations', 'files'];//Default relationships
       if (isset($params->include))//merge relations with default relationships
         $includeDefault = array_merge($includeDefault, $params->include);
       $query->with($includeDefault);//Add Relationships to query
     }
+
     /*== FILTER ==*/
     if (isset($params->filter)) {
       $filter = $params->filter;
@@ -263,6 +265,10 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Categ
     /*== FIELDS ==*/
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
+
+    if (!isset($params->filter->field)) {
+      $query->where('id', $criteria);
+    }
 
     /*== REQUEST ==*/
     return $query->first();
