@@ -5,6 +5,7 @@ namespace Modules\Iblog\Entities;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
+use Modules\Core\Icrud\Entities\CrudModel;
 use Modules\Core\Traits\NamespacedEntity;
 use Modules\Iblog\Presenters\PostPresenter;
 use Modules\Media\Entities\File;
@@ -18,18 +19,22 @@ use Modules\Isite\Traits\RevisionableTrait;
 
 use Modules\Core\Support\Traits\AuditTrait;
 
-class Post extends Model implements TaggableInterface
+class Post extends CrudModel implements TaggableInterface
 {
   use Translatable, PresentableTrait, NamespacedEntity,
     TaggableTrait, MediaRelation, BelongsToTenant,
-    hasEventsWithBindings, Typeable, RevisionableTrait, AuditTrait;
+    hasEventsWithBindings, Typeable;
 
   protected static $entityNamespace = 'asgardcms/post';
 
   public $transformer = 'Modules\Iblog\Transformers\PostTransformer';
   public $entity = 'Modules\Iblog\Entities\Post';
   public $repository = 'Modules\Iblog\Repositories\PostRepository';
-
+  public $requestValidation = [
+    'create' => 'Modules\Iblog\Http\Requests\CreatePostRequest',
+    'update' => 'Modules\Iblog\Http\Requests\UpdatePostRequest',
+  ];
+  
   protected $table = 'iblog__posts';
 
   protected $fillable = [

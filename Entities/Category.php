@@ -5,6 +5,7 @@ namespace Modules\Iblog\Entities;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
+use Modules\Core\Icrud\Entities\CrudModel;
 use Modules\Core\Traits\NamespacedEntity;
 use Modules\Media\Entities\File;
 use Kalnoy\Nestedset\NodeTrait;
@@ -18,17 +19,19 @@ use Modules\Isite\Traits\RevisionableTrait;
 
 use Modules\Core\Support\Traits\AuditTrait;
 
-class Category extends Model
+class Category extends CrudModel
 {
   use Translatable, MediaRelation, PresentableTrait,
     NamespacedEntity, NodeTrait, BelongsToTenant,
-    hasEventsWithBindings, Typeable, isFillable,
-    RevisionableTrait, AuditTrait;
+    hasEventsWithBindings, Typeable, isFillable;
 
   public $transformer = 'Modules\Iblog\Transformers\CategoryTransformer';
   public $entity = 'Modules\Iblog\Entities\Category';
   public $repository = 'Modules\Iblog\Repositories\CategoryRepository';
-
+  public $requestValidation = [
+    'create' => 'Modules\Iblog\Http\Requests\CreateCategoryRequest',
+    'update' => 'Modules\Iblog\Http\Requests\UpdateCategoryRequest',
+  ];
   protected $table = 'iblog__categories';
 
   protected $fillable = [
