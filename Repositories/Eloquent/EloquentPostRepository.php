@@ -224,5 +224,23 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
     //Response
     return $query;
   }
-
+  
+  
+  public function defaultPreFilters($query, $params)
+  {
+    
+    //pre-filter date_available
+    $query->where(function ($query) {
+      $query->where("date_available", "<=", date("Y-m-d", strtotime(now())));
+      $query->orWhereNull("date_available");
+    });
+    
+    $query->whereRaw("iblog__posts.category_id IN (SELECT category_id from iblog__category_translations where status = 1)");
+    
+    
+    //pre-filter status
+    $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = 2 and locale = '" . ($params->filter->locale ?? locale()) . "')");
+    
+    
+  }
 }
