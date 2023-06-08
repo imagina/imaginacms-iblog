@@ -23,7 +23,7 @@ class Post extends CrudModel implements TaggableInterface
 {
   use Translatable, PresentableTrait, NamespacedEntity,
     TaggableTrait, MediaRelation, BelongsToTenant,
-    hasEventsWithBindings, Typeable;
+    Typeable;
 
   protected static $entityNamespace = 'asgardcms/post';
 

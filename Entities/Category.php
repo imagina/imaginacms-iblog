@@ -23,7 +23,7 @@ class Category extends CrudModel
 {
   use Translatable, MediaRelation, PresentableTrait,
     NamespacedEntity, NodeTrait, BelongsToTenant,
-    hasEventsWithBindings, Typeable, isFillable;
+    Typeable, isFillable;
 
   public $transformer = 'Modules\Iblog\Transformers\CategoryTransformer';
   public $entity = 'Modules\Iblog\Entities\Category';
