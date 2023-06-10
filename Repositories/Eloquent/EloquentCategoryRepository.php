@@ -20,7 +20,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
    * Filter names to replace
    * @var array
    */
-  protected $replaceFilters = [];
+  protected $replaceFilters = ["parentId"];
   
   /**
    * Relation names to replace
@@ -72,6 +72,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
         $ids = array_merge($ids, $categories->pluck("id")->toArray());
       }
       $query->whereIn('iblog__categories.id', $ids);
+
     }
   
     if (isset($filter->search)) { //si hay que filtrar por rango de precio
@@ -106,7 +107,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
       //pre-filter status
       $query->whereRaw("iblog__categories.id IN (SELECT category_id from iblog__category_translations where status = 1)");
     }
-    
+    //if(isset($filter->parentId) && in_array(74,$filter->parentId))  dd($query->toSql(),$query->getBindings(),$filter);
     //Response
     return $query;
   }
