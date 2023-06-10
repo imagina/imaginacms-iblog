@@ -21,13 +21,13 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
    * @var array
    */
   protected $replaceFilters = ["parentId"];
-  
+
   /**
    * Relation names to replace
    * @var array
    */
   protected $replaceSyncModelRelations = [];
-  
+
   /**
    * Filter query
    *
@@ -37,10 +37,10 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
    */
   public function filterQuery($query, $filter, $params)
   {
-  
+
     if (isset($filter->id)) {
       $ids = is_array($filter->id) ? $filter->id : [$filter->id];
-    
+
       if (isset($filter->includeDescendants) && $filter->includeDescendants) {
         foreach ($ids as $id) {
           if (isset($filter->includeSelf) && $filter->includeSelf) {
@@ -51,12 +51,12 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
           $ids = array_merge($ids, $categories->pluck("id")->toArray());
         }
       }
-    
+
       $query->whereIn('id', $ids);
     }
-  
+
     if (isset($filter->parentId)) {
-    
+
       !is_array($filter->parentId) ? $filter->parentId = [$filter->parentId] : false;
       $ids = [];
       foreach ($filter->parentId as $parentId) {
@@ -68,13 +68,13 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
         } else {
           $categories = $this->model->query()->where("parent_id", $parentId)->get();
         }
-      
+
         $ids = array_merge($ids, $categories->pluck("id")->toArray());
       }
       $query->whereIn('iblog__categories.id', $ids);
 
     }
-  
+
     if (isset($filter->search)) { //si hay que filtrar por rango de precio
       $criterion = $filter->search;
       $param = explode(' ', $criterion);
@@ -86,32 +86,32 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
         });
       })->orWhere('id', 'like', '%' . $filter->search . '%');
     }
-  
+
     if (isset($filter->tagId)) {
-    
+
       $query->whereTag($filter->tagId, "id");
-    
-    
+
+
     }
-  
-  
+
+
     //add filter by showMenu
     if (isset($filter->showMenu) && is_bool($filter->showMenu)) {
       $query->where('show_menu', $filter->showMenu);
     }
-  
+
     if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
-    
+
     } else {
-    
+
       //pre-filter status
       $query->whereRaw("iblog__categories.id IN (SELECT category_id from iblog__category_translations where status = 1)");
     }
-    //if(isset($filter->parentId) && in_array(74,$filter->parentId))  dd($query->toSql(),$query->getBindings(),$filter);
+
     //Response
     return $query;
   }
-  
+
   /**
    * Method to sync Model Relations
    *
@@ -122,7 +122,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
   {
     //Get model relations data from attribute of model
     $modelRelationsData = ($model->modelRelations ?? []);
-    
+
     /**
      * Note: Add relation name to replaceSyncModelRelations attribute before replace it
      *
@@ -132,11 +132,11 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
      * }
      *
      */
-    
+
     //Response
     return $model;
   }
-  
+
   /**
    * Method to include relations to query
    * @param $query
@@ -144,7 +144,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
    */
   public function includeToQuery($query, $relations)
   {
-    
+
     //request all categories instances in the "relations" attribute in the entity model
     if (in_array('*', $relations)) $relations = $this->model->getRelations() ?? ['files','translations'];
     //Instance relations in query
