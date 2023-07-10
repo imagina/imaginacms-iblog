@@ -9,7 +9,8 @@ use Modules\Iblog\Entities\Category;
 
 class BlogContentAi
 {
-  public $iaService;
+  public $aiService;
+  private $log = "Iblog: Services|BlogContentAi|";
 
   function __construct()
   {
@@ -17,7 +18,9 @@ class BlogContentAi
   }
 
   public function getPosts($quantity = 2)
-  {
+  { 
+    \Log::info($this->log."getPosts|INIT");
+
     //instance the prompt to generate the posts
     $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos ";
     //Instance attributes
@@ -27,6 +30,7 @@ class BlogContentAi
     );
     //Call IA Service
     $response = $this->aiService->getContent($prompt, $quantity);
+    \Log::info($this->log."getPosts|END");
     //Return response
     return $response;
   }
