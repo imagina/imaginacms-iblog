@@ -38,23 +38,7 @@
         {{-- Sidebar --}}
         <div class="col-12 col-md-4 pl-lg-5">
           <div class="categories-blog">
-              <livewire:isite::filters :filters="['categories' => [
-                                                                'title' => 'iblog::category.plural',
-                                                                'name' => 'categories',
-                                                                'typeTitle' => 'titleOfTheConfig',
-                                                                'status' => true,
-                                                                'isExpanded' => true,
-                                                                'type' => 'tree',
-                                                                'repository' => 'Modules\Iblog\Repositories\CategoryRepository',
-                                                                'entityClass' => 'Modules\Iblog\Entities\Category',
-                                                                'params' => ['filter' => ['internal' => false]],
-                                                                'emitTo' => 'itemsListGetData',
-                                                                'repoAction' => null,
-                                                                'repoAttribute' => null,
-                                                                'listener' => null,
-                                                                'layout' => 'default',
-                                                                'classes' => 'col-12'
-                                                            ]]"/>
+            <livewire:isite::filters :filters="config('asgard.iblog.config.filters')"/>
             </div>
           <div class="recent-blog my-3">
               <h4 class="mt-1 mb-3">{{trans('iblog::common.layouts.titlePostRecent')}}</h4>
