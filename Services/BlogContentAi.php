@@ -75,7 +75,10 @@ class BlogContentAi
       if(is_null($newData)){
         $attempts++;
       }else{
-        break;
+        if(isset($newData[0]['es']) && isset($newData[0]['en']))
+          break;
+        else
+          $attempts++;
       }
     }while($attempts < $this->maxAttempts);
 
