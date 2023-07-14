@@ -13,12 +13,14 @@ class BlogContentAi
   public $aiService;
   private $log = "Iblog: Services|BlogContentAi|";
   private $postRepository;
-  private $maxAttempts = 3;
-  private $postQuantity = 4;
+  private $maxAttempts;
+  private $postQuantity;
 
-  function __construct()
+  function __construct($maxAttempts = 3, $postQuantity = 4)
   {
     $this->aiService = new AiService();
+    $this->maxAttempts = $maxAttempts;
+    $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
   }
 
@@ -68,7 +70,7 @@ class BlogContentAi
 
     $attempts = 0;
     do {
-      \Log::info($this->log."getNewData|Attempt:".($attempts+1));
+      \Log::info($this->log."getNewData|Attempt:".($attempts+1)."/Max:".$this->maxAttempts);
       $newData = $this->getPosts($this->postQuantity);
       if(is_null($newData)){
         $attempts++;
