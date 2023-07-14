@@ -11,6 +11,7 @@ return [
       'description' => "$transPrefix.activities.createPostDescription",
       'type' => 1,
       'url' => "iadmin/#/blog/posts/index?create=call",
+      'permission' => 'iblog.posts.manage',
       'categoryId' => 'admin_home_actions',
       'icon' => 'fa-light fa-blog',
       'roles' => []
