@@ -13,15 +13,18 @@ class BlogContentAi
   public $aiService;
   private $log = "Iblog: Services|BlogContentAi|";
   private $postRepository;
+  private $categoryRepository;
+
   private $maxAttempts;
   private $postQuantity;
 
-  function __construct($maxAttempts = 3, $postQuantity = 4)
+  function __construct($maxAttempts = 3, $postQuantity = 7)
   {
     $this->aiService = new AiService();
     $this->maxAttempts = $maxAttempts;
     $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
+    $this->categoryRepository = app("Modules\Iblog\Repositories\CategoryRepository");
   }
 
   public function getPosts($quantity = 2)
@@ -97,12 +100,20 @@ class BlogContentAi
       $post['user_id'] = 1;
       $post['status'] = 2; //Published
 
-      \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
-      
-      $result = $this->postRepository->create($post);
+      if(isset($post['category_id'])){
 
-      //TODO
-      //Proceso to create image
+        \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
+        
+        //Apesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
+        $category = $this->categoryRepository->getItem($post['category_id']);
+        if(!is_null($category)){
+          $result = $this->postRepository->create($post);
+
+          //TODO
+          //Proceso to create image
+        }
+         
+      }
 
     }
    
