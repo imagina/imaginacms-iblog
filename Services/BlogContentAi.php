@@ -18,7 +18,7 @@ class BlogContentAi
   private $maxAttempts;
   private $postQuantity;
 
-  function __construct($maxAttempts = 3, $postQuantity = 7)
+  function __construct($maxAttempts = 3, $postQuantity = 4)
   {
     $this->aiService = new AiService();
     $this->maxAttempts = $maxAttempts;
@@ -71,10 +71,15 @@ class BlogContentAi
     
     $newData = null;
 
+    //Total of posts depending of the (instalation or tenant etc)
+    $params = [] ;
+    $totalPost = $this->postRepository->getItemsBy(json_decode(json_encode($params)));
+    $postQuantity = count($totalPost)>0 ? count($totalPost) : $this->postQuantity;
+    
     $attempts = 0;
     do {
       \Log::info($this->log."getNewData|Attempt:".($attempts+1)."/Max:".$this->maxAttempts);
-      $newData = $this->getPosts($this->postQuantity);
+      $newData = $this->getPosts($postQuantity);
       if(is_null($newData)){
         $attempts++;
       }else{
