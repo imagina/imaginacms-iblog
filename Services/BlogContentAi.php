@@ -56,8 +56,11 @@ class BlogContentAi
     $newData = $this->getNewData();
     if(!is_null($newData)){
 
-      $this->deleteOldPosts();
-      $this->createPosts($newData);
+      $newPostsIds = $this->createPosts($newData);
+      if(count($newPostsIds)){
+        //\Log::info(json_encode($newPostsIds));
+        $this->deleteOldPosts($newPostsIds);
+      }
       
     }
 
@@ -100,19 +103,24 @@ class BlogContentAi
   {
 
     \Log::info($this->log."createPosts");
+
+    $newPostsIds = [];
     foreach ($posts as $key => $post) {
 
-      $post['user_id'] = 1;
-      $post['status'] = 2; //Published
-
-      if(isset($post['category_id'])){
+      if(isset($post['category_id']) && is_numeric($post['category_id'])){
 
         \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
-        
+
         //Apesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
         $category = $this->categoryRepository->getItem($post['category_id']);
         if(!is_null($category)){
-          $result = $this->postRepository->create($post);
+
+          $post['user_id'] = 1;
+          $post['status'] = 2; //Published
+
+          $newPost = $this->postRepository->create($post);
+
+          array_push($newPostsIds,$newPost->id);
 
           //TODO
           //Proceso to create image
@@ -121,24 +129,24 @@ class BlogContentAi
       }
 
     }
+
+    return $newPostsIds;
    
   }
 
   /**
    * Delete old Posts
    */
-  public function deleteOldPosts()
+  public function deleteOldPosts($newPostsIds)
   {
 
     \Log::info($this->log."deleteOldPosts");
 
-    //Problems with constraints
-    //$deletedOldPosts = Post::truncate();
-
-    //\DB::table('iblog__post_translations')->truncate();
-
     $params = [
       "include" => [],
+      "filter" => [
+        'exclude' => $newPostsIds
+      ]
     ];
     $posts = $this->postRepository->getItemsBy(json_decode(json_encode($params)));
     
