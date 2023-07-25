@@ -13,13 +13,18 @@ class BlogContentAi
   public $aiService;
   private $log = "Iblog: Services|BlogContentAi|";
   private $postRepository;
-  private $maxAttempts = 3;
-  private $postQuantity = 4;
+  private $categoryRepository;
 
-  function __construct()
+  private $maxAttempts;
+  private $postQuantity;
+
+  function __construct($maxAttempts = 3, $postQuantity = 4)
   {
     $this->aiService = new AiService();
+    $this->maxAttempts = $maxAttempts;
+    $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
+    $this->categoryRepository = app("Modules\Iblog\Repositories\CategoryRepository");
   }
 
   public function getPosts($quantity = 2)
@@ -51,8 +56,11 @@ class BlogContentAi
     $newData = $this->getNewData();
     if(!is_null($newData)){
 
-      $this->deleteOldPosts();
-      $this->createPosts($newData);
+      $newPostsIds = $this->createPosts($newData);
+      if(count($newPostsIds)){
+        //\Log::info(json_encode($newPostsIds));
+        $this->deleteOldPosts($newPostsIds);
+      }
       
     }
 
@@ -66,14 +74,22 @@ class BlogContentAi
     
     $newData = null;
 
+    //Total of posts depending of the (instalation or tenant etc)
+    $params = [] ;
+    $totalPost = $this->postRepository->getItemsBy(json_decode(json_encode($params)));
+    $postQuantity = count($totalPost)>0 ? count($totalPost) : $this->postQuantity;
+    
     $attempts = 0;
     do {
-      \Log::info($this->log."getNewData|Attempt:".($attempts+1));
-      $newData = $this->getPosts($this->postQuantity);
+      \Log::info($this->log."getNewData|Attempt:".($attempts+1)."/Max:".$this->maxAttempts);
+      $newData = $this->getPosts($postQuantity);
       if(is_null($newData)){
         $attempts++;
       }else{
-        break;
+        if(isset($newData[0]['es']) && isset($newData[0]['en']))
+          break;
+        else
+          $attempts++;
       }
     }while($attempts < $this->maxAttempts);
 
@@ -87,37 +103,50 @@ class BlogContentAi
   {
 
     \Log::info($this->log."createPosts");
+
+    $newPostsIds = [];
     foreach ($posts as $key => $post) {
 
-      $post['user_id'] = 1;
-      $post['status'] = 2; //Published
+      if(isset($post['category_id']) && is_numeric($post['category_id'])){
 
-      \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
-      
-      $result = $this->postRepository->create($post);
+        \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
 
-      //TODO
-      //Proceso to create image
+        //Apesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
+        $category = $this->categoryRepository->getItem($post['category_id']);
+        if(!is_null($category)){
+
+          $post['user_id'] = 1;
+          $post['status'] = 2; //Published
+
+          $newPost = $this->postRepository->create($post);
+
+          array_push($newPostsIds,$newPost->id);
+
+          //TODO
+          //Proceso to create image
+        }
+         
+      }
 
     }
+
+    return $newPostsIds;
    
   }
 
   /**
    * Delete old Posts
    */
-  public function deleteOldPosts()
+  public function deleteOldPosts($newPostsIds)
   {
 
     \Log::info($this->log."deleteOldPosts");
 
-    //Problems with constraints
-    //$deletedOldPosts = Post::truncate();
-
-    //\DB::table('iblog__post_translations')->truncate();
-
     $params = [
       "include" => [],
+      "filter" => [
+        'exclude' => $newPostsIds
+      ]
     ];
     $posts = $this->postRepository->getItemsBy(json_decode(json_encode($params)));
     

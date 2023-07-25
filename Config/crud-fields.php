@@ -32,7 +32,7 @@ return [
       'loadOptions' => [
         'apiRoute' => '/isite/v1/layouts',
         'select' => ['label' => 'title', 'id' => 'id'],
-        'requestParams' => ['filter' => ['entity_name' => 'Category', 'module_name' => 'Iblog']],
+        'requestParams' => ['filter' => ['entity_name' => 'Category', 'module_name' => 'Iblog', 'isInternal' => 1]],
       ],
       'props' => [
         'label' => 'iblog::common.layouts.label_categories',
@@ -86,7 +86,7 @@ return [
       'loadOptions' => [
         'apiRoute' => '/isite/v1/layouts',
         'select' => ['label' => 'title', 'id' => 'id'],
-        'requestParams' => ['filter' => ['entity_name' => 'Post', 'module_name' => 'Iblog']],
+        'requestParams' => ['filter' => ['entity_name' => 'Post', 'module_name' => 'Iblog', 'isInternal' => 1]],
       ],
       'props' => [
         'label' => 'iblog::common.layouts.label_posts',
