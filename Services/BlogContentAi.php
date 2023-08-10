@@ -14,6 +14,7 @@ class BlogContentAi
   private $log = "Iblog: Services|BlogContentAi|";
   private $postRepository;
   private $categoryRepository;
+  private $fileService;
 
   private $maxAttempts;
   private $postQuantity;
@@ -25,6 +26,7 @@ class BlogContentAi
     $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
     $this->categoryRepository = app("Modules\Iblog\Repositories\CategoryRepository");
+    $this->fileService = app("Modules\Media\Services\FileService");
   }
 
   public function getPosts($quantity = 2)
@@ -35,7 +37,7 @@ class BlogContentAi
     $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos ";
     //Instance attributes
     $prompt .= $this->aiService->getStandardPrompts(
-      ["title", "description", "summary", "slug", "category_id"],
+      ["title", "description", "summary", "slug", "category_id", "tags"],
       ["categories" => Category::get()]
     );
     //Call IA Service
@@ -111,19 +113,33 @@ class BlogContentAi
 
         \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
 
-        //Apesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
+        //A pesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
         $category = $this->categoryRepository->getItem($post['category_id']);
         if(!is_null($category)){
 
+          // Image Process
+          if(isset($post['image'])){
+            $file = $this->saveImage($post['image'][0]);
+            $post['medias_single']['mainimage'] = $file->id;
+          }
+
+          //Delete data from AI
+          if(isset($post['tags']))
+            unset($post['tags']);
+
+          //Delete data from AI
+          if(isset($post['image']))
+            unset($post['image']);
+
+          //Default values
           $post['user_id'] = 1;
           $post['status'] = 2; //Published
 
           $newPost = $this->postRepository->create($post);
 
+          //Save new posts
           array_push($newPostsIds,$newPost->id);
 
-          //TODO
-          //Proceso to create image
         }
          
       }
@@ -155,6 +171,22 @@ class BlogContentAi
         $post->delete();
       }
     }
+
+  }
+
+
+  public function saveImage($image){
+
+    \Log::info($this->log."saveImage");
+    
+
+    $path = $image->url;
+    $provider = $image->provider;
+
+    $fileCreated = $this->fileService->storeHotLinked($path,$provider);
+
+    return $fileCreated;
+
 
   }
 
