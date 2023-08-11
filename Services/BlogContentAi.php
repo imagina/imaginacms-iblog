@@ -118,9 +118,10 @@ class BlogContentAi
         if(!is_null($category)){
 
           // Image Process
-          if(isset($post['image'])){
+          if(isset($post['image']) && isset($post['image'][0])){
             $file = $this->saveImage($post['image'][0]);
             $post['medias_single']['mainimage'] = $file->id;
+            $post['medias_single']['secondaryimage'] = $file->id;
           }
 
           //Delete data from AI
