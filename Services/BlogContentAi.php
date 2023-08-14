@@ -14,7 +14,6 @@ class BlogContentAi
   private $log = "Iblog: Services|BlogContentAi|";
   private $postRepository;
   private $categoryRepository;
-  private $fileService;
 
   private $maxAttempts;
   private $postQuantity;
@@ -26,7 +25,6 @@ class BlogContentAi
     $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
     $this->categoryRepository = app("Modules\Iblog\Repositories\CategoryRepository");
-    $this->fileService = app("Modules\Media\Services\FileService");
   }
 
   public function getPosts($quantity = 2)
@@ -119,18 +117,14 @@ class BlogContentAi
 
           // Image Process
           if(isset($post['image']) && isset($post['image'][0])){
-            $file = $this->saveImage($post['image'][0]);
+            $file = $this->aiService->saveImage($post['image'][0]);
             $post['medias_single']['mainimage'] = $file->id;
             $post['medias_single']['secondaryimage'] = $file->id;
           }
 
           //Delete data from AI
-          if(isset($post['tags']))
-            unset($post['tags']);
-
-          //Delete data from AI
-          if(isset($post['image']))
-            unset($post['image']);
+          if(isset($post['tags'])) unset($post['tags']);
+          if(isset($post['image'])) unset($post['image']);
 
           //Default values
           $post['user_id'] = 1;
@@ -172,22 +166,6 @@ class BlogContentAi
         $post->delete();
       }
     }
-
-  }
-
-
-  public function saveImage($image){
-
-    \Log::info($this->log."saveImage");
-    
-
-    $path = $image->url;
-    $provider = $image->provider;
-
-    $fileCreated = $this->fileService->storeHotLinked($path,$provider);
-
-    return $fileCreated;
-
 
   }
 
