@@ -19,10 +19,10 @@ class BlogContentAi
   private $maxAttempts;
   private $postQuantity;
 
-  function __construct($maxAttempts = 3, $postQuantity = 4)
+  function __construct($postQuantity = 4)
   {
     $this->aiService = new AiService();
-    $this->maxAttempts = $maxAttempts;
+    $this->maxAttempts = (int)setting("isite::n8nMaxAttempts", null, 3);
     $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
     $this->categoryRepository = app("Modules\Iblog\Repositories\CategoryRepository");
