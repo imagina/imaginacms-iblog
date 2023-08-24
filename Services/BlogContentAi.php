@@ -53,6 +53,9 @@ class BlogContentAi
 
     \Log::info($this->log."startProcesses");
 
+    //Show infor in log
+    //showDataConnection();
+
     $newData = $this->getNewData();
     if(!is_null($newData)){
 
