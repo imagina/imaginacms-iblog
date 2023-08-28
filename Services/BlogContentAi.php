@@ -18,10 +18,10 @@ class BlogContentAi
   private $maxAttempts;
   private $postQuantity;
 
-  function __construct($maxAttempts = 3, $postQuantity = 4)
+  function __construct($postQuantity = 4)
   {
     $this->aiService = new AiService();
-    $this->maxAttempts = $maxAttempts;
+    $this->maxAttempts = (int)setting("isite::n8nMaxAttempts", null, 3);
     $this->postQuantity = $postQuantity;
     $this->postRepository = app("Modules\Iblog\Repositories\PostRepository");
     $this->categoryRepository = app("Modules\Iblog\Repositories\CategoryRepository");
@@ -35,7 +35,7 @@ class BlogContentAi
     $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos ";
     //Instance attributes
     $prompt .= $this->aiService->getStandardPrompts(
-      ["title", "description", "summary", "slug", "category_id"],
+      ["title", "description", "summary", "slug", "category_id", "tags"],
       ["categories" => Category::get()]
     );
     //Call IA Service
@@ -52,6 +52,9 @@ class BlogContentAi
   {
 
     \Log::info($this->log."startProcesses");
+
+    //Show infor in log
+    //showDataConnection();
 
     $newData = $this->getNewData();
     if(!is_null($newData)){
@@ -111,19 +114,30 @@ class BlogContentAi
 
         \Log::info($this->log."createPosts|Category Id:".$post['category_id']);
 
-        //Apesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
+        //A pesar que se le envia las categorias existen, a veces trae ids q no existen en el sitio
         $category = $this->categoryRepository->getItem($post['category_id']);
         if(!is_null($category)){
 
+          // Image Process
+          if(isset($post['image']) && isset($post['image'][0])){
+            $file = $this->aiService->saveImage($post['image'][0]);
+            $post['medias_single']['mainimage'] = $file->id;
+            $post['medias_single']['secondaryimage'] = $file->id;
+          }
+
+          //Delete data from AI
+          if(isset($post['tags'])) unset($post['tags']);
+          if(isset($post['image'])) unset($post['image']);
+
+          //Default values
           $post['user_id'] = 1;
           $post['status'] = 2; //Published
 
           $newPost = $this->postRepository->create($post);
 
+          //Save new posts
           array_push($newPostsIds,$newPost->id);
 
-          //TODO
-          //Proceso to create image
         }
          
       }
