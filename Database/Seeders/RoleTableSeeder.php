@@ -6,9 +6,17 @@ use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+use Modules\Isite\Jobs\ProcessSeeds;
 
 class RoleTableSeeder extends Seeder
-{
+{ 
+
+  private $profileRoleRepository;
+
+  public function __construct()
+  {
+    $this->profileRoleRepository = app("Modules\Iprofile\Repositories\RoleApiRepository");
+  }
 
   public function run()
   {
@@ -20,7 +28,7 @@ class RoleTableSeeder extends Seeder
       [
         'name' => 'Editor',
         'slug' => 'editor',
-        'permissions' => json_encode([
+        'permissions' => [
           'profile.api.login' => true,
           'profile.user.index' => true,
           'iblog.categories.manage' => true,
@@ -33,31 +41,46 @@ class RoleTableSeeder extends Seeder
           'iblog.posts.create' => true,
           'iblog.posts.edit' => true,
           'iblog.posts.destroy' => true,
-        ])
+        ]
       ],
       [
         'name' => 'Author',
         'slug' => 'author',
-        'permissions' => json_encode([
+        'permissions' => [
           'profile.api.login' => true,
           'profile.user.index' => true,
           'iblog.posts.manage' => true,
           'iblog.posts.index' => true,
           'iblog.posts.create' => true,
           'iblog.posts.edit' => true,
-        ])
+        ]
       ]
     ];
 
     //Create Roles
     foreach ($roles as $role) {
-      $roleCreated = DB::table('roles')->where("slug",$role["slug"])->first();
-      if(!isset($roleCreated->id)){
-        $roleId = DB::table('roles')->insertGetId($role);
-//    Assign Role to admin user
-//        \DB::table('role_users')->insert([['user_id' => 1, 'role_id' => $roleId]]);
+
+      $params = [
+        "filter" => [
+          "field" => "slug",
+        ],
+        "include" => [],
+        "fields" => [],
+      ];
+
+      $roleExist = $this->profileRoleRepository->getItem($role["slug"], json_decode(json_encode($params)));
+      if (!isset($roleExist->id)) {
+        $this->profileRoleRepository->create($role);
       }
+     
     }
+
+    //To update de IprofileSetting 'assignedRoles'
+    ProcessSeeds::dispatch([
+      "baseClass" => "\Modules\Iprofile\Database\Seeders",
+      "seeds" => ["RolePermissionsSeeder"]
+    ]);
+    
 
   }
 }
