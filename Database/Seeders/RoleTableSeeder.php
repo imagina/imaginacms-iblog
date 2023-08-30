@@ -11,13 +11,6 @@ use Modules\Isite\Jobs\ProcessSeeds;
 class RoleTableSeeder extends Seeder
 { 
 
-  private $profileRoleRepository;
-
-  public function __construct()
-  {
-    $this->profileRoleRepository = app("Modules\Iprofile\Repositories\RoleApiRepository");
-  }
-
   public function run()
   {
     Model::unguard();
@@ -28,7 +21,8 @@ class RoleTableSeeder extends Seeder
       [
         'name' => 'Editor',
         'slug' => 'editor',
-        'title' => trans("iprofile::roles.types.editor"),
+        'en' => ['title' => trans("iprofile::roles.types.editor",[],"en")],
+        'es' => ['title' => trans("iprofile::roles.types.editor",[],"es")],
         'permissions' => [
           'profile.api.login' => true,
           'profile.user.index' => true,
@@ -47,7 +41,8 @@ class RoleTableSeeder extends Seeder
       [
         'name' => 'Author',
         'slug' => 'author',
-        'title' => trans("iprofile::roles.types.author"),
+        'en' => ['title' => trans("iprofile::roles.types.author",[],"en")],
+        'es' => ['title' => trans("iprofile::roles.types.author",[],"es")],
         'permissions' => [
           'profile.api.login' => true,
           'profile.user.index' => true,
@@ -62,19 +57,8 @@ class RoleTableSeeder extends Seeder
     //Create Roles
     foreach ($roles as $role) {
 
-      $params = [
-        "filter" => [
-          "field" => "slug",
-        ],
-        "include" => [],
-        "fields" => [],
-      ];
-
-      $roleExist = $this->profileRoleRepository->getItem($role["slug"], json_decode(json_encode($params)));
-      if (!isset($roleExist->id)) {
-        $this->profileRoleRepository->create($role);
-      }
-     
+      $resultRole = createOrUpdateRole($role);
+      
     }
 
     //To update de IprofileSetting 'assignedRoles'
