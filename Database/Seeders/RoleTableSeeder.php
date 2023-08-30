@@ -28,6 +28,7 @@ class RoleTableSeeder extends Seeder
       [
         'name' => 'Editor',
         'slug' => 'editor',
+        'title' => trans("iprofile::roles.types.editor"),
         'permissions' => [
           'profile.api.login' => true,
           'profile.user.index' => true,
@@ -46,6 +47,7 @@ class RoleTableSeeder extends Seeder
       [
         'name' => 'Author',
         'slug' => 'author',
+        'title' => trans("iprofile::roles.types.author"),
         'permissions' => [
           'profile.api.login' => true,
           'profile.user.index' => true,
