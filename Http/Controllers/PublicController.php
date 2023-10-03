@@ -59,6 +59,7 @@ class PublicController extends BasePublicController
 
     $configFilters = config("asgard.iblog.config.filters");
     
+    $posts = $this->post->whereCategory($category->id);
     //Get Custom Template.
 
     $categoryBreadcrumb = CategoryTransformer::collection(Category::defaultOrder()->ancestorsAndSelf($category->id));
@@ -105,7 +106,7 @@ class PublicController extends BasePublicController
       $organization = tenant();
     }
 
-    return view($tpl, compact('category', 'categoryBreadcrumb','organization'));
+    return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','organization'));
 
   }
 
