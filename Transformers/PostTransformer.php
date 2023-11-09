@@ -20,7 +20,7 @@ class PostTransformer extends CrudResource
   public function modelAttributes($request)
   {
     return [
-      'statusName' => $this->when($this->status, $this->present()->status),
+      'statusName' => $this->present()->status,
       'url' => $this->url ?? '#',
       'mainImage' => $this->main_image,
       'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
