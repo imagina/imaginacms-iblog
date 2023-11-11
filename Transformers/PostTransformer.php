@@ -19,14 +19,19 @@ class PostTransformer extends CrudResource
    */
   public function modelAttributes($request)
   {
+    $tags = [];
+    foreach ($this->tags as $tag) {
+      $tags[] = $tag->name;
+    }
     return [
-      'statusName' => $this->when($this->status, $this->present()->status),
+      'statusName' => $this->present()->status,
       'url' => $this->url ?? '#',
       'mainImage' => $this->main_image,
       'secondaryImage' => $this->when($this->secondary_image, $this->secondary_image),
       'gallery' => $this->gallery,
       'editor' => new UserProfileTransformer($this->whenLoaded('user')),
       'layoutId' => $this->layoutId,
+      'tags' => $tags
     ];
   }
 }

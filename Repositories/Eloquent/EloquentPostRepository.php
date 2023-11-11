@@ -156,7 +156,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
       unset($filter->order);
     }
   
-    if (isset($filter->status) && !empty($filter->status)) {
+    if (isset($filter->status)) {
       !is_array($filter->status) ? $filter->status = [$filter->status] : false;
       $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = " . join($filter->status) . " and locale = '" . ($filter->locale ?? locale()) . "')");
     }

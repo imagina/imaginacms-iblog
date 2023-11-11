@@ -133,6 +133,9 @@ class BlogContentAi
           $post['user_id'] = 1;
           $post['status'] = 2; //Published
 
+          if(isset($post['es']['title']))
+            \Log::info($this->log."createPosts|Title: ".$post['es']['title']);
+
           $newPost = $this->postRepository->create($post);
 
           //Save new posts
@@ -140,6 +143,8 @@ class BlogContentAi
 
         }
          
+      }else{
+        \Log::info($this->log."createPosts|Error: Category ID Not found or is not numeric");
       }
 
     }
