@@ -32,7 +32,7 @@ class BlogContentAi
     \Log::info($this->log."getPosts|INIT");
 
     //instance the prompt to generate the posts
-    $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos ";
+    $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos: ";
     //Instance attributes
     $prompt .= $this->aiService->getStandardPrompts(
       ["title", "description", "summary", "slug", "category_id", "tags"],
