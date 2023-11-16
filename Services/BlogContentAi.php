@@ -88,11 +88,14 @@ class BlogContentAi
       $newData = $this->getPosts($postQuantity);
       if(is_null($newData)){
         $attempts++;
+        \Log::info($this->log."getNewData|NewData is NULL");
       }else{
-        if(isset($newData[0]['es']) && isset($newData[0]['en']))
+        if(isset($newData[0]['es']) && isset($newData[0]['en'])){
           break;
-        else
+        }else{
           $attempts++;
+          \Log::info($this->log."getNewData|NewData not ES or EN| Or Error in format");
+        }
       }
     }while($attempts < $this->maxAttempts);
 
