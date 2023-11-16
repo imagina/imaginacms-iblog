@@ -81,6 +81,7 @@ class BlogContentAi
     $params = [] ;
     $totalPost = $this->postRepository->getItemsBy(json_decode(json_encode($params)));
     $postQuantity = count($totalPost)>0 ? count($totalPost) : $this->postQuantity;
+    \Log::info($this->log."getNewData|PostQuantity to get:".$postQuantity);
     
     $attempts = 0;
     do {
