@@ -127,6 +127,8 @@ class BlogContentAi
             $file = $this->aiService->saveImage($post['image'][0]);
             $post['medias_single']['mainimage'] = $file->id;
             $post['medias_single']['secondaryimage'] = $file->id;
+          }else{
+            \Log::info($this->log."createPosts|Post Image Not Exist");
           }
 
           //Delete data from AI
