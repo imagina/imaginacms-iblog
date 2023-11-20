@@ -63,6 +63,10 @@ class BlogContentAi
       if(count($newPostsIds)){
         //\Log::info(json_encode($newPostsIds));
         $this->deleteOldPosts($newPostsIds);
+
+        //Set the process has completed
+        $this->aiService->saveAiCompleted("iblog");
+
       }
       
     }
