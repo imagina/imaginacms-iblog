@@ -12,10 +12,21 @@ class PostTranslation extends Model
 
     public $timestamps = false;
     protected $table = 'iblog__post_translations';
-    protected $fillable = ['title','description','slug','summary','meta_title','meta_description','meta_keywords','translatable_options'];
+    protected $fillable = [
+      'title',
+      'description',
+      'slug',
+      'summary',
+      'meta_title',
+      'meta_description',
+      'meta_keywords',
+      'translatable_options',
+      'status',
+      ];
 
     protected $casts = [
-        'translatable_options' => 'array'
+        'translatable_options' => 'array',
+        'meta_keywords' => 'array'
     ];
 
     /**
@@ -38,23 +49,6 @@ class PostTranslation extends Model
         return $options;
 
 
-    }
-    /**
-     * @return mixed
-     */
-    public function getMetaDescriptionAttribute()
-    {
-
-        return $this->meta_description ?? $this->summary;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMetaTitleAttribute()
-    {
-
-        return $this->meta_title ?? $this->title;
     }
 
 }

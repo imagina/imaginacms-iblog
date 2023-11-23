@@ -2,6 +2,7 @@
 
 namespace Modules\Iblog\Console;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Modules\Iblog\Repositories\CategoryRepository;
@@ -80,7 +81,7 @@ class MigrateIblog extends Command
 
                         foreach ($title as $i => $t) {
                             $data[$i]['title'] = $t;
-                            $titlep = str_slug($t, '-');
+                            $titlep = Str::slug($t, '-');
                         }
                     } else {
                         $data[$locale]['title'] = $post->title;
@@ -190,7 +191,7 @@ class MigrateIblog extends Command
 
             }
         } catch (\Exception $e) {
-            \Log::error($e);
+            \Log::error($e->getMessage());
             $this->info($e->getMessage());
         }
     }

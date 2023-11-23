@@ -3,7 +3,9 @@
 namespace Modules\Iblog\Repositories\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
+use Modules\Core\Icrud\Repositories\Eloquent\EloquentCrudRepository;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Events\CategoryWasCreated;
 use Modules\Iblog\Events\CategoryWasDeleted;
 use Modules\Iblog\Events\CategoryWasUpdated;
@@ -12,250 +14,144 @@ use Modules\Ihelpers\Events\CreateMedia;
 use Modules\Ihelpers\Events\DeleteMedia;
 use Modules\Ihelpers\Events\UpdateMedia;
 
-class EloquentCategoryRepository extends EloquentBaseRepository implements CategoryRepository
+class EloquentCategoryRepository extends EloquentCrudRepository implements CategoryRepository
 {
-  
   /**
-   * @inheritdoc
+   * Filter names to replace
+   * @var array
    */
-  public function find($id)
-  {
-    if (method_exists($this->model, 'translations')) {
-      return $this->model->with('translations')->find($id);
-    }
-    return $this->model->with('parent', 'children')->find($id);
-  }
-  
+  protected $replaceFilters = ["parentId"];
+
   /**
-   * Find a resource by the given slug
+   * Relation names to replace
+   * @var array
+   */
+  protected $replaceSyncModelRelations = [];
+
+  /**
+   * Filter query
    *
-   * @param string $slug
-   * @return object
-   */
-  public function findBySlug($slug)
-  {
-    if (method_exists($this->model, 'translations')) {
-      return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
-        $q->where('slug', $slug);
-      })->with('translations', 'parent', 'children', 'posts')->firstOrFail();
-    }
-    
-    return $this->model->where('slug', $slug)->with('translations', 'parent', 'children', 'posts')->first();;
-  }
-  
-  /**
-   * Standard Api Method
-   * @param bool $params
+   * @param $query
+   * @param $filter
    * @return mixed
    */
-  public function getItemsBy($params = false)
+  public function filterQuery($query, $filter, $params)
   {
-    /*== initialize query ==*/
-    $query = $this->model->query();
-    
-    /*== RELATIONSHIPS ==*/
-    if (in_array('*', $params->include)) {//If Request all relationships
-      $query->with(['translations']);
-    } else {//Especific relationships
-      $includeDefault = ['translations'];//Default relationships
-      if (isset($params->include))//merge relations with default relationships
-        $includeDefault = array_merge($includeDefault, $params->include);
-      $query->with($includeDefault);//Add Relationships to query
-    }
-    
-    /*== FILTERS ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter;//Short filter
-      if (isset($filter->parent)) {
-        $query->where('parent_id', $filter->parent);
-      }
-      
-      if (isset($filter->search)) { //si hay que filtrar por rango de precio
-        $criterion = $filter->search;
-        $param = explode(' ', $criterion);
-        $criterion = $filter->search;
-        //find search in columns
-        $query->where(function ($query) use ($filter, $criterion) {
-          $query->whereHas('translations', function (Builder $q) use ($criterion) {
-            $q->where('title', 'like', "%{$criterion}%");
-          });
-        })->orWhere('id', 'like', '%' . $filter->search . '%');
-      }
-      
-      //Filter by date
-      if (isset($filter->date)) {
-        $date = $filter->date;//Short filter date
-        $date->field = $date->field ?? 'created_at';
-        if (isset($date->from))//From a date
-          $query->whereDate($date->field, '>=', $date->from);
-        if (isset($date->to))//to a date
-          $query->whereDate($date->field, '<=', $date->to);
-      }
-      if(is_module_enabled('Marketplace')){
-        if (isset($filter->store)) {
-          $query->where('store_id',$filter->store);
+
+    if (isset($filter->id)) {
+      $ids = is_array($filter->id) ? $filter->id : [$filter->id];
+
+      if (isset($filter->includeDescendants) && $filter->includeDescendants) {
+        foreach ($ids as $id) {
+          if (isset($filter->includeSelf) && $filter->includeSelf) {
+            $categories = Category::descendantsAndSelf($id);
+          } else {
+            $categories = Category::descendantsOf($id);
+          }
+          $ids = array_merge($ids, $categories->pluck("id")->toArray());
         }
       }
-      //Order by
-      if (isset($filter->order)) {
-        $orderByField = $filter->order->field ?? 'created_at';//Default field
-        $orderWay = $filter->order->way ?? 'desc';//Default way
-        $query->orderBy($orderByField, $orderWay);//Add order to query
+
+      $query->whereIn('id', $ids);
+    }
+
+    if (isset($filter->parentId)) {
+
+      !is_array($filter->parentId) ? $filter->parentId = [$filter->parentId] : false;
+      $ids = [];
+      foreach ($filter->parentId as $parentId) {
+        if (isset($filter->includeDescendants) && $filter->includeDescendants) {
+          if (isset($filter->includeSelf) && $filter->includeSelf)
+            $categories = Category::descendantsAndSelf($parentId);
+          else
+            $categories = Category::descendantsOf($parentId);
+        } else {
+          $categories = $this->model->query()->where("parent_id", $parentId)->get();
+        }
+
+        $ids = array_merge($ids, $categories->pluck("id")->toArray());
       }
+      $query->whereIn('iblog__categories.id', $ids);
+
     }
-    
-    /*== FIELDS ==*/
-    if (isset($params->fields) && count($params->fields))
-      $query->select($params->fields);
-    
-    /*== REQUEST ==*/
-    if (isset($params->page) && $params->page) {
-      return $query->paginate($params->take);
-    } else {
-      $params->take ? $query->take($params->take) : false;//Take
-      return $query->get();
-    }
-  }
-  
-  /**
-   * Standard Api Method
-   * @param $criteria
-   * @param bool $params
-   * @return mixed
-   */
-  public function getItem($criteria, $params = false)
-  {
-    //Initialize query
-    $query = $this->model->query();
-    
-    /*== RELATIONSHIPS ==*/
-    if (in_array('*', $params->include)) {//If Request all relationships
-      $query->with(['translations']);
-    } else {//Especific relationships
-      $includeDefault = [];//Default relationships
-      if (isset($params->include))//merge relations with default relationships
-        $includeDefault = array_merge($includeDefault, $params->include);
-      $query->with($includeDefault);//Add Relationships to query
-    }
-    /*== FILTER ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter;
-      
-      if (isset($filter->field))//Filter by specific field
-        $field = $filter->field;
-      
-      // find translatable attributes
-      $translatedAttributes = $this->model->translatedAttributes;
-      
-      // filter by translatable attributes
-      if (isset($field) && in_array($field, $translatedAttributes))//Filter by slug
-        $query->whereHas('translations', function ($query) use ($criteria, $filter, $field) {
-          $query->where('locale', $filter->locale)
-            ->where($field, $criteria);
+
+    if (isset($filter->search)) { //si hay que filtrar por rango de precio
+      $criterion = $filter->search;
+      $param = explode(' ', $criterion);
+      $criterion = $filter->search;
+      //find search in columns
+      $query->where(function ($query) use ($filter, $criterion) {
+        $query->whereHas('translations', function (Builder $q) use ($criterion) {
+          $q->where('title', 'like', "%{$criterion}%");
         });
-      else
-        // find by specific attribute or by id
-        $query->where($field ?? 'id', $criteria);
+      })->orWhere('id', 'like', '%' . $filter->search . '%');
     }
-    
-    /*== FIELDS ==*/
-    if (isset($params->fields) && count($params->fields))
-      $query->select($params->fields);
-    
-    /*== REQUEST ==*/
-    return $query->first();
-  }
-  
-  /**
-   * Standard Api Method
-   * @param $data
-   * @return mixed
-   */
-  public function create($data)
-  {
-    
-    $category = $this->model->create($data);
-    
-    event(new CategoryWasCreated($category, $data));
-    
-    return $this->find($category->id);
-  }
-  
-  /**
-   * Update a resource
-   * @param $category
-   * @param array $data
-   * @return mixed
-   */
-  public function update($category, $data)
-  {
-    $category->update($data);
-    
-    event(new CategoryWasUpdated($category, $data));
-    
-    return $category;
-  }
-  
-  
-  public function destroy($model)
-  {
-    event(new CategoryWasDeleted($model->id, get_class($model)));
-    
-    return $model->delete();
-  }
-  
-  
-  /**
-   * Standard Api Method
-   * @param $criteria
-   * @param $data
-   * @param bool $params
-   * @return bool
-   */
-  public function updateBy($criteria, $data, $params = false)
-  {
-    /*== initialize query ==*/
-    $query = $this->model->query();
-    
-    /*== FILTER ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter;
-      
-      //Update by field
-      if (isset($filter->field))
-        $field = $filter->field;
+
+    if (isset($filter->tagId)) {
+
+      $query->whereTag($filter->tagId, "id");
+
+
     }
-    
-    /*== REQUEST ==*/
-    $model = $query->where($field ?? 'id', $criteria)->first();
-    $model ? $model->update((array)$data) : false;
-    event(new UpdateMedia($model, $data));
-  }
-  
-  /**
-   * Standard Api Method
-   * @param $criteria
-   * @param bool $params
-   */
-  public function deleteBy($criteria, $params = false)
-  {
-    /*== initialize query ==*/
-    $query = $this->model->query();
-    
-    /*== FILTER ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter;
-      
-      if (isset($filter->field))//Where field
-        $field = $filter->field;
+
+
+    //add filter by showMenu
+    if (isset($filter->showMenu) && is_bool($filter->showMenu)) {
+      $query->where('show_menu', $filter->showMenu);
     }
-    
-    /*== REQUEST ==*/
-    $model = $query->where($field ?? 'id', $criteria)->first();
-    $model ? $model->delete() : false;
-    event(new DeleteMedia($model->id, get_class($model)));
-    
+
+    if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
+
+    } else {
+
+      //pre-filter status
+      $query->whereRaw("iblog__categories.id IN (SELECT category_id from iblog__category_translations where status = 1)");
+    }
+
+    //Response
+    return $query;
   }
-  
-  
+
+  /**
+   * Method to sync Model Relations
+   *
+   * @param $model ,$data
+   * @return $model
+   */
+  public function syncModelRelations($model, $data)
+  {
+    //Get model relations data from attribute of model
+    $modelRelationsData = ($model->modelRelations ?? []);
+
+    /**
+     * Note: Add relation name to replaceSyncModelRelations attribute before replace it
+     *
+     * Example to sync relations
+     * if (array_key_exists(<relationName>, $data)){
+     *    $model->setRelation(<relationName>, $model-><relationName>()->sync($data[<relationName>]));
+     * }
+     *
+     */
+
+    //Response
+    return $model;
+  }
+
+  /**
+   * Method to include relations to query
+   * @param $query
+   * @param $relations
+   */
+  public function includeToQuery($query, $relations)
+  {
+
+    //request all categories instances in the "relations" attribute in the entity model
+    if (in_array('*', $relations)) $relations = $this->model->getRelations() ?? ['files','translations'];
+    //Instance relations in query
+    $query->with($relations);
+    //Response
+    return $query;
+  }
+
+
 }

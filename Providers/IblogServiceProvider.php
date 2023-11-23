@@ -2,6 +2,7 @@
 
 namespace Modules\Iblog\Providers;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\Traits\CanPublishConfiguration;
 use Modules\Core\Events\BuildingSidebar;
@@ -17,97 +18,115 @@ use Modules\Iblog\Repositories\Eloquent\EloquentCategoryRepository;
 use Modules\Iblog\Repositories\Eloquent\EloquentPostRepository;
 use Modules\Iblog\Repositories\PostRepository;
 use Modules\Tag\Repositories\TagManager;
+use Illuminate\Support\Facades\Blade;
+use Modules\Iblog\View\Components\Timeline;
 
 class IblogServiceProvider extends ServiceProvider
 {
-    use CanPublishConfiguration;
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
+  use CanPublishConfiguration;
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->registerBindings();
-        $this->app['events']->listen(BuildingSidebar::class, RegisterIblogSidebar::class);
-        $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
-            $event->load('post', array_dot(trans('iblog::post')));
-            $event->load('category', array_dot(trans('iblog::category')));
-            // append translations
-        });
-        $this->registerCommands();
-    }
+  /**
+   * Indicates if loading of the provider is deferred.
+   *
+   * @var bool
+   */
+  protected $defer = false;
 
-    public function boot()
-    {
-        $this->publishConfig('iblog', 'config');
-        $this->publishConfig('iblog', 'settings');
-        $this->publishConfig('iblog', 'permissions');
-        $this->publishConfig('iblog', 'settings-fields');
-        $this->publishConfig('iblog', 'crud-fields');
+  /**
+   * Register the service provider.
+   *
+   * @return void
+   */
+  public function register()
+  {
+    $this->registerBindings();
+    $this->app['events']->listen(BuildingSidebar::class, RegisterIblogSidebar::class);
+    $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
+      $event->load('post', Arr::dot(trans('iblog::post')));
+      $event->load('category', Arr::dot(trans('iblog::category')));
+      // append translations
+    });
+    $this->registerCommands();
+  }
 
-        $this->app[TagManager::class]->registerNamespace(new Post());
+  public function boot()
+  {
+    $this->publishConfig('iblog', 'config');
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'settings'), "asgard.iblog.settings");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'settings-fields'), "asgard.iblog.settings-fields");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'permissions'), "asgard.iblog.permissions");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'cmsPages'), "asgard.iblog.cmsPages");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'cmsSidebar'), "asgard.iblog.cmsSidebar");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'gamification'), "asgard.iblog.gamification");
+    $this->publishConfig('iblog', 'crud-fields');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-    }
+    $this->app[TagManager::class]->registerNamespace(new Post());
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array();
-    }
+    //$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
-    private function registerBindings()
-    {
-        $this->app->bind(PostRepository::class, function () {
-            $repository = new EloquentPostRepository(new Post());
+    $this->registerComponents();
+  }
 
-            if (config('app.cache') === false) {
-                return $repository;
-            }
+  /**
+   * Get the services provided by the provider.
+   *
+   * @return array
+   */
+  public function provides()
+  {
+    return array();
+  }
 
-            return new CachePostDecorator($repository);
-        });
+  private function registerBindings()
+  {
+    $this->app->bind(PostRepository::class, function () {
+      $repository = new EloquentPostRepository(new Post());
 
-        $this->app->bind(CategoryRepository::class, function () {
-            $repository = new EloquentCategoryRepository(new Category());
+      if (config('app.cache') === false) {
+        return $repository;
+      }
 
-            if (config('app.cache') === false) {
-                return $repository;
-            }
+      return new CachePostDecorator($repository);
+    });
 
-            return new CacheCategoryDecorator($repository);
-        });
+    $this->app->bind(CategoryRepository::class, function () {
+      $repository = new EloquentCategoryRepository(new Category());
 
-    }
+      if (config('app.cache') === false) {
+        return $repository;
+      }
 
-    /**
-     * Register all commands for this module
-     */
-    private function registerCommands()
-    {
-        $this->registerMigrateIblogCommand();
-    }
+      return new CacheCategoryDecorator($repository);
+    });
 
-    /**
-     * Register the refresh thumbnails command
-     */
-    private function registerMigrateIblogCommand()
-    {
+  }
 
-        $this->app['command.iblog.migrateiblog'] = $this->app->make(MigrateIblog::class);;
-        $this->commands(['command.iblog.migrateiblog']);
-    }
+  /**
+   * Register all commands for this module
+   */
+  private function registerCommands()
+  {
+    $this->registerMigrateIblogCommand();
+  }
+
+  /**
+   * Register the refresh thumbnails command
+   */
+  private function registerMigrateIblogCommand()
+  {
+
+    $this->app['command.iblog.migrateiblog'] = $this->app->make(MigrateIblog::class);;
+    $this->commands(['command.iblog.migrateiblog']);
+  }
+
+
+  /**
+   * Register components
+   */
+
+  private function registerComponents()
+  {
+    Blade::componentNamespace("Modules\Iblog\View\Components", 'iblog');
+  }
 
 }
