@@ -34,6 +34,13 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
    */
   protected $replaceSyncModelRelations = [];
   
+  
+  /**
+   * Attribute to customize relations by default
+   * @var array
+   */
+  protected $includeToQuery = ['translations', 'files', 'category'];
+  
   /**
    * Filter query
    *
@@ -209,21 +216,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
     //Response
     return $model;
   }
-  /**
-   * Method to include relations to query
-   * @param $query
-   * @param $relations
-   */
-  public function includeToQuery($query, $relations)
-  {
-    
-    //request all categories instances in the "relations" attribute in the entity model
-    if (in_array('*', $relations)) $relations = $this->model->getRelations() ?? ['translations', 'files', 'category'];
-    //Instance relations in query
-    $query->with($relations);
-    //Response
-    return $query;
-  }
+  
   
   
   public function defaultPreFilters($query, $params)
