@@ -214,7 +214,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
    * @param $query
    * @param $relations
    */
-  public function includeToQuery($query, $relations)
+  public function includeToQuery($query, $relations, $method = null)
   {
     
     //request all categories instances in the "relations" attribute in the entity model
