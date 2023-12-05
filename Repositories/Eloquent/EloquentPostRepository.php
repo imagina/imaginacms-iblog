@@ -39,7 +39,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
    * Attribute to customize relations by default
    * @var array
    */
-  protected $includeToQuery = ['translations', 'files', 'category'];
+  protected $with = ['all' => ['translations', 'files', 'category']];
   
   /**
    * Filter query
