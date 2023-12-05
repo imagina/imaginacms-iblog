@@ -32,7 +32,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
    * Attribute to customize relations by default
    * @var array
    */
-  protected $includeToQuery = ['files','translations'];
+  protected $with = ['all' => ['files','translations']];
   
   /**
    * Filter query
