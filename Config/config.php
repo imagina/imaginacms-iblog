@@ -480,5 +480,21 @@ return [
   'documentation' => [
     'posts' => "iblog::cms.documentation.posts",
     'categories' => "iblog::cms.documentation.categories",
+  ],
+
+  // Builder
+  'builder' => [
+    'layout' => [
+      [
+        'entity' => ['label' => "iblog::cms.post", 'value' => "Modules\\Iblog\\Entities\\Post"],
+        'types' => []
+      ],
+      [
+        'entity' => ['label' => "iblog::cms.category", 'value' => "Modules\\Iblog\\Entities\\Category"],
+        'types' => [
+          ['label' => 'isite::cms.label.contactUs', 'value' => 'contact']
+        ]
+      ]
+    ]
   ]
 ];
