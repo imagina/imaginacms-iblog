@@ -106,7 +106,7 @@ class Post extends CrudModel implements TaggableInterface
 
   public function getSecondaryImageAttribute()
   {
-    $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
+    $thumbnail = $this->files->where('zone', 'secondaryimage')->first();
     if (!$thumbnail) {
       $image = [
         'mimeType' => 'image/jpeg',
@@ -123,7 +123,7 @@ class Post extends CrudModel implements TaggableInterface
 
   public function getMainImageAttribute()
   {
-    $thumbnail = $this->files()->where('zone', 'mainimage')->first();
+    $thumbnail = $this->files->where('zone', 'mainimage')->first();
     if (!$thumbnail) {
       if (isset($this->options->mainimage)) {
         $image = [
