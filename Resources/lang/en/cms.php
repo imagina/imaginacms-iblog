@@ -12,6 +12,7 @@ return [
   "newCategory" => "New Category",
   "updateCategory" => "Update Category",
   "post" => "Post",
+  "category" => "Category",
   "quickCard" => [
     "lastPosts" => "Blog - Last Posts"
   ],

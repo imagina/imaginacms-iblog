@@ -27,7 +27,13 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
    * @var array
    */
   protected $replaceSyncModelRelations = [];
-
+  
+  /**
+   * Attribute to customize relations by default
+   * @var array
+   */
+  protected $with = ['all' => ['files','translations']];
+  
   /**
    * Filter query
    *
@@ -136,22 +142,7 @@ class EloquentCategoryRepository extends EloquentCrudRepository implements Categ
     //Response
     return $model;
   }
-
-  /**
-   * Method to include relations to query
-   * @param $query
-   * @param $relations
-   */
-  public function includeToQuery($query, $relations)
-  {
-
-    //request all categories instances in the "relations" attribute in the entity model
-    if (in_array('*', $relations)) $relations = $this->model->getRelations() ?? ['files','translations'];
-    //Instance relations in query
-    $query->with($relations);
-    //Response
-    return $query;
-  }
+  
 
 
 }

@@ -18,12 +18,13 @@ use Modules\Ifillable\Traits\isFillable;
 use Modules\Isite\Traits\RevisionableTrait;
 
 use Modules\Core\Support\Traits\AuditTrait;
+use Modules\Iqreable\Traits\IsQreable;
 
 class Category extends CrudModel
 {
   use Translatable, MediaRelation, PresentableTrait,
     NamespacedEntity, NodeTrait, BelongsToTenant,
-    Typeable, isFillable;
+    Typeable, isFillable, IsQreable;
 
   public $transformer = 'Modules\Iblog\Transformers\CategoryTransformer';
   public $entity = 'Modules\Iblog\Entities\Category';
@@ -151,7 +152,7 @@ class Category extends CrudModel
     $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
       parse_url(config('app.url'),PHP_URL_HOST);
       
-    if (!(request()->wantsJson() || Str::startsWith(request()->path(), 'api'))) {
+    if (!request()->wantsJson() || Str::startsWith(request()->path(), 'api')) {
       if(config("app.url") != $currentDomain){
         $savedDomain = config("app.url");
         config(["app.url" => "https://".$currentDomain]);
