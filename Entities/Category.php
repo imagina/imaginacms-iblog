@@ -141,7 +141,7 @@ class Category extends CrudModel
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $category->slug ?? '';
     }
-    
+ 
     $currentLocale = $locale ?? locale();
     if(!is_null($currentLocale)){
        $this->slug = $this->getTranslation($currentLocale)->slug;
@@ -151,16 +151,15 @@ class Category extends CrudModel
   
     $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
       parse_url(config('app.url'),PHP_URL_HOST);
-      
-    if (!request()->wantsJson() || Str::startsWith(request()->path(), 'api')) {
-      if(config("app.url") != $currentDomain){
+
+     if(config("app.url") != $currentDomain){
         $savedDomain = config("app.url");
         config(["app.url" => "https://".$currentDomain]);
       }
       $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
   
       if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
-    }
+   
 
     return $url;
   }
