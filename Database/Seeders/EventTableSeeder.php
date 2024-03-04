@@ -5,7 +5,7 @@ namespace Modules\Iblog\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Modules\Isite\Entities\event;
+use Modules\Isite\Entities\Event;
 
 
 
@@ -31,12 +31,12 @@ class EventTableSeeder extends Seeder
 
        foreach ($this->events as $event) {
             
-            $dbEvent = event::where("module_name", "Iblog")
+            $dbEvent = Event::where("module_name", "Iblog")
             ->where("name", $event)
             ->first();
             
             if(empty($dbEvent)){
-                event::create([
+                Event::create([
                     "module_name" => "Iblog",
                     "name" => $event
                 ]);
