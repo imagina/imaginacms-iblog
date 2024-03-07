@@ -19,10 +19,6 @@ class PostTransformer extends CrudResource
    */
   public function modelAttributes($request)
   {
-    $tags = [];
-    foreach ($this->tags as $tag) {
-      $tags[] = $tag->name;
-    }
     return [
       'statusName' => $this->present()->status,
       'url' => $this->url ?? '#',
@@ -31,7 +27,7 @@ class PostTransformer extends CrudResource
       'gallery' => $this->gallery,
       'editor' => new UserProfileTransformer($this->whenLoaded('user')),
       'layoutId' => $this->layoutId,
-      'tags' => $tags
+      'tags' => $this->getNameTags()
     ];
   }
 }
