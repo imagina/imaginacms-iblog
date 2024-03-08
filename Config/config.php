@@ -496,5 +496,34 @@ return [
         ]
       ]
     ]
-  ]
+        ],
+  /*
+  |-------------------------------------------------------------------------
+  | Webhooks events tables
+  |-------------------------------------------------------------------------
+  */
+
+  'webhookEvents' => [
+      "PostWasCreated",
+      "PostWasUpated",
+      "PostWasDeleted",
+      "CategoryWasCreated",
+      "CategoryWasUpated",
+      "CategoryWasDeleted"
+    ],
+
+    /*
+  |-------------------------------------------------------------------------
+  | Webhooks events tables
+  |-------------------------------------------------------------------------
+  */
+
+  'webhookEvents' => [
+    "PostWasCreated",
+    "PostWasUpated",
+    "PostWasDeleted",
+    "CategoryWasCreated",
+    "CategoryWasUpated",
+    "CategoryWasDeleted"
+  ],
 ];
