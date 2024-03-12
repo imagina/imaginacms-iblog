@@ -491,9 +491,7 @@ return [
       ],
       [
         'entity' => ['label' => "iblog::cms.category", 'value' => "Modules\\Iblog\\Entities\\Category"],
-        'types' => [
-          ['label' => 'isite::cms.label.contactUs', 'value' => 'contact']
-        ]
+        'types' => []
       ]
     ]
         ],
