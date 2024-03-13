@@ -497,16 +497,12 @@ return [
         ],
   /*
   |-------------------------------------------------------------------------
-  | Webhooks events tables
+  | Webhooks entities tables
   |-------------------------------------------------------------------------
   */
 
-  'webhookEvents' => [
-      "PostWasCreated",
-      "PostWasUpated",
-      "PostWasDeleted",
-      "CategoryWasCreated",
-      "CategoryWasUpated",
-      "CategoryWasDeleted"
-    ],
+  'webhookEntities' => [
+    "Post",
+    "Category"
+  ],
 ];
