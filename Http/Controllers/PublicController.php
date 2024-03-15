@@ -53,10 +53,12 @@ class PublicController extends BasePublicController
             $tpl = $ttpl;
         }
 
-        $configFilters = config('asgard.iblog.config.filters');
 
-        $posts = $this->post->whereCategory($category->id);
-        //Get Custom Template.
+    $configFilters = config("asgard.iblog.config.filters");
+
+    $params = ["filter" => ["categoryId" => $category->id]];
+    $posts = $this->post->getItemsBy(json_decode(json_encode($params)));
+    //Get Custom Template.
 
         $categoryBreadcrumb = CategoryTransformer::collection(Category::defaultOrder()->ancestorsAndSelf($category->id));
 

@@ -3,21 +3,28 @@
 namespace Modules\Iblog\Entities;
 
 use Astrotomic\Translatable\Translatable;
-use Illuminate\Support\Str;
-use Kalnoy\Nestedset\NodeTrait;
+use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Core\Icrud\Entities\CrudModel;
 use Modules\Core\Traits\NamespacedEntity;
-use Modules\Ifillable\Traits\isFillable;
-use Modules\Isite\Traits\Typeable;
+use Modules\Media\Entities\File;
+use Kalnoy\Nestedset\NodeTrait;
 use Modules\Media\Support\Traits\MediaRelation;
+use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
+use Modules\Isite\Traits\Typeable;
+use Modules\Core\Icrud\Traits\hasEventsWithBindings;
+use Modules\Ifillable\Traits\isFillable;
+use Modules\Isite\Traits\RevisionableTrait;
+
+use Modules\Core\Support\Traits\AuditTrait;
+use Modules\Iqreable\Traits\IsQreable;
 
 class Category extends CrudModel
 {
-    use Translatable, MediaRelation, PresentableTrait,
-        NamespacedEntity, NodeTrait, BelongsToTenant,
-        Typeable, isFillable;
+  use Translatable, MediaRelation, PresentableTrait,
+    NamespacedEntity, NodeTrait, BelongsToTenant,
+    Typeable, isFillable, IsQreable;
 
     public $transformer = 'Modules\Iblog\Transformers\CategoryTransformer';
 
@@ -80,7 +87,7 @@ class Category extends CrudModel
     public function getOptionsAttribute($value)
     {
         try {
-            return json_decode(json_decode($value));
+            return json_decode($value);
         } catch (\Exception $e) {
             return json_decode($value);
         }
