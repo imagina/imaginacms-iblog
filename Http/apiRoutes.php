@@ -9,5 +9,11 @@ Route::prefix('iblog/v1')->group(function (Router $router) {
     //======  POSTS
     require 'ApiRoutes/postRoutes.php';
 
-    //append
+  $router->apiCrud([
+    'module' => 'iblog',
+    'prefix' => 'statuses',
+    'staticEntity' => 'Modules\Iblog\Entities\Status',
+    //'middleware' => ['create' => [], 'index' => [], 'show' => [], 'update' => [], 'delete' => [], 'restore' => []]
+  ]);
+  //append
 });

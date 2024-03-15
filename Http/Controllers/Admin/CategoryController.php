@@ -2,6 +2,7 @@
 
 namespace Modules\Iblog\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 use Modules\Iblog\Entities\Category;
