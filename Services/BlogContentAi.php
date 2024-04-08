@@ -32,7 +32,7 @@ class BlogContentAi
     \Log::info($this->log."getPosts|INIT");
 
     //instance the prompt to generate the posts
-    $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos ";
+    $prompt = "Contenido para post de blog que seran usados en un sitio WEB con los siguientes atributos: ";
     //Instance attributes
     $prompt .= $this->aiService->getStandardPrompts(
       ["title", "description", "summary", "slug", "category_id", "tags"],
@@ -63,6 +63,10 @@ class BlogContentAi
       if(count($newPostsIds)){
         //\Log::info(json_encode($newPostsIds));
         $this->deleteOldPosts($newPostsIds);
+
+        //Set the process has completed
+        $this->aiService->saveAiCompleted("iblog");
+
       }
       
     }
@@ -81,18 +85,22 @@ class BlogContentAi
     $params = [] ;
     $totalPost = $this->postRepository->getItemsBy(json_decode(json_encode($params)));
     $postQuantity = count($totalPost)>0 ? count($totalPost) : $this->postQuantity;
-    
+    \Log::info($this->log."getNewData|PostQuantity to get:".$postQuantity);
+
     $attempts = 0;
     do {
       \Log::info($this->log."getNewData|Attempt:".($attempts+1)."/Max:".$this->maxAttempts);
       $newData = $this->getPosts($postQuantity);
       if(is_null($newData)){
         $attempts++;
+        \Log::info($this->log."getNewData|NewData is NULL");
       }else{
-        if(isset($newData[0]['es']) && isset($newData[0]['en']))
+        if(isset($newData[0]['es']) && isset($newData[0]['en'])){
           break;
-        else
+        }else{
           $attempts++;
+          \Log::info($this->log."getNewData|NewData not ES or EN| Or Error in format");
+        }
       }
     }while($attempts < $this->maxAttempts);
 
@@ -123,6 +131,8 @@ class BlogContentAi
             $file = $this->aiService->saveImage($post['image'][0]);
             $post['medias_single']['mainimage'] = $file->id;
             $post['medias_single']['secondaryimage'] = $file->id;
+          }else{
+            \Log::info($this->log."createPosts|Post Image Not Exist");
           }
 
           //Delete data from AI
@@ -133,6 +143,9 @@ class BlogContentAi
           $post['user_id'] = 1;
           $post['status'] = 2; //Published
 
+          if(isset($post['es']['title']))
+            \Log::info($this->log."createPosts|Title: ".$post['es']['title']);
+
           $newPost = $this->postRepository->create($post);
 
           //Save new posts
@@ -140,6 +153,8 @@ class BlogContentAi
 
         }
          
+      }else{
+        \Log::info($this->log."createPosts|Error: Category ID Not found or is not numeric");
       }
 
     }

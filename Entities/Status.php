@@ -47,6 +47,18 @@ class Status
             return $this->statuses[$statusId];
         }
 
-        return $this->statuses[self::DRAFT];
+    return $this->statuses[self::DRAFT];
+  }
+
+  public function index()
+  {
+    //Instance response
+    $response = [];
+    //AMp status
+    foreach ($this->statuses as $key => $status) {
+      array_push($response, ['id' => $key, 'title' => $status]);
     }
+    //Repsonse
+    return collect($response);
+  }
 }

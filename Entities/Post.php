@@ -3,21 +3,28 @@
 namespace Modules\Iblog\Entities;
 
 use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 use Modules\Core\Icrud\Entities\CrudModel;
 use Modules\Core\Traits\NamespacedEntity;
 use Modules\Iblog\Presenters\PostPresenter;
-use Modules\Isite\Traits\Typeable;
+use Modules\Media\Entities\File;
 use Modules\Media\Support\Traits\MediaRelation;
 use Modules\Tag\Contracts\TaggableInterface;
 use Modules\Tag\Traits\TaggableTrait;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
+use Modules\Isite\Traits\Typeable;
+use Modules\Core\Icrud\Traits\hasEventsWithBindings;
+use Modules\Isite\Traits\RevisionableTrait;
+use Modules\Iqreable\Traits\IsQreable;
+
+use Modules\Core\Support\Traits\AuditTrait;
 
 class Post extends CrudModel implements TaggableInterface
 {
-    use Translatable, PresentableTrait, NamespacedEntity,
-        TaggableTrait, MediaRelation, BelongsToTenant,
-        Typeable;
+  use Translatable, PresentableTrait, NamespacedEntity,
+    TaggableTrait, MediaRelation, BelongsToTenant,
+    Typeable, IsQreable;
 
     protected static $entityNamespace = 'asgardcms/post';
 
@@ -63,6 +70,10 @@ class Post extends CrudModel implements TaggableInterface
     'date_available'
   ];
 
+  protected $with = [
+    'tags'
+  ];
+
     protected $casts = [
         'date_available' => 'datetime',
         'options' => 'array',
@@ -95,8 +106,8 @@ class Post extends CrudModel implements TaggableInterface
 
     public function getOptionsAttribute($value)
     {
-        try {
-            return json_decode(json_decode($value));
+      try {
+            return json_decode($value);
         } catch (\Exception $e) {
             return json_decode($value);
         }
