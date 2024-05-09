@@ -188,26 +188,11 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
       $model->categories()->sync([$model->category_id]);
     }
 
-    $model->setTags(Arr::get($data, 'tags', []));
-
     //Response
     return $model;
   }
 
-  /**
-   * Method to include relations to query
-   */
-  public function includeToQuery($query, $relations, $method = null)
-  {
-    //request all categories instances in the "relations" attribute in the entity model
-    if (in_array('*', $relations)) {
-      $relations = $this->model->getRelations() ?? ['translations', 'files', 'category'];
-    }
-    //Instance relations in query
-    $query->with($relations);
-    //Response
-    return $query;
-  }
+
 
   public function defaultPreFilters($query, $params)
   {

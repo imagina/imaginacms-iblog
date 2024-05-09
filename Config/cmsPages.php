@@ -32,35 +32,21 @@ return [
         'refresh' => true,
       ],
     ],
-    'postsInternal' => [
-      'permission' => 'iblog.posts.manage',
-      'activated' => true,
-      'authenticated' => true,
-      'path' => '/blog/posts/internal',
-      'name' => 'qblog.admin.posts.internal',
-      'page' => 'qblog/_pages/admin/posts/internal',
-      'layout' => 'qsite/_layouts/master.vue',
-      'title' => 'iblog.cms.sidebar.adminPostsInternal',
-      'icon' => 'far fa-newspaper',
-      'subHeader' => [
-        'refresh' => true,
-      ],
-      "postsInternal" => [
-        "permission" => "iblog.posts.manage",
-        "activated" => true,
-        "authenticated" => true,
-        "path" => "/blog/posts/internal",
-        "name" => "qblog.admin.posts.internal",
-        "page" => "qblog/_pages/admin/posts/internal",
-        "layout" => "qsite/_layouts/master.vue",
-        "title" => "iblog.cms.sidebar.adminPostsInternal",
-        "icon" => "far fa-newspaper",
-        "subHeader" => [
-          "refresh" => true
-        ]
+    "postsInternal" => [
+      "permission" => "iblog.posts.manage",
+      "activated" => true,
+      "authenticated" => true,
+      "path" => "/blog/posts/internal",
+      "name" => "qblog.admin.posts.internal",
+      "page" => "qblog/_pages/admin/posts/internal",
+      "layout" => "qsite/_layouts/master.vue",
+      "title" => "iblog.cms.sidebar.adminPostsInternal",
+      "icon" => "far fa-newspaper",
+      "subHeader" => [
+        "refresh" => true
       ]
-    ],
-    'panel' => [],
-    'main' => [],
-  ]
+    ]
+  ],
+  'panel' => [],
+  'main' => []
 ];
