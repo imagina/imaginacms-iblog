@@ -131,29 +131,29 @@ class Post extends CrudModel implements TaggableInterface
         return json_decode(json_encode($image));
     }
 
+    /**
+    *  main image url used to meta
+    */
     public function getMainImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'mainimage')->first();
-        if (! $thumbnail) {
-            if (isset($this->options->mainimage)) {
-                $image = [
-                    'mimeType' => 'image/jpeg',
-                    'path' => url($this->options->mainimage),
-                ];
-            } else {
-                $image = [
-                    'mimeType' => 'image/jpeg',
-                    'path' => url('modules/iblog/img/post/default.jpg'),
-                ];
-            }
-        } else {
+
+        //Default
+        $image = [
+        'mimeType' => 'image/jpeg',
+        'path' => url('modules/iblog/img/post/default.jpg')
+        ];
+
+        //Get and Set mainimage
+        $file = $this->filesByZone("mainimage")->first();
+        if(!is_null($file)){
             $image = [
-                'mimeType' => $thumbnail->mimetype,
-                'path' => $thumbnail->path_string,
+                'mimeType' => 'image/jpeg',
+                'path' => $file->path->getUrl()
             ];
         }
 
         return json_decode(json_encode($image));
+
     }
 
     public function getGalleryAttribute()
