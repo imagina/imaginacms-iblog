@@ -26,6 +26,11 @@
             <div class="page-body description mb-4 text-justify">
               {!! $post->description !!}
             </div>
+
+            <div class="post-gallery">
+              @include('iblog::frontend.gallery.viewline')
+            </div>
+            
             <div class="social-share d-flex justify-content-end align-items-center">
               <div class="mr-2">{{trans('iblog::common.social.share')}}:</div>
               <div class="sharethis-inline-share-buttons"></div>
