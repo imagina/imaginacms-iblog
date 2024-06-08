@@ -1,5 +1,6 @@
 <?php
 
+include base_path().'/Modules/Setting/helpers.php';
 $item = (array) json_decode(setting('iblog::arrayItemComponentsAttributesBlog'));
 if (! empty($item)) {
     if (! empty($item['orderClasses'])) {
@@ -495,4 +496,5 @@ return [
         'types' => []
       ]
     ]
+  ]
 ];
