@@ -2,25 +2,11 @@
 
 namespace Modules\Iblog\Repositories;
 
-use Modules\Core\Repositories\BaseRepository;
+use Modules\Core\Icrud\Repositories\BaseCrudRepository;
 
 /**
  * Interface CategoryRepository
- * @package Modules\Iblog\Repositories
  */
-interface CategoryRepository extends BaseRepository
+interface CategoryRepository extends BaseCrudRepository
 {
-    /**
-     * @param $params
-     * @return mixed
-     */
-    public function getItemsBy($params);
-
-    /**
-     * @param $criteria
-     * @param $params
-     * @return mixed
-     */
-    public function getItem($criteria, $params);
-
 }

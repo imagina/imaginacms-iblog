@@ -2,10 +2,12 @@
 
 namespace Modules\Iblog\Providers;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use Modules\Core\Traits\CanPublishConfiguration;
 use Modules\Core\Events\BuildingSidebar;
 use Modules\Core\Events\LoadingBackendTranslations;
+use Modules\Core\Traits\CanPublishConfiguration;
 use Modules\Iblog\Console\MigrateIblog;
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Entities\Post;
@@ -21,6 +23,7 @@ use Modules\Tag\Repositories\TagManager;
 class IblogServiceProvider extends ServiceProvider
 {
     use CanPublishConfiguration;
+
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -30,16 +33,14 @@ class IblogServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register()
     {
         $this->registerBindings();
         $this->app['events']->listen(BuildingSidebar::class, RegisterIblogSidebar::class);
         $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
-            $event->load('post', array_dot(trans('iblog::post')));
-            $event->load('category', array_dot(trans('iblog::category')));
+            $event->load('post', Arr::dot(trans('iblog::post')));
+            $event->load('category', Arr::dot(trans('iblog::category')));
             // append translations
         });
         $this->registerCommands();
@@ -48,24 +49,27 @@ class IblogServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig('iblog', 'config');
-        $this->publishConfig('iblog', 'settings');
-        $this->publishConfig('iblog', 'permissions');
-        $this->publishConfig('iblog', 'settings-fields');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'settings'), 'asgard.iblog.settings');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'settings-fields'), 'asgard.iblog.settings-fields');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'permissions'), 'asgard.iblog.permissions');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'cmsPages'), 'asgard.iblog.cmsPages');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'cmsSidebar'), 'asgard.iblog.cmsSidebar');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('iblog', 'gamification'), 'asgard.iblog.gamification');
         $this->publishConfig('iblog', 'crud-fields');
 
         $this->app[TagManager::class]->registerNamespace(new Post());
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        //$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
+        $this->registerComponents();
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
     public function provides()
     {
-        return array();
+        return [];
     }
 
     private function registerBindings()
@@ -89,7 +93,6 @@ class IblogServiceProvider extends ServiceProvider
 
             return new CacheCategoryDecorator($repository);
         });
-
     }
 
     /**
@@ -105,9 +108,15 @@ class IblogServiceProvider extends ServiceProvider
      */
     private function registerMigrateIblogCommand()
     {
-
-        $this->app['command.iblog.migrateiblog'] = $this->app->make(MigrateIblog::class);;
+        $this->app['command.iblog.migrateiblog'] = $this->app->make(MigrateIblog::class);
         $this->commands(['command.iblog.migrateiblog']);
     }
 
+    /**
+     * Register components
+     */
+    private function registerComponents()
+    {
+        Blade::componentNamespace("Modules\Iblog\View\Components", 'iblog');
+    }
 }

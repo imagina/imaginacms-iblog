@@ -4,13 +4,15 @@ namespace Modules\Iblog\Entities;
 
 /**
  * Class Status
- * @package Modules\Blog\Entities
  */
 class Status
 {
     const DRAFT = 0;
+
     const PENDING = 1;
+
     const PUBLISHED = 2;
+
     const UNPUBLISHED = 3;
 
     /**
@@ -30,24 +32,33 @@ class Status
 
     /**
      * Get the available statuses
-     * @return array
      */
-    public function lists()
+    public function lists(): array
     {
         return $this->statuses;
     }
 
     /**
      * Get the post status
-     * @param int $statusId
-     * @return string
      */
-    public function get($statusId)
+    public function get(int $statusId): string
     {
         if (isset($this->statuses[$statusId])) {
             return $this->statuses[$statusId];
         }
 
-        return $this->statuses[self::DRAFT];
+    return $this->statuses[self::DRAFT];
+  }
+
+  public function index()
+  {
+    //Instance response
+    $response = [];
+    //AMp status
+    foreach ($this->statuses as $key => $status) {
+      array_push($response, ['id' => $key, 'title' => $status]);
     }
+    //Repsonse
+    return collect($response);
+  }
 }

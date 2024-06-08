@@ -2,21 +2,42 @@
 
 namespace Modules\Iblog\Entities;
 
-use Dimsav\Translatable\Translatable;
+use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
+use Modules\Core\Icrud\Entities\CrudModel;
 use Modules\Core\Traits\NamespacedEntity;
 use Modules\Iblog\Presenters\PostPresenter;
 use Modules\Media\Entities\File;
 use Modules\Media\Support\Traits\MediaRelation;
 use Modules\Tag\Contracts\TaggableInterface;
 use Modules\Tag\Traits\TaggableTrait;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
+use Modules\Isite\Traits\Typeable;
+use Modules\Core\Icrud\Traits\hasEventsWithBindings;
+use Modules\Isite\Traits\RevisionableTrait;
+use Modules\Iqreable\Traits\IsQreable;
 
-class Post extends Model implements TaggableInterface
+use Modules\Core\Support\Traits\AuditTrait;
+
+class Post extends CrudModel implements TaggableInterface
 {
-    use Translatable, PresentableTrait, NamespacedEntity, TaggableTrait, MediaRelation;
+  use Translatable, PresentableTrait, NamespacedEntity,
+    TaggableTrait, MediaRelation, BelongsToTenant,
+    Typeable, IsQreable;
 
     protected static $entityNamespace = 'asgardcms/post';
+
+    public $transformer = 'Modules\Iblog\Transformers\PostTransformer';
+
+    public $entity = 'Modules\Iblog\Entities\Post';
+
+    public $repository = 'Modules\Iblog\Repositories\PostRepository';
+
+    public $requestValidation = [
+        'create' => 'Modules\Iblog\Http\Requests\CreatePostRequest',
+        'update' => 'Modules\Iblog\Http\Requests\UpdatePostRequest',
+    ];
 
     protected $table = 'iblog__posts';
 
@@ -24,9 +45,13 @@ class Post extends Model implements TaggableInterface
         'options',
         'category_id',
         'user_id',
-        'status',
+        'featured',
+        'sort_order',
+        'external_id',
         'created_at',
+        'date_available',
     ];
+
     public $translatedAttributes = [
         'title',
         'description',
@@ -35,24 +60,32 @@ class Post extends Model implements TaggableInterface
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'translatable_options'
+        'translatable_options',
+        'status',
     ];
+
     protected $presenter = PostPresenter::class;
 
+  protected $dates = [
+    'date_available'
+  ];
+
+  protected $with = [
+    'tags'
+  ];
 
     protected $casts = [
-        'options' => 'array'
+        'date_available' => 'datetime',
+        'options' => 'array',
     ];
 
+    protected $revisionEnabled = true;
 
-    public function __construct(array $attributes = [])
-    {
-        if (config()->has('asgard.iblog.config.fillable.post')) {
-            $this->fillable = config('asgard.iblog.config.fillable.post');
-        }
+    protected $revisionCleanup = true;
 
-        parent::__construct($attributes);
-    }
+    protected $historyLimit = 100;
+
+    protected $revisionCreationsEnabled = true;
 
     public function categories()
     {
@@ -73,8 +106,8 @@ class Post extends Model implements TaggableInterface
 
     public function getOptionsAttribute($value)
     {
-        try {
-            return json_decode(json_decode($value));
+      try {
+            return json_decode($value);
         } catch (\Exception $e) {
             return json_decode($value);
         }
@@ -83,53 +116,53 @@ class Post extends Model implements TaggableInterface
     public function getSecondaryImageAttribute()
     {
         $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
-        if (!$thumbnail) {
+        if (! $thumbnail) {
             $image = [
                 'mimeType' => 'image/jpeg',
-                'path' => url('modules/iblog/img/post/default.jpg')
+                'path' => url('modules/iblog/img/post/default.jpg'),
             ];
         } else {
             $image = [
                 'mimeType' => $thumbnail->mimetype,
-                'path' => $thumbnail->path_string
+                'path' => $thumbnail->path_string,
             ];
         }
+
         return json_decode(json_encode($image));
     }
 
+    /**
+    *  main image url used to meta
+    */
     public function getMainImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'mainimage')->first();
-        if (!$thumbnail) {
-            if (isset($this->options->mainimage)) {
-                $image = [
-                    'mimeType' => 'image/jpeg',
-                    'path' => url($this->options->mainimage)
-                ];
-            } else {
-                $image = [
-                    'mimeType' => 'image/jpeg',
-                    'path' => url('modules/iblog/img/post/default.jpg')
-                ];
-            }
-        } else {
+
+        //Default
+        $image = [
+        'mimeType' => 'image/jpeg',
+        'path' => url('modules/iblog/img/post/default.jpg')
+        ];
+
+        //Get and Set mainimage
+        $file = $this->filesByZone("mainimage")->first();
+        if(!is_null($file)){
             $image = [
-                'mimeType' => $thumbnail->mimetype,
-                'path' => $thumbnail->path_string
+                'mimeType' => 'image/jpeg',
+                'path' => $file->path->getUrl()
             ];
         }
+
         return json_decode(json_encode($image));
 
     }
 
     public function getGalleryAttribute()
     {
-
-        $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
+        $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/'.$this->id);
         if (count($images)) {
-            $response = array();
+            $response = [];
             foreach ($images as $image) {
-                $response = ["mimetype" => "image/jpeg", "path" => $image];
+                $response = ['mimetype' => 'image/jpeg', 'path' => $image];
             }
         } else {
             $gallery = $this->filesByZone('gallery')->get();
@@ -137,10 +170,9 @@ class Post extends Model implements TaggableInterface
             foreach ($gallery as $img) {
                 array_push($response, [
                     'mimeType' => $img->mimetype,
-                    'path' => $img->path_string
+                    'path' => $img->path_string,
                 ]);
             }
-
         }
 
         return json_decode(json_encode($response));
@@ -148,47 +180,69 @@ class Post extends Model implements TaggableInterface
 
     /**
      * URL post
-     * @return string
      */
-    public function getUrlAttribute()
+    public function getUrlAttribute($locale = null)
     {
-  
-      $category = $this->category;
-      if (!isset($category->slug)) {
-        if (!empty($this->categories)) {
-          $category = $this->categories->first();
-          if (!isset($category->slug)) {
-            $category = Category::take(1)->get()->first();
-          }
-        } else {
-          $category = Category::take(1)->get()->first();
+        if (empty($this->slug)) {
+            $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
+            $this->slug = $post->slug ?? '';
         }
-      }
-        
-        return \URL::route(\LaravelLocalization::getCurrentLocale() . '.iblog.'.$category->slug.'.post', [$this->slug]);
 
+        $currentLocale = $locale ?? locale();
+        if (! is_null($locale)) {
+            $this->slug = $this->getTranslation($currentLocale)->slug;
+            $this->category = $this->category->getTranslation($currentLocale);
+        }
+
+        if (empty($this->slug)) {
+            return '';
+        }
+
+        $currentDomain = ! empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
+          parse_url(config('app.url'), PHP_URL_HOST);
+
+        if (config('app.url') != $currentDomain) {
+            $savedDomain = config('app.url');
+            config(['app.url' => 'https://'.$currentDomain]);
+        }
+
+        if (isset($this->options->urlCoder) && ! empty($this->options->urlCoder) && $this->options->urlCoder == 'onlyPost') {
+            $url = \LaravelLocalization::localizeUrl('/'.$this->slug, $currentLocale);
+        } else {
+            if (empty($this->category->slug)) {
+                $url = '';
+            } else {
+                $url = \LaravelLocalization::localizeUrl('/'.$this->category->slug.'/'.$this->slug, $currentLocale);
+            }
+        }
+
+        if (isset($savedDomain) && ! empty($savedDomain)) {
+            config(['app.url' => $savedDomain]);
+        }
+
+        return $url;
     }
 
     /**
      * Magic Method modification to allow dynamic relations to other entities.
-     * @var $value
-     * @var $destination_path
-     * @return string
+     *
+     *
+     * @var
+     * @var
      */
     public function __call($method, $parameters)
     {
-        #i: Convert array to dot notation
+        //i: Convert array to dot notation
         $config = implode('.', ['asgard.iblog.config.relations.post', $method]);
 
-        #i: Relation method resolver
+        //i: Relation method resolver
         if (config()->has($config)) {
             $function = config()->get($config);
 
             return $function($this);
         }
 
-        #i: No relation found, return the call to parent (Eloquent) to handle it.
+        //i: No relation found, return the call to parent (Eloquent) to handle it.
         return parent::__call($method, $parameters);
     }
-
 }
