@@ -30,7 +30,10 @@ class CategoryTranslation extends Model
       ]
     ];
   }
+    public function getMeetaDescriptionAttribute(){
 
+        return $this->meta_description ?? substr(strip_tags($this->description??''),0,150);
+    }
   public function getTranslatableOptionAttribute($value)
   {
 
@@ -39,4 +42,14 @@ class CategoryTranslation extends Model
 
 
   }
+
+    /**
+     * @return mixed
+     */
+    public function getMeetaTitleAttribute(){
+
+        return $this->meta_title ?? $this->title;
+    }
+
+
 }
