@@ -5,8 +5,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "imagina/core-module": "v10.x-dev",
-        "imagina/ihelpers-module": "v10.x-dev",
+        "imagina/core-module": "^10.0",
+        "imagina/ihelpers-module": "^10.0",
         "cviebrock/eloquent-sluggable": "^8.0|^9.0|^10.0"
     },
     "require-dev": {
