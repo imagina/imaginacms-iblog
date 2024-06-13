@@ -11,7 +11,7 @@ class AddIndiceInCategoryTranslationsTable extends Migration
    */
   public function up(): void
   {
-    Schema::create('iblog__category_translations', function (Blueprint $table) {
+    Schema::table('iblog__category_translations', function (Blueprint $table) {
       $table->index(['status']);
     });
   }

@@ -11,7 +11,7 @@ class AddIndiceInPostTranslationsTable extends Migration
    */
   public function up(): void
   {
-    Schema::create('iblog__post__category', function (Blueprint $table) {
+    Schema::table('iblog__post_translations', function (Blueprint $table) {
       $table->index(['status']);
     });
   }

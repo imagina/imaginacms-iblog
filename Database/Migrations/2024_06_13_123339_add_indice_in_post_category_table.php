@@ -11,7 +11,7 @@ class AddIndiceInPostCategoryTable extends Migration
    */
   public function up(): void
   {
-    Schema::create('iblog__post__category', function (Blueprint $table) {
+    Schema::table('iblog__post__category', function (Blueprint $table) {
       $table->index(['post_id', 'category_id']);
     });
   }
