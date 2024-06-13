@@ -145,7 +145,8 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
 
     if (isset($filter->status) && !empty($filter->status)) {
       !is_array($filter->status) ? $filter->status = [$filter->status] : false;
-      $query->whereRaw('id IN (SELECT post_id from iblog__post_translations where status = ' . implode($filter->status) . " and locale = '" . ($filter->locale ?? locale()) . "')");
+      $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = " . join($filter->status) .
+        " and locale = '" . ($filter->locale ?? locale()) . "' and post_id = iblog__posts.id )");
     }
 
     // add filter by Categories Intersected 1 or more than 1, in array
@@ -159,7 +160,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
     }
 
     if (isset($filter->withoutInternal)) {
-      $query->whereRaw('iblog__posts.category_id IN (SELECT id from iblog__categories where internal = 0)');
+      $query->whereRaw("iblog__posts.category_id IN (SELECT id from iblog__categories where internal = 0 and iblog__categories.id = iblog__posts.category_id)");
     }
 
     if (isset($params->setting) && isset($params->setting->fromAdmin) && $params->setting->fromAdmin) {
@@ -193,7 +194,6 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
   }
 
 
-
   public function defaultPreFilters($query, $params)
   {
     //pre-filter date_available
@@ -202,10 +202,10 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
       $query->orWhereNull('date_available');
     });
 
-    $query->whereRaw('iblog__posts.category_id IN (SELECT category_id from iblog__category_translations where status = 1)');
+    $query->whereRaw("iblog__posts.category_id IN (SELECT category_id from iblog__category_translations where status = 1 and category_id = iblog__posts.category_id)");
 
     //pre-filter status
-    $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = 2 and locale = '" . ($params->filter->locale ?? locale()) . "')");
+    $query->whereRaw("id IN (SELECT post_id from iblog__post_translations where status = 2 and locale = '" . ($params->filter->locale ?? locale()) . "' and post_id = iblog__posts.id)");
 
 
   }
