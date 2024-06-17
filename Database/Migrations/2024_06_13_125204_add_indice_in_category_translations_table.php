@@ -23,4 +23,4 @@ class AddIndiceInCategoryTranslationsTable extends Migration
   {
     //
   }
-};
+}

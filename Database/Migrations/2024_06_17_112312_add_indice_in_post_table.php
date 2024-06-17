@@ -4,15 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIndiceInPostTranslationsTable extends Migration
+class AddIndiceInPostTable extends Migration
 {
   /**
    * Run the migrations.
    */
   public function up(): void
   {
-    Schema::table('iblog__post_translations', function (Blueprint $table) {
-      $table->index(['status']);
+    Schema::table('iblog__posts', function (Blueprint $table) {
+      $table->index(['date_available']);
     });
   }
 
