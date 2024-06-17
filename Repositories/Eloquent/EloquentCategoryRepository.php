@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Modules\Core\Icrud\Repositories\Eloquent\EloquentCrudRepository;
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Repositories\CategoryRepository;
+use Modules\Iblog\Events\CategoryWasCreated;
+use Modules\Iblog\Events\CategoryWasUpdated;
 
 class EloquentCategoryRepository extends EloquentCrudRepository implements CategoryRepository
 {
