@@ -126,8 +126,8 @@ class Post extends CrudModel implements TaggableInterface
 
     if (!is_null($mainimageFile)) {
       $image = [
-        'mimeType' => 'image/jpeg',
-        'path' => $file->path->getUrl()
+        'mimeType' => $mainimageFile->mimetype,
+        'path' => $mainimageFile->path_string
       ];
     }
 
