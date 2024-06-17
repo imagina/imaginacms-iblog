@@ -1,4 +1,4 @@
-<meta name="description" content="{{strip_tags($category->description)}}">
+<meta name="description" content="{{$category->meta_description ??  Str::limit(strip_tags($category->description),160)}}">
 <!-- Schema.org para Google+ -->
 <meta itemprop="name" content="{{$category->meta_title ?? $category->title}}">
 <meta itemprop="description" content="{{$category->meta_description ??  Str::limit(strip_tags($category->description),160)}}">
