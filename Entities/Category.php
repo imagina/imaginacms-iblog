@@ -88,44 +88,31 @@ class Category extends CrudModel
     }
   }
 
-  public function getSecondaryImageAttribute()
-  {
-    $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
-    if (!$thumbnail) {
-      $image = [
-        'mimeType' => 'image/jpeg',
-        'path' => url('modules/iblog/img/post/default.jpg')
-      ];
-    } else {
-      $image = [
-        'mimeType' => $thumbnail->mimetype,
-        'path' => $thumbnail->path_string
-      ];
-    }
-    return json_decode(json_encode($image));
-  }
 
   public function getMainImageAttribute()
   {
-    $thumbnail = $this->files()->where('zone', 'mainimage')->first();
-    if (!$thumbnail) {
-      if (isset($this->options->mainimage)) {
-        $image = [
-          'mimeType' => 'image/jpeg',
-          'path' => url($this->options->mainimage)
-        ];
-      } else {
-        $image = [
-          'mimeType' => 'image/jpeg',
-          'path' => url('modules/iblog/img/post/default.jpg')
-        ];
+
+    //Default
+    $image = [
+      'mimeType' => 'image/jpeg',
+      'path' => url('modules/iblog/img/post/default.jpg')
+    ];
+
+    $mainimageFile = null;
+    if($this->relationLoaded('files')){
+      foreach($this->files as $file){
+        if($file->pivot->zone == "mainimage") $mainimageFile = $file;
       }
-    } else {
+    }
+
+
+    if(!is_null($mainimageFile)){
       $image = [
-        'mimeType' => $thumbnail->mimetype,
-        'path' => $thumbnail->path_string
+        'mimeType' => 'image/jpeg',
+        'path' => $file->path->getUrl()
       ];
     }
+
     return json_decode(json_encode($image));
 
   }
@@ -141,26 +128,25 @@ class Category extends CrudModel
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $category->slug ?? '';
     }
-    
+
     $currentLocale = $locale ?? locale();
     if(!is_null($currentLocale)){
-       $this->slug = $this->getTranslation($currentLocale)->slug;
+      $this->slug = $this->getTranslation($currentLocale)->slug;
     }
 
     if (empty($this->slug)) return "";
-  
+
     $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
       parse_url(config('app.url'),PHP_URL_HOST);
-      
-    if (!request()->wantsJson() || Str::startsWith(request()->path(), 'api')) {
-      if(config("app.url") != $currentDomain){
-        $savedDomain = config("app.url");
-        config(["app.url" => "https://".$currentDomain]);
-      }
-      $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
-  
-      if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
+
+    if(config("app.url") != $currentDomain){
+      $savedDomain = config("app.url");
+      config(["app.url" => "https://".$currentDomain]);
     }
+    $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
+
+    if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
+
 
     return $url;
   }

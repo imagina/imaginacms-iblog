@@ -35,7 +35,7 @@ class Post extends CrudModel implements TaggableInterface
     'create' => 'Modules\Iblog\Http\Requests\CreatePostRequest',
     'update' => 'Modules\Iblog\Http\Requests\UpdatePostRequest',
   ];
-  
+
   protected $table = 'iblog__posts';
 
   protected $fillable = [
@@ -60,13 +60,13 @@ class Post extends CrudModel implements TaggableInterface
     'status',
   ];
   protected $presenter = PostPresenter::class;
-  
+
   protected $dates = [
     'date_available'
   ];
-  
+
   protected $with = [
-    'tags'
+    'tags', 'files'
   ];
 
   protected $casts = [
@@ -104,71 +104,37 @@ class Post extends CrudModel implements TaggableInterface
     }
   }
 
-  public function getSecondaryImageAttribute()
-  {
-    $thumbnail = $this->files->where('zone', 'secondaryimage')->first();
-    if (!$thumbnail) {
-      $image = [
-        'mimeType' => 'image/jpeg',
-        'path' => url('modules/iblog/img/post/default.jpg')
-      ];
-    } else {
-      $image = [
-        'mimeType' => $thumbnail->mimetype,
-        'path' => $thumbnail->path_string
-      ];
-    }
-    return json_decode(json_encode($image));
-  }
-
+  /**
+   *  main image url used to meta
+   */
   public function getMainImageAttribute()
   {
-    $thumbnail = $this->files->where('zone', 'mainimage')->first();
-    if (!$thumbnail) {
-      if (isset($this->options->mainimage)) {
-        $image = [
-          'mimeType' => 'image/jpeg',
-          'path' => url($this->options->mainimage)
-        ];
-      } else {
-        $image = [
-          'mimeType' => 'image/jpeg',
-          'path' => url('modules/iblog/img/post/default.jpg')
-        ];
+
+    //Default
+    $image = [
+      'mimeType' => 'image/jpeg',
+      'path' => url('modules/iblog/img/post/default.jpg')
+    ];
+
+    //Get and Set mainimage
+    $mainimageFile = null;
+    if ($this->relationLoaded('files')) {
+      foreach ($this->files as $file) {
+        if ($file->pivot->zone == "mainimage") $mainimageFile = $file;
       }
-    } else {
+    }
+
+    if (!is_null($mainimageFile)) {
       $image = [
-        'mimeType' => $thumbnail->mimetype,
-        'path' => $thumbnail->path_string
+        'mimeType' => 'image/jpeg',
+        'path' => $file->path->getUrl()
       ];
     }
+
     return json_decode(json_encode($image));
 
   }
 
-  public function getGalleryAttribute()
-  {
-
-    $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
-    if (count($images)) {
-      $response = array();
-      foreach ($images as $image) {
-        $response = ["mimetype" => "image/jpeg", "path" => $image];
-      }
-    } else {
-      $gallery = $this->filesByZone('gallery')->get();
-      $response = [];
-      foreach ($gallery as $img) {
-        array_push($response, [
-          'mimeType' => $img->mimetype,
-          'path' => $img->path_string
-        ]);
-      }
-
-    }
-
-    return json_decode(json_encode($response));
-  }
 
   /**
    * URL post
