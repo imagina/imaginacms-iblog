@@ -97,11 +97,13 @@ class Post extends CrudModel implements TaggableInterface
 
   public function getOptionsAttribute($value)
   {
-    try {
-      return json_decode(json_decode($value));
-    } catch (\Exception $e) {
-      return json_decode($value);
+    $response = json_decode($value);
+
+    if(is_string($response)) {
+      $response = json_decode($response);
     }
+
+    return $response;
   }
 
   /**
