@@ -29,8 +29,8 @@ class PublicController extends BasePublicController
   private $pageRepository;
 
   public function __construct(
-    PostRepository $post, 
-    CategoryRepository $category, 
+    PostRepository $post,
+    CategoryRepository $category,
     TagRepository $tag,
     PageRepository $pageRepository
     ){
@@ -48,8 +48,8 @@ class PublicController extends BasePublicController
     $result = validateLocaleFromUrl($request,['entity' => $category]);
     if(isset($result["reedirect"]))
       return redirect()->to($result["url"]);
-    
-    
+
+
     //Default Template
     $tpl = 'iblog::frontend.index';
     $ttpl = 'iblog.index';
@@ -58,7 +58,7 @@ class PublicController extends BasePublicController
 
 
     $configFilters = config("asgard.iblog.config.filters");
-    
+
     $params = ["filter" => ["categoryId" => $category->id]];
     $posts = $this->post->getItemsBy(json_decode(json_encode($params)));
     //Get Custom Template.
@@ -107,8 +107,9 @@ class PublicController extends BasePublicController
       $organization = tenant();
     }
 
-    return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','organization'));
-
+    return $category->renderLayout(function() use($posts, $category, $categoryBreadcrumb, $organization){
+      return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','organization'));
+    }, ["posts" => $posts, "category" => $category, "categoryBreadcrumb" => $categoryBreadcrumb, "organization" => $organization]);
   }
 
   public function show($post,$request)
@@ -120,8 +121,8 @@ class PublicController extends BasePublicController
     $result = validateLocaleFromUrl($request,['entity' => $post]);
     if(isset($result["reedirect"]))
       return redirect()->to($result["url"]);
-    
-   
+
+
 
     $tpl = 'iblog::frontend.show';
     $ttpl = 'iblog.show';
@@ -159,7 +160,7 @@ class PublicController extends BasePublicController
     if (view()->exists($ctpl)) $tpl = $ctpl;
 
     $this->addAlternateUrls(alternate($post));
-    
+
     //meta keywords
     $metaKeywords = (implode("," ,$post->meta_keywords ?? [])).
       join(",", $post->tags->pluck('name')->toArray());
@@ -170,9 +171,9 @@ class PublicController extends BasePublicController
       $organization = tenant();
     }
 
-    return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','organization'));
-
-
+    return $post->renderLayout(function() use($post, $category, $tags, $categoryBreadcrumb, $metaKeywords, $organization){
+      return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','organization'));
+    }, ["post" => $post, "category" => $category, "tags" => $tags, "categoryBreadcrumb" => $categoryBreadcrumb, "metaKeywords" => $metaKeywords, "organization" => $organization]);
   }
 
   public function tag($slug)

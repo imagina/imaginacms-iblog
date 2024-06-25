@@ -16,6 +16,7 @@ use Modules\Isite\Traits\Typeable;
 use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 use Modules\Ifillable\Traits\isFillable;
 use Modules\Isite\Traits\RevisionableTrait;
+use Modules\Ibuilder\Traits\isBuildable;
 
 use Modules\Core\Support\Traits\AuditTrait;
 use Modules\Iqreable\Traits\IsQreable;
@@ -24,7 +25,7 @@ class Category extends CrudModel
 {
   use Translatable, MediaRelation, PresentableTrait,
     NamespacedEntity, NodeTrait, BelongsToTenant,
-    Typeable, isFillable, IsQreable;
+    Typeable, isFillable, IsQreable, isBuildable;
 
   public $transformer = 'Modules\Iblog\Transformers\CategoryTransformer';
   public $entity = 'Modules\Iblog\Entities\Category';
@@ -141,14 +142,14 @@ class Category extends CrudModel
       $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $category->slug ?? '';
     }
- 
+
     $currentLocale = $locale ?? locale();
     if(!is_null($currentLocale)){
        $this->slug = $this->getTranslation($currentLocale)->slug;
     }
 
     if (empty($this->slug)) return "";
-  
+
     $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
       parse_url(config('app.url'),PHP_URL_HOST);
 
@@ -157,9 +158,9 @@ class Category extends CrudModel
         config(["app.url" => "https://".$currentDomain]);
       }
       $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
-  
+
       if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
-   
+
 
     return $url;
   }
