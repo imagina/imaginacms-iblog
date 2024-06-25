@@ -107,7 +107,9 @@ class PublicController extends BasePublicController
             $organization = tenant();
         }
 
-        return view($tpl, compact('posts', 'category', 'categoryBreadcrumb', 'organization'));
+      return $category->renderLayout(function() use($posts, $category, $categoryBreadcrumb, $organization){
+        return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','organization'));
+      }, ["posts" => $posts, "category" => $category, "categoryBreadcrumb" => $categoryBreadcrumb, "organization" => $organization]);
     }
 
     public function show($post, $request)
@@ -171,7 +173,9 @@ class PublicController extends BasePublicController
             $organization = tenant();
         }
 
-        return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb', 'metaKeywords', 'organization'));
+      return $post->renderLayout(function() use($post, $category, $tags, $categoryBreadcrumb, $metaKeywords, $organization){
+        return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','organization'));
+      }, ["post" => $post, "category" => $category, "tags" => $tags, "categoryBreadcrumb" => $categoryBreadcrumb, "metaKeywords" => $metaKeywords, "organization" => $organization]);
     }
 
     public function tag($slug)

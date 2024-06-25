@@ -16,6 +16,7 @@ use Modules\Isite\Traits\Typeable;
 use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 use Modules\Ifillable\Traits\isFillable;
 use Modules\Isite\Traits\RevisionableTrait;
+use Modules\Ibuilder\Traits\isBuildable;
 
 use Modules\Core\Support\Traits\AuditTrait;
 use Modules\Iqreable\Traits\IsQreable;
@@ -24,7 +25,7 @@ class Category extends CrudModel
 {
   use Translatable, MediaRelation, PresentableTrait,
     NamespacedEntity, NodeTrait, BelongsToTenant,
-    Typeable, isFillable, IsQreable;
+    Typeable, isFillable, IsQreable, isBuildable;
 
   public $transformer = 'Modules\Iblog\Transformers\CategoryTransformer';
   public $entity = 'Modules\Iblog\Entities\Category';
