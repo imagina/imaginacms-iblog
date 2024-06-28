@@ -16,7 +16,8 @@ class UpdateCategoryRequest extends BaseFormRequest
     {
         return [
             'title' => 'min:1',
-            'slug' => [new UniqueSlugRule('iblog__category_translations', $this->id, 'category_id', trans('iblog::category.messages.sameSlug')), 'min:1'],
+            // 'slug' => [new UniqueSlugRule('iblog__post_translations', $this->id, 'post_id'), 'min:1'],
+            'slug' => ['required', 'min:1'],
             'description' => 'min:1',
         ];
     }
