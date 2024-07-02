@@ -67,7 +67,7 @@ class Post extends CrudModel implements TaggableInterface
   ];
 
   protected $with = [
-    'tags'
+    'tags', 'files'
   ];
 
   protected $casts = [
@@ -105,23 +105,6 @@ class Post extends CrudModel implements TaggableInterface
     }
   }
 
-  public function getSecondaryImageAttribute()
-  {
-    $thumbnail = $this->files->where('zone', 'secondaryimage')->first();
-    if (!$thumbnail) {
-      $image = [
-        'mimeType' => 'image/jpeg',
-        'path' => url('modules/iblog/img/post/default.jpg')
-      ];
-    } else {
-      $image = [
-        'mimeType' => $thumbnail->mimetype,
-        'path' => $thumbnail->path_string
-      ];
-    }
-    return json_decode(json_encode($image));
-  }
-
   /**
    *  main image url used to meta
    */
@@ -135,11 +118,17 @@ class Post extends CrudModel implements TaggableInterface
     ];
 
     //Get and Set mainimage
-    $file = $this->filesByZone("mainimage")->first();
-    if(!is_null($file)){
+    $mainimageFile = null;
+    if ($this->relationLoaded('files')) {
+      foreach ($this->files as $file) {
+        if ($file->pivot->zone == "mainimage") $mainimageFile = $file;
+      }
+    }
+
+    if (!is_null($mainimageFile)) {
       $image = [
-        'mimeType' => 'image/jpeg',
-        'path' => $file->path->getUrl()
+        'mimeType' => $mainimageFile->mimetype,
+        'path' => $mainimageFile->path_string
       ];
     }
 
@@ -147,29 +136,6 @@ class Post extends CrudModel implements TaggableInterface
 
   }
 
-  public function getGalleryAttribute()
-  {
-
-    $images = \Storage::disk('publicmedia')->files('assets/iblog/post/gallery/' . $this->id);
-    if (count($images)) {
-      $response = array();
-      foreach ($images as $image) {
-        $response = ["mimetype" => "image/jpeg", "path" => $image];
-      }
-    } else {
-      $gallery = $this->filesByZone('gallery')->get();
-      $response = [];
-      foreach ($gallery as $img) {
-        array_push($response, [
-          'mimeType' => $img->mimetype,
-          'path' => $img->path_string
-        ]);
-      }
-
-    }
-
-    return json_decode(json_encode($response));
-  }
 
   /**
    * URL post
