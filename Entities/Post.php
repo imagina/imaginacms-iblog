@@ -17,6 +17,7 @@ use Modules\Isite\Traits\Typeable;
 use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 use Modules\Isite\Traits\RevisionableTrait;
 use Modules\Iqreable\Traits\IsQreable;
+use Modules\Ibuilder\Traits\isBuildable;
 
 use Modules\Core\Support\Traits\AuditTrait;
 
@@ -24,7 +25,7 @@ class Post extends CrudModel implements TaggableInterface
 {
   use Translatable, PresentableTrait, NamespacedEntity,
     TaggableTrait, MediaRelation, BelongsToTenant,
-    Typeable, IsQreable;
+    Typeable, IsQreable, isBuildable;
 
   protected static $entityNamespace = 'asgardcms/post';
 
