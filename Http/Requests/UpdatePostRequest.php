@@ -18,7 +18,7 @@ class UpdatePostRequest extends BaseFormRequest
   {
     return [
       'name' => 'min:1',
-      'slug' => [new UniqueSlugRule("iblog__post_translations", $this->id, "post_id") ,"min:1"],
+      'slug' => ["min:1"],
       'description' => 'min:1'
     ];
   }

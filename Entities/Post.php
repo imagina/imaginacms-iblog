@@ -60,6 +60,7 @@ class Post extends CrudModel implements TaggableInterface
     'translatable_options',
     'status',
   ];
+  public $uniqueFields = ['slug'];
   protected $presenter = PostPresenter::class;
 
   protected $dates = [

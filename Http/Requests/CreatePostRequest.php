@@ -19,7 +19,7 @@ class CreatePostRequest extends BaseFormRequest
         return [
             'title' => 'required|min:1',
             'summary'=>'required|min:1',
-          'slug' => ["required",new UniqueSlugRule("iblog__post_translations"),"min:1"],
+          'slug' => ["required","min:1"],
             'description' => 'required|min:1',
         ];
     }
