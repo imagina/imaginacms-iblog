@@ -37,16 +37,16 @@ $customMiddlewares = config('asgard.iblog.config.middlewares') ?? [];
 //      //'middleware' => config('asgard.iblog.config.middleware'),
 //    ]);
 //  });
-  
-  
-  /** @var Router $router */
-  $router->group(['prefix' => 'iblog/feed',
-    'middleware' => $customMiddlewares], function (Router $router) use ($locale) {
-    $router->get('{format}', [
-      'as' => $locale . '.iblog.feed.format',
-      'uses' => 'PublicController@feed',
-    
-    ]);
-  });
-  
+//
+//
+//  /** @var Router $router */
+//  $router->group(['prefix' => 'iblog/feed',
+//    'middleware' => $customMiddlewares], function (Router $router) use ($locale) {
+//    $router->get('{format}', [
+//      'as' => $locale . '.iblog.feed.format',
+//      'uses' => 'PublicController@feed',
+//
+//    ]);
+//  });
+
 

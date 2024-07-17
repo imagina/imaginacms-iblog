@@ -196,15 +196,4 @@ class PublicController extends BasePublicController
     return view($tpl, compact('posts', 'tag'));
 
   }
-
-  public function feed($format)
-  {
-    $postPerFeed = config('asgard.iblog.config.postPerFeed');
-    $posts = $this->post->whereFilters((object)['status' => 'publicado', 'take' => $postPerFeed]);
-    $feed = new SupportFeed($format, $posts);
-    $feed_logo = config('asgard.iblog.config.logo');
-    return $feed->feed($feed_logo);
-
-  }
-
 }
