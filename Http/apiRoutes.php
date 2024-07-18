@@ -4,11 +4,19 @@ use Illuminate\Routing\Router;
 
 $router->group(['prefix' => 'iblog/v1'], function (Router $router) {
 
-  //======  CATEGORIES
-  require('ApiRoutes/categoryRoutes.php');
+  $router->apiCrud([
+    'module' => 'iblog',
+    'prefix' => 'posts',
+    'controller' => 'PostApiController',
+    //'middleware' => ['create' => [], 'index' => [], 'show' => [], 'update' => [], 'delete' => [], 'restore' => []]
+  ]);
 
-  //======  POSTS
-  require('ApiRoutes/postRoutes.php');
+  $router->apiCrud([
+    'module' => 'iblog',
+    'prefix' => 'categories',
+    'controller' => 'CategoryApiController',
+    //'middleware' => ['create' => [], 'index' => [], 'show' => [], 'update' => [], 'delete' => [], 'restore' => []]
+  ]);
 
   $router->apiCrud([
     'module' => 'iblog',
