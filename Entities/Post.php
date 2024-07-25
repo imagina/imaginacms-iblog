@@ -18,14 +18,14 @@ use Modules\Core\Icrud\Traits\hasEventsWithBindings;
 use Modules\Isite\Traits\RevisionableTrait;
 use Modules\Iqreable\Traits\IsQreable;
 use Modules\Ibuilder\Traits\isBuildable;
-
+use Modules\Ifillable\Traits\isFillable;
 use Modules\Core\Support\Traits\AuditTrait;
 
 class Post extends CrudModel implements TaggableInterface
 {
   use Translatable, PresentableTrait, NamespacedEntity,
     TaggableTrait, MediaRelation, BelongsToTenant,
-    Typeable, IsQreable, isBuildable;
+    Typeable, IsQreable, isBuildable, isFillable;
 
   protected static $entityNamespace = 'asgardcms/post';
 
@@ -68,7 +68,7 @@ class Post extends CrudModel implements TaggableInterface
   ];
 
   protected $with = [
-    'tags','files'
+    'tags','files', 'fields'
   ];
 
   protected $casts = [
