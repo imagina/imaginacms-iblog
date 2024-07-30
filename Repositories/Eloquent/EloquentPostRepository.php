@@ -121,7 +121,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
       $orderSearchResults = json_decode(setting('iblog::orderSearchResults'));
 
       // removing symbols used by MySQL
-      $filter->search = preg_replace('/[^Ñña-zA-Z0-9]+/', ' ', $filter->search);
+      $filter->search = sanitizeSearchParameter($filter->search);
       $words = explode(' ', $filter->search); //Explode
 
       //Search query
