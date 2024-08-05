@@ -60,6 +60,7 @@ class Category extends CrudModel
   protected $with = [
     'fields'
   ];
+
   /*
   |--------------------------------------------------------------------------
   | RELATIONS
@@ -100,14 +101,14 @@ class Category extends CrudModel
     ];
 
     $mainimageFile = null;
-    if($this->relationLoaded('files')){
-      foreach($this->files as $file){
-        if($file->pivot->zone == "mainimage") $mainimageFile = $file;
+    if ($this->relationLoaded('files')) {
+      foreach ($this->files as $file) {
+        if ($file->pivot->zone == "mainimage") $mainimageFile = $file;
       }
     }
 
 
-    if(!is_null($mainimageFile)){
+    if (!is_null($mainimageFile)) {
       $image = [
         'mimeType' => $mainimageFile->mimetype,
         'path' => $mainimageFile->path_string
@@ -131,22 +132,22 @@ class Category extends CrudModel
     }
 
     $currentLocale = $locale ?? locale();
-    if(!is_null($currentLocale)){
+    if (!is_null($currentLocale)) {
       $this->slug = $this->getTranslation($currentLocale)->slug;
     }
 
     if (empty($this->slug)) return "";
 
     $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
-      parse_url(config('app.url'),PHP_URL_HOST);
+      parse_url(config('app.url'), PHP_URL_HOST);
 
-    if(config("app.url") != $currentDomain){
+    if (config("app.url") != $currentDomain) {
       $savedDomain = config("app.url");
-      config(["app.url" => "https://".$currentDomain]);
+      config(["app.url" => "https://" . $currentDomain]);
     }
     $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
 
-    if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
+    if (isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
 
 
     return $url;
@@ -201,4 +202,13 @@ class Category extends CrudModel
     return 'parent_id';
   }
 
+  public function getCacheClearableData()
+  {
+    return [
+      'cdn' => [
+        config("app.url"),
+        $this->url
+      ]
+    ];
+  }
 }
