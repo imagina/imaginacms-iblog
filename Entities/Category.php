@@ -203,4 +203,13 @@ class Category extends CrudModel
     return 'parent_id';
   }
 
+  public function getCacheClearableData()
+  {
+    return [
+      'cdn' => [
+        config("app.url"),
+        $this->url
+      ]
+    ];
+  }
 }

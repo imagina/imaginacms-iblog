@@ -206,4 +206,14 @@ class Post extends CrudModel implements TaggableInterface
     return parent::__call($method, $parameters);
   }
 
+  public function getCacheClearableData()
+  {
+    return [
+      'cdn' => [
+        config("app.url"),
+        $this->category->url,
+        $this->url
+      ]
+    ];
+  }
 }
