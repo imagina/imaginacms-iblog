@@ -109,7 +109,8 @@ class PublicController extends BasePublicController
 
     return $category->renderLayout(function() use($tpl, $posts, $category, $categoryBreadcrumb, $organization){
       return view($tpl, compact('posts', 'category', 'categoryBreadcrumb','organization'));
-    }, ["posts" => $posts, "category" => $category, "categoryBreadcrumb" => $categoryBreadcrumb, "organization" => $organization]);
+    }, ["posts" => $posts, "category" => $category, "categoryBreadcrumb" => $categoryBreadcrumb, "organization" => $organization,
+        "IbuilderLayoutMetaTags"=> 'iblog::frontend.partials.category.metas']);
   }
 
   public function show($post,$request)
@@ -173,7 +174,8 @@ class PublicController extends BasePublicController
 
     return $post->renderLayout(function() use($tpl, $post, $category, $tags, $categoryBreadcrumb, $metaKeywords, $organization){
       return view($tpl, compact('post', 'category', 'tags', 'categoryBreadcrumb','metaKeywords','organization'));
-    }, ["post" => $post, "category" => $category, "tags" => $tags, "categoryBreadcrumb" => $categoryBreadcrumb, "metaKeywords" => $metaKeywords, "organization" => $organization]);
+    }, ["post" => $post, "category" => $category, "tags" => $tags, "categoryBreadcrumb" => $categoryBreadcrumb, "metaKeywords" => $metaKeywords, "organization" => $organization,
+      "IbuilderLayoutMetaTags"=> 'iblog::frontend.partials.post.metas']);
   }
 
   public function tag($slug)
