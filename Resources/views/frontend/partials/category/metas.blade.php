@@ -7,7 +7,7 @@
 <meta property="og:title" content="{{$category->meta_title ?? $category->title}}"/>
 <meta property="og:type" content="article"/>
 <meta property="og:url" content="{{$category->url}}"/>
-<meta property="og:image" content="{{url($category->mainImage->path)}}"/>
+<meta property="og:image" content="{{url($category->mediaFiles()->mainimage->path)}}"/>
 <meta property="og:description" content="{{$category->meta_description ??  Str::limit( strip_tags($category->description),160)}}"/>
 <meta property="og:site_name" content="{{Setting::get('core::site-name') }}"/>
 <meta property="og:locale" content="{{config('asgard.iblog.config.oglocale')}}">
