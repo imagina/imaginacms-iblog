@@ -18,7 +18,7 @@ class UpdatePostRequest extends BaseFormRequest
   {
     return [
       'name' => 'min:1',
-      'slug' => ["min:1"],
+      'slug' => ["min:1", "alpha_dash:ascii"],
       'description' => 'min:1'
     ];
   }
