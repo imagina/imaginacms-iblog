@@ -1,7 +1,4 @@
 <div id="timelineLayout3" class="timeline">
- <div class="title-section">
-  {{-- <h2>{{dd($category)}}</h2> --}}
- </div>
  <div class="container">
   <div class="col-12">
    <div class="row">
@@ -29,8 +26,8 @@
          </div>
          <div class="item-info">
           @include("isite::frontend.partials.item", [
-              "itemLayout" => $itemComponentAttributesList['layout'],
-              "itemComponentAttributes" => $itemComponentAttributesList
+              "itemLayout" => $itemComponentAttributes['layout'],
+              "itemComponentAttributes" => $itemComponentAttributes
           ])
          </div>
         </div>
@@ -126,14 +123,14 @@
   #timelineLayout3 .content-item {
     @if($imageInterspersed)
       clear: both;
-    @if($firstItemPosition === '1')
+    @if($firstImagePosition === '1')
       &:nth-child(odd) .card-item .item-image {
         order: 0;
       }
       &:nth-child(even) .card-item .item-image {
         order: 1;
       }
-    @elseif($firstItemPosition === '2')
+    @elseif($firstImagePosition === '2')
       &:nth-child(odd) .card-item .item-image {
         order: 1;
       }
@@ -162,23 +159,28 @@
     .content-increment-time{
       margin: 0 10px;
     }
+    @if($showTwoItems)
+      @if($firstItemPosition === '1')
+        &:nth-child(odd) .content-increment-time {
+          order: 0;
+        }
+        &:nth-child(even) .content-increment-time {
+          order: 2;
+        }
 
-    @if($firstItemPosition === '1')
-      &:nth-child(odd) .content-increment-time {
-        order: 0;
-      }
-      &:nth-child(even) .content-increment-time {
-        order: 2;
-      }
+      @elseif($firstItemPosition === '2')
 
-    @elseif($firstItemPosition === '2')
-
-      &:nth-child(odd) .content-increment-time {
-        order: 2;
-      }
-      &:nth-child(even) .content-increment-time {
-        order: 0;
-      }
+        &:nth-child(odd) .content-increment-time {
+          order: 2;
+        }
+        &:nth-child(even) .content-increment-time {
+          order: 0;
+        }
+      @endif
+      @else
+         .content-increment-time {
+            order: {{ $mainLinePosition === '1' ? '0' : '1' }};
+         }
     @endif
   }
 
@@ -190,7 +192,7 @@
     color: {{$colorNumber}};
     background: {{$bgNumber}};
     border-radius: {{$radiusNumber}}%;
-    border: {{$borderNumber}};
+    border: {{$borderNumber}} solid {{$colorBorderNumber}};
     margin: {{ $marginNumber }};
     display: flex;
     align-items: center;
@@ -211,11 +213,11 @@
       font-size: {{$sizeDate}}px;
       font-weight: bold;
       color: {{$colorDate}};
-      padding: {{ $paddingDate }};
+      padding: {{ $paddingDate }}px;
       background: {{$bgDate}};
-      border-radius: {{$radiusDate}};
+      border-radius: {{$radiusDate}}px;
       text-align: center;
-      margin: {{ $marginDate }} 0;
+      margin: {{ $marginDate }} ;
     }
   }
   #timelineLayout3 .content-item{
