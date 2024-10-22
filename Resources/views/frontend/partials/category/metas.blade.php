@@ -1,3 +1,4 @@
+<title>{{$category->meta_title ?? $category->title}} | @setting('core::site-name')</title>
 <meta name="description" content="{{$category->meta_description ??  Str::limit(strip_tags($category->description),160)}}">
 <!-- Schema.org para Google+ -->
 <meta itemprop="name" content="{{$category->meta_title ?? $category->title}}">
