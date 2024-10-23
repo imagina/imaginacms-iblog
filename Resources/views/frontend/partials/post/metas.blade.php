@@ -1,3 +1,4 @@
+<title>{{$post->meta_title ?? $post->title}} | @setting('core::site-name')</title>
 <meta name="description"
       content="{{$post->meta_description ?? strip_tags($post->summary) ?? strip_tags($post->description)}}">
 <!-- Schema.org para Google+ -->

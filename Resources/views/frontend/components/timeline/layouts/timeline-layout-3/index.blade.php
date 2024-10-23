@@ -167,9 +167,9 @@
         &:nth-child(even) .content-increment-time {
           order: 2;
         }
-  
+
       @elseif($firstItemPosition === '2')
-  
+
         &:nth-child(odd) .content-increment-time {
           order: 2;
         }
@@ -270,4 +270,5 @@
       }
     }
   }
+
 </style>
