@@ -52,6 +52,7 @@ class MigrateWordPressIblog implements ShouldQueue
           'slug' => $post->post_name,
           'user_id' => 1,
           'created_at' => $post->post_date,
+          'status' => 2
         ]);
       } else {
         $newPost = $existingPost;
@@ -70,7 +71,8 @@ class MigrateWordPressIblog implements ShouldQueue
         if (is_null($cat)) {
           $newCategory = Category::create([
             'title' => $category,
-            'description' => $category
+            'description' => $category,
+            'status' => 1
           ]);
           $categoryIds[] = $newCategory->id;
         } else {
