@@ -17,7 +17,7 @@ class IblogDatabaseSeeder extends Seeder
         ProcessSeeds::dispatch([
             'baseClass' => "\Modules\Iblog\Database\Seeders",
             'seeds' => ['IblogModuleTableSeeder', 'RoleTableSeeder', 'SlugCheckerTableSeeder', 'LayoutsBlogTableSeeder',
-                'MoveStatusToPostsTranslationsTableSeeder', 'MoveStatusToCategoryTranslationsTable'],
+                'IblogWordpressContentMigrationTableSeeder','MoveStatusToPostsTranslationsTableSeeder', 'MoveStatusToCategoryTranslationsTable'],
         ]);
     }
 }
