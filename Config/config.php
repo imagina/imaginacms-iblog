@@ -499,5 +499,10 @@ return [
   ],
 
   // Wordpress Migration
-  'wordpressMigrationEnable' => false
+  'wordpressMigration' => [
+    'enableMig' => false,
+    'post' => [
+      'status' =>['all'] //['auto-draft', 'draft', 'publish', 'trash']
+    ]
+  ]
 ];

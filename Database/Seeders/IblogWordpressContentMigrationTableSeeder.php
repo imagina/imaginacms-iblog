@@ -10,7 +10,7 @@ class IblogWordpressContentMigrationTableSeeder extends Seeder
 {
   public function run()
   {
-    if (config('asgard.iblog.config.wordpressMigrationEnable')) {
+    if (config('asgard.iblog.config.wordpressMigration.enableMig')) {
       \Log::info('WordPress start migration');
       $totalCategories = \DB::connection('wordpress')
         ->table('wp_terms')
@@ -20,17 +20,23 @@ class IblogWordpressContentMigrationTableSeeder extends Seeder
 
       $batchCatSize = 100;
 
-    \Log::info('WordPress start Categories Migration');
+      \Log::info('WordPress start Categories Migration');
       for ($offset = 0; $offset < $totalCategories; $offset += $batchCatSize) {
         MigrateWordPressIblogCategories::dispatch($offset, $batchCatSize)->onQueue('wordpress_migration');
       }
 
       \Log::info('WordPress categories migration jobs dispatched successfully.');
 
-      $totalPosts = \DB::connection('wordpress')->table('wp_posts')
-        ->where('post_type', 'post')
-        ->where('post_status', 'publish')
-        ->count();
+      $wpStatusWhere = config('asgard.iblog.config.wordpressMigration.post.status');
+      // Convert an array if is a string
+      $wpStatusArray = is_string($wpStatusWhere) ? [$wpStatusWhere] : (array) $wpStatusWhere;
+      $queryPost = \DB::connection('wordpress')->table('wp_posts')
+        ->where('post_type', 'post');
+      // If the array contain 'all',don't apply whereIn()
+      if (!in_array('all', $wpStatusArray, true)) {
+        $queryPost->whereIn('post_status', $wpStatusArray);
+      }
+      $totalPosts = $queryPost->count();
 
       $batchPostSize = 100;
 
