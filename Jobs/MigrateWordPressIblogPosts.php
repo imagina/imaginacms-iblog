@@ -34,13 +34,19 @@ class MigrateWordPressIblogPosts implements ShouldQueue
    */
   public function handle(): void
   {
-    $posts = \DB::connection('wordpress')->table('wp_posts')
+    $wpStatusWhere = config('asgard.iblog.config.wordpressMigration.post.status');
+    // Convert an array if is a string
+    $wpStatusArray = is_string($wpStatusWhere) ? [$wpStatusWhere] : (array) $wpStatusWhere;
+    $queryPost = \DB::connection('wordpress')->table('wp_posts')
       ->where('post_type', 'post')
-      ->where('post_status', 'publish')
-      ->select('ID', 'post_title', 'post_content', 'post_date', 'post_name', 'post_modified')
+      ->select('ID', 'post_title', 'post_content', 'post_date', 'post_name', 'post_modified', 'post_status')
       ->offset($this->offset)
-      ->limit($this->limit)
-      ->get();
+      ->limit($this->limit);
+    // If the array contain 'all',don't apply whereIn()
+    if (!in_array('all', $wpStatusArray, true)) {
+      $queryPost->whereIn('post_status', $wpStatusArray);
+    }
+    $posts = $queryPost->get();
 
     $postsIds = $posts->pluck('ID');
 
@@ -64,20 +70,29 @@ class MigrateWordPressIblogPosts implements ShouldQueue
     foreach ($posts as $post) {
       $params = ['filter' => ['field' => 'external_id']];
       $existingPost = $postRepository->getItem($post->ID, json_decode(json_encode($params)));
-      if (is_null($existingPost)) {
+      if (is_null($existingPost) && (isset($existingPost->post_name) && !empty($existingPost->post_name))) {
+        $statusMap = [
+          'auto-draft' => Status::DRAFT,
+          'draft'      => Status::DRAFT,
+          'publish'    => Status::PUBLISHED,
+          'trash'      => Status::UNPUBLISHED,
+        ];
+        $status = $statusMap[$post->post_status] ?? Status::PENDING;
+
         $postToCreate = [
           'title' => $post->post_title,
           'description' => $post->post_content,
           'summary' => $post->post_title,
           'slug' => $post->post_name,
           'user_id' => 1,
-          'status' => Status::PUBLISHED,
+          'status' => $status,
           'created_at' => $post->post_date,
           'updated_at' => $post->post_modified,
           'external_id' => $post->ID,
         ];
 
-        $wpCategoriesByPost = $categoriesByPost->get($post->ID)->pluck('term_id')->toArray();
+        $wpCategories = $categoriesByPost->get($post->ID);
+        $wpCategoriesByPost = $wpCategories ? $wpCategories->pluck('term_id')->toArray() : [];
         $categoriesOfPost = [];
         if(!empty($wpCategoriesByPost)) {
           $categoriesOfPost = $localCat->whereIn('external_id', $wpCategoriesByPost)->pluck('id')->toArray();
