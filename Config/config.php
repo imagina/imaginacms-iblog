@@ -496,5 +496,8 @@ return [
         'types' => []
       ]
     ]
-  ]
+  ],
+
+  // Wordpress Migration
+  'wordpressMigrationEnable' => false
 ];

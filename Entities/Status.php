@@ -41,7 +41,7 @@ class Status
     /**
      * Get the post status
      */
-    public function get(int $statusId): string
+    public function get($statusId)
     {
         if (isset($this->statuses[$statusId])) {
             return $this->statuses[$statusId];
