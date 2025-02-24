@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Category;
+use Modules\Iblog\Services\WordPressMigrationService;
 
 class MigrateWordPressIblogCategories implements ShouldQueue
 {
@@ -33,15 +34,8 @@ class MigrateWordPressIblogCategories implements ShouldQueue
    */
   public function handle(): void
   {
-    $categories = \DB::connection('wordpress')
-      ->table('wp_terms')
-      ->join('wp_term_taxonomy', 'wp_terms.term_id', '=', 'wp_term_taxonomy.term_id')
-      ->where('wp_term_taxonomy.taxonomy', 'category')
-      ->select('wp_terms.term_id', 'wp_terms.name', 'wp_terms.slug', 'wp_term_taxonomy.parent')
-      ->offset($this->offset)
-      ->limit($this->limit)
-      ->orderBy('wp_term_taxonomy.parent', 'ASC')
-      ->get();
+    $migrationService = new WordPressMigrationService();
+    $categories = $migrationService->getCategories($this->offset, $this->limit);
 
     $categoryRepository = app('Modules\Iblog\Repositories\CategoryRepository');
 
