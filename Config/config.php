@@ -502,6 +502,9 @@ return [
   'wordpressMigration' => [
     'enableMig' => false,
     'post' => [
+      'images' => [
+        'limit' => 100
+      ],
       'status' =>['all'] //['auto-draft', 'draft', 'publish', 'trash']
     ]
   ]

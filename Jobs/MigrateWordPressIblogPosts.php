@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\Iblog\Entities\Post;
 use Modules\Iblog\Entities\Category;
 use Modules\Iblog\Entities\Status;
+use Modules\Iblog\Services\WordPressMigrationService;
 
 class MigrateWordPressIblogPosts implements ShouldQueue
 {
@@ -34,29 +35,11 @@ class MigrateWordPressIblogPosts implements ShouldQueue
    */
   public function handle(): void
   {
-    $wpStatusWhere = config('asgard.iblog.config.wordpressMigration.post.status');
-    // Convert an array if is a string
-    $wpStatusArray = is_string($wpStatusWhere) ? [$wpStatusWhere] : (array) $wpStatusWhere;
-    $queryPost = \DB::connection('wordpress')->table('wp_posts')
-      ->where('post_type', 'post')
-      ->select('ID', 'post_title', 'post_content', 'post_date', 'post_name', 'post_modified', 'post_status')
-      ->offset($this->offset)
-      ->limit($this->limit);
-    // If the array contain 'all',don't apply whereIn()
-    if (!in_array('all', $wpStatusArray, true)) {
-      $queryPost->whereIn('post_status', $wpStatusArray);
-    }
-    $posts = $queryPost->get();
-
+    $migrationService = new WordPressMigrationService();
+    $posts = $migrationService->getPosts($this->offset, $this->limit);
     $postsIds = $posts->pluck('ID');
 
-    $categories = \DB::connection('wordpress')->table('wp_terms')
-      ->join('wp_term_taxonomy', 'wp_terms.term_id', '=', 'wp_term_taxonomy.term_id')
-      ->join('wp_term_relationships', 'wp_term_taxonomy.term_taxonomy_id', '=', 'wp_term_relationships.term_taxonomy_id')
-      ->whereIn('wp_term_relationships.object_id', $postsIds)
-      ->where('wp_term_taxonomy.taxonomy', 'category')
-      ->select('wp_terms.term_id', 'wp_term_relationships.object_id')
-      ->get();
+    $categories = $migrationService->getPostsCat($postsIds);
 
     $categoriesByPost = $categories->groupBy('object_id');
     $externalCatIds = $categories->pluck('term_id')->unique()->toArray();
