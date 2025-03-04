@@ -503,6 +503,8 @@ return [
     'enableMig' => false,
     'post' => [
       'images' => [
+        'batch' => 50,
+        'sleep' => 0.5,
         'limit' => 100
       ],
       'status' =>['all'] //['auto-draft', 'draft', 'publish', 'trash']

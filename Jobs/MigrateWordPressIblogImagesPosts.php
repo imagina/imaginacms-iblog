@@ -34,6 +34,7 @@ class MigrateWordPressIblogImagesPosts implements ShouldQueue
    */
   public function handle(): void
   {
+    $sleep = config('asgard.iblog.config.wordpressMigration.post.images.sleep') ?? 0;
     $migrationService = new WordPressMigrationService();
     $data = $migrationService->getImagePost($this->offset, $this->limit);
 
@@ -51,6 +52,7 @@ class MigrateWordPressIblogImagesPosts implements ShouldQueue
       $relatedPostsIds = $relatedPosts->pluck('ID')->unique();
       $locPost = $localPosts->whereIn('external_id', $relatedPostsIds);
       $fixedUrl = str_replace('…', '%E2%80%A6', $imageUrl);
+      sleep($sleep);
       //Get base64 file
       $uploadedFile = getUploadedFileFromUrl($fixedUrl);
       //Create file
@@ -59,7 +61,17 @@ class MigrateWordPressIblogImagesPosts implements ShouldQueue
       $fileId = $file->id;
 
       foreach ($locPost as $post) {
-        $post->files()->attach($fileId, ['zone' => 'mainimage']);
+        // Obtener los archivos del post
+        $existingFiles = $post->files;
+
+        // Verificar si ya existe el archivo con los mismos valores
+        $fileExists = $existingFiles->contains(function ($file) use ($fileId) {
+          return $file->id == $fileId;
+        });
+        // Si no existe, lo agregamos
+        if (!$fileExists) {
+          $post->files()->attach($fileId, ['zone' => 'mainimage']);
+        }
       }
     }
   }
