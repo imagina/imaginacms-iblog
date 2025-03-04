@@ -53,7 +53,7 @@ class MigrateWordPressIblogPosts implements ShouldQueue
     foreach ($posts as $post) {
       $params = ['filter' => ['field' => 'external_id']];
       $existingPost = $postRepository->getItem($post->ID, json_decode(json_encode($params)));
-      if (is_null($existingPost) && (isset($existingPost->post_name) && !empty($existingPost->post_name))) {
+      if (is_null($existingPost) && (isset($post->post_name) && !empty($post->post_name))) {
         $statusMap = [
           'auto-draft' => Status::DRAFT,
           'draft'      => Status::DRAFT,
@@ -64,7 +64,7 @@ class MigrateWordPressIblogPosts implements ShouldQueue
 
         $postToCreate = [
           'title' => $post->post_title,
-          'description' => $post->post_content,
+          'description' => $migrationService->replaceDescription($post->post_content),
           'summary' => $post->post_title,
           'slug' => $post->post_name,
           'user_id' => 1,

@@ -36,10 +36,10 @@ class IblogWordpressContentMigrationTableSeeder extends Seeder
 
       // Images Main Post Migration
       $totalImages = $migrationService->getTotalImagePosts();
-      $batchImgPostSize = 100;
+      $batchImgPostSize = config('asgard.iblog.config.wordpressMigration.post.images.batch') ?? 50;
       \Log::info('WordPress start Main Img Posts Migration');
       for ($offset = 0; $offset < $totalImages; $offset += $batchImgPostSize) {
-        MigrateWordPressIblogImagesPosts::dispatch($offset, $batchImgPostSize, $postIds)->onQueue('wordpress_migration');
+        MigrateWordPressIblogImagesPosts::dispatch($offset, $batchImgPostSize)->onQueue('wordpress_migration');
       }
 
       \Log::info('WordPress Main Img posts migration jobs dispatched successfully.');

@@ -145,4 +145,14 @@ class WordPressMigrationService
       ->limit($limit)
       ->get();
   }
+
+  public function replaceDescription($text) {
+    $text = str_replace(["\r\n", "\n", "\r"], "<br>", $text);
+    $text = preg_replace(
+      '/\[embed\](https?:\/\/[^\s]+)\[\/embed\]/i',
+      '<iframe src="$1" width="100%" height="150" frameborder="0" allow="autoplay"></iframe>',
+      $text
+    );
+    return $text;
+  }
 }
