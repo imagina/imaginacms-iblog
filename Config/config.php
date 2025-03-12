@@ -1,9 +1,9 @@
 <?php
 $item = (array)json_decode(setting('iblog::arrayItemComponentsAttributesBlog'));
 if (!empty($item)) {
-    if (!empty($item['orderClasses'])) {
-        $item['orderClasses'] = (array)$item['orderClasses'];
-    }
+  if (!empty($item['orderClasses'])) {
+    $item['orderClasses'] = (array)$item['orderClasses'];
+  }
 } else {
   $item = [
     'withViewMoreButton' => false,
@@ -90,7 +90,7 @@ if (!empty($item)) {
     'itemBackgroundColorHover' => '#ffffff',
     'titleHeight' => '60',
     'summaryHeight' => '100',
-    'titleTextSizeMobile'=>'17',
+    'titleTextSizeMobile' => '17',
   ];
 }
 return [
@@ -494,5 +494,11 @@ return [
         'types' => []
       ]
     ]
+  ],
+
+  'moduleWithAvailableDate' => [
+    'field' => 'date_available',
+    'repo' => 'Modules\Iblog\Repositories\PostRepository',
   ]
+
 ];
