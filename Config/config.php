@@ -497,8 +497,8 @@ return [
   ],
 
   'moduleWithAvailableDate' => [
-    'Field' => 'date_available',
-    'Repo' => 'Modules\Iblog\Repositories\PostRepository',
+    'field' => 'date_available',
+    'repo' => 'Modules\Iblog\Repositories\PostRepository',
   ]
 
 ];
