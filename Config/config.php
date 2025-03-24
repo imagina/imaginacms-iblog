@@ -509,5 +509,15 @@ return [
       ],
       'status' =>['all'] //['auto-draft', 'draft', 'publish', 'trash']
     ]
-  ]
+  ],
+
+  //Tenant
+  'tenant' => [
+    'dbPrefix' => 'iblog',
+    'client' => [
+      'icon' => 'fal fa-blog',
+      'title' => '(pt) Blog',
+      'description' => '(pt) Post your thoughts',
+    ]
+  ],
 ];
