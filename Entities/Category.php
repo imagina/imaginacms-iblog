@@ -207,7 +207,7 @@ class Category extends CrudModel
   {
     $baseUrls = [config("app.url")];
 
-    if (!$this->wasRecentlyCreated) {
+    if (!$this->wasRecentlyCreated && $this->status == 1) {
       $baseUrls[] = $this->url;
     }
     $urls = ['urls' => $baseUrls];
