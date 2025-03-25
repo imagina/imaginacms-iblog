@@ -146,6 +146,7 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
       $query->leftJoin(\DB::raw(
         "(SELECT MATCH (" . implode(',',json_decode(setting('iblog::selectSearchFieldsPosts'))) . ") AGAINST ('(\"" . $filter->search . "\")' IN BOOLEAN MODE) scoreSearch1, post_id, title, " .
         " MATCH (" . implode(',',json_decode(setting('iblog::selectSearchFieldsPosts'))) . ") AGAINST ('(+" . $filter->search . "*)' IN BOOLEAN MODE) scoreSearch2 " .
+        "LOCATE('" . $filter->search . "', name) as name_position " .
         "from iblog__post_translations " .
         "where `locale` = '".($filter->locale ?? locale())."') as ptrans"
       ), 'ptrans.post_id', 'iblog__posts.id')
@@ -155,7 +156,11 @@ class EloquentPostRepository extends EloquentCrudRepository implements PostRepos
         });
 
       foreach ($orderSearchResults ?? [] as $orderSearch) {
-        $query->orderBy($orderSearch, 'desc');
+        if ($orderSearch == 'name_position') {
+          $query->orderBy($orderSearch, 'asc');
+        } else {
+          $query->orderBy($orderSearch, 'desc');
+        }
       }
 
 

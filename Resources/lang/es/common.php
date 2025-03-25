@@ -2,7 +2,7 @@
 
 return [
   'iblog' => 'Blog',
-  
+
   'button' => [
     "read more" => "Leer Mas"
   ],
@@ -29,35 +29,35 @@ return [
     'published' => 'Publicado',
     'unpublished' => 'En espera',
   ],
-  
+
   'status_text' => 'Estado',
-  
+
   'image' => 'Imágen',
-  
+
   'categories' => 'Categorías',
-  
+
   'title' => 'Título',
   'slug' => 'Enlace permanente:',
   'description' => 'Descripción',
   'metatitle' => 'Meta Título',
   'metadescription' => 'Meta Descripción',
-  
+
   'date' => 'Fecha y hora',
   'optional' => '(Opcional)',
-  
+
   'summary' => 'Sumario',
   'content' => 'Content',
-  
+
   'author' => 'Autor',
   'by' => 'por',
   'Posted on' => 'Publicado el',
   'default_category' => 'Categoría Principal',
-  
+
   'admin_notes' => 'Notas de Administración',
   'created_at' => 'Fecha de Creación',
   'parent' => 'Superior',
-  
-  
+
+
   'social' => [
     'share' => 'Compartir'
   ],
@@ -97,4 +97,17 @@ return [
   'crudFields' => [
     'labelValueIdFieldTimeLine' => 'Valor Campo Identificador Para Artículos De Linea De Tiempo',
   ],
+  'search' => [
+    'settings' => [
+      'options' => [
+        'name_position' => 'Posicion Palabras',
+        'name' => 'Nombre Del Producto',
+        'summary' => 'Resumen Del Producto',
+        'description' => 'Descripción Del Producto',
+        'uniqueWord' => 'Palabras Individuales',
+        'createDate' => 'Fecha De Creación',
+        'fullWord' => 'Palabra Completa',
+      ]
+    ]
+  ]
 ];
