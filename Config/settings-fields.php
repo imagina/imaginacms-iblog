@@ -71,9 +71,10 @@ return [
       'hideDropdownIcon' => true,
       'newValueMode' => 'add-unique',
       'options' => [
-        ['label' => 'Palabra completa', 'value' => 'scoreSearch1'],
-        ['label' => 'Fecha de Creación', 'value' => 'iblog__posts.created_at'],
-        ['label' => 'Palabras individuales', 'value' => 'scoreSearch2'],
+        ['label' => 'iblog::common.search.settings.options.name_position', 'value' => 'name_position'],
+        ['label' => 'iblog::common.search.settings.options.fullWord', 'value' => 'scoreSearch1'],
+        ['label' => 'iblog::common.search.settings.options.createDate', 'value' => 'iblog__posts.created_at'],
+        ['label' => 'iblog::common.search.settings.options.uniqueWord', 'value' => 'scoreSearch2'],
       ]
     ]
   ],
