@@ -208,7 +208,9 @@ class Post extends CrudModel implements TaggableInterface
 
   public function getCacheClearableData()
   {
-    $baseUrls = [config("app.url"), $this->category->url];
+    $baseUrls = [config("app.url")];
+
+    if($this->category) $baseUrls[] = $this->category->url;
 
     if (!$this->wasRecentlyCreated) {
       $baseUrls[] = $this->url;
