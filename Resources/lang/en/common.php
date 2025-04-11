@@ -20,6 +20,7 @@ return [
     'resource updated' => 'Record Updated',
     'resource deleted' => 'Record Deleted',
     'resource created' => 'Record Created',
+    'deleteValidation' => 'The category cannot be deleted because it has related posts.',
   ],
   'validation' => [
   ],

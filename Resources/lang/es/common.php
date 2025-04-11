@@ -20,6 +20,7 @@ return [
     'resource updated' => 'Registro Actualizado',
     'resource deleted' => 'Registro Eliminado',
     'resource created' => 'Registro Creado',
+    'deleteValidation' => 'No se puede eliminar la categoría porque tiene publicaciones relacionadas.'
   ],
   'validation' => [
   ],
