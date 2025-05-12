@@ -14,6 +14,30 @@ class Timeline extends Component
   public $itemComponent;
   public $itemComponentAttributes;
   public $itemComponentNamespace;
+  public $title;
+  public $subtitle;
+  public $textPosition; // 1 -> solo titulo 2 -> titulo con subtitulo debajo 3 -> titulo con subtitilo arria
+  public $titleMarginT;
+  public $titleMarginB;
+  public $titleColor;
+  public $titleVineta;
+  public $titleVinetaColor;
+  public $titleSize;
+  public $titleWeight;
+  public $titleTransform;
+  public $titleLetterSpacing;
+  public $subtitleMarginT;
+  public $subtitleMarginB;
+  public $subtitleColor;
+  public $subtitleSize;
+  public $subtitleWeight;
+  public $subtitleTransform;
+  public $subtitleLetterSpacing;
+  public $withLineTitle;
+  public $lineTitleConfig;
+  public $titleClasses;
+  public $subtitleClasses;
+  public $textAlign;
   public $mainLineColor;
   public $mainLinePosition;
   public $imageInterspersed;
@@ -34,13 +58,15 @@ class Timeline extends Component
   public $bgNumber;
   public $radiusNumber;
   public $sizeContainerNumber;
-  public $withDate;
-  public $colorDate;
-  public $bgDate;
-  public $sizeDate;
-  public $paddingDate;
-  public $marginDate;
-  public  $radiusDate;
+  public $contentLabel;
+  public $withContentLabel;
+  public $colorContentLabel;
+  public $bgContentLabel;
+  public $sizeContentLabel;
+  public $paddingContentLabel;
+  public $marginContentLabel;
+  public $radiusContentLabel;
+  public $formatDate;
 
   /**
    * Create a new component instance.
@@ -53,8 +79,15 @@ class Timeline extends Component
                              $withNumber = false, $classNumber = 'font-weight-bold', $sizeNumber = '15',$bgNumber = 'var(--secondary)',
                              $borderNumber = '1px solid var(--secondary)', $colorNumber = 'var(--primary)', $marginNumber = '10px',
                              $radiusNumber = '0', $sizeContainerNumber = '30',$icon = 'fa-solid fa-circle',$colorIcon = "var(--primary)",
-                             $sizeIcon = '15', $classItem = null, $withDate = false, $colorDate = 'var(--primary)', $bgDate = 'var(--secondary)',
-                             $sizeDate = '15', $paddingDate = '10px', $marginDate = '10px 0', $radiusDate = '8px', $colorBorderNumber = 'var(--primary)'
+                             $sizeIcon = '15', $classItem = null, $withContentLabel = false, $colorContentLabel = 'var(--primary)',
+                             $bgContentLabel = 'var(--secondary)', $sizeContentLabel = '15', $paddingContentLabel = '10px', $marginContentLabel = '10px 0',
+                             $radiusContentLabel = '8px', $colorBorderNumber = 'var(--primary)', $formatDate = "d \\d\\e M", $contentLabel = null, $textPosition = 2,
+                            $titleMarginT = "mt-0", $titleMarginB = "mb-0", $titleColor = null, $titleVineta = null, $titleVinetaColor = null,
+                            $titleSize = null, $titleWeight = "font-weight-normal", $titleTransform = null, $title="", $subtitle="",
+                            $titleLetterSpacing = 0, $subtitleMarginT = "mt-0", $subtitleMarginB = "mb-0",
+                            $subtitleColor = null, $subtitleSize = null, $subtitleWeight = "font-weight-normal", $subtitleTransform = null,
+                            $subtitleLetterSpacing = 0,$withLineTitle = 0, $lineTitleConfig = [], $titleClasses = "", $subtitleClasses = "",
+                            $textAlign = "text-left"
  ){
    $this->layout = $layout;
    $this->view = "iblog::frontend.components.timeline.layouts.$layout.index";
@@ -84,13 +117,53 @@ class Timeline extends Component
     $this->showTwoItems = $showTwoItems;
     $this->firstItemPosition = $firstItemPosition;
     $this->classItem = $classItem;
-    $this->withDate = $withDate;
-    $this->colorDate = $colorDate;
-    $this->bgDate = $bgDate;
-    $this->sizeDate = $sizeDate;
-    $this->paddingDate = $paddingDate;
-    $this->marginDate = $marginDate;
-    $this->radiusDate = $radiusDate;
+    $this->contentLabel = $contentLabel;
+    $this->withContentLabel = $withContentLabel;
+    $this->colorContentLabel = $colorContentLabel;
+    $this->bgContentLabel = $bgContentLabel;
+    $this->sizeContentLabel = $sizeContentLabel;
+    $this->paddingContentLabel = $paddingContentLabel;
+    $this->marginContentLabel = $marginContentLabel;
+    $this->radiusContentLabel = $radiusContentLabel;
+    $this->formatDate = $formatDate;
+    $this->title = $title;
+    $this->subtitle = $subtitle;
+    $this->textPosition = $textPosition;
+    $this->titleMarginT = $titleMarginT;
+    $this->titleMarginB = $titleMarginB;
+    $this->titleColor = $titleColor;
+    $this->titleVineta = $titleVineta;
+    $this->titleVinetaColor = $titleVinetaColor;
+    $this->titleSize = $titleSize;
+    $this->titleWeight = $titleWeight;
+    $this->titleTransform = $titleTransform;
+    $this->titleLetterSpacing = $titleLetterSpacing;
+    $this->subtitleMarginT = $subtitleMarginT;
+    $this->subtitleMarginB = $subtitleMarginB;
+    $this->subtitleColor = $subtitleColor;
+    $this->subtitleSize = $subtitleSize;
+    $this->subtitleWeight = $subtitleWeight;
+    $this->subtitleTransform = $subtitleTransform;
+    $this->subtitleLetterSpacing = $subtitleLetterSpacing;
+    $this->titleClasses = $titleClasses;
+    $this->subtitleClasses = $subtitleClasses;
+    $this->withLineTitle = $withLineTitle;
+    $this->lineTitleConfig = !empty($lineTitleConfig) ? $lineTitleConfig : [
+      "background" => "var(--primary)",
+      "height" => "2px",
+      "width" => "10%",
+      "margin" => "0 auto"];
+    $this->textAlign = $textAlign;
+
+    //  Covert to array extra fields
+    if (!empty($contentLabel)) {
+      if (strpos($contentLabel, ',') !== false) {
+        $this->contentLabel = explode(",", $contentLabel);
+      } else {
+        $this->contentLabel = array($contentLabel);
+      }
+    }
+
     $this->getItems();
   }
 
