@@ -33,6 +33,7 @@ class Category extends CrudModel
   public $requestValidation = [
     'create' => 'Modules\Iblog\Http\Requests\CreateCategoryRequest',
     'update' => 'Modules\Iblog\Http\Requests\UpdateCategoryRequest',
+    'delete' => 'Modules\Iblog\Http\Requests\DeleteCategoryRequest',
   ];
   protected $table = 'iblog__categories';
 
@@ -207,7 +208,7 @@ class Category extends CrudModel
   {
     $baseUrls = [config("app.url")];
 
-    if (!$this->wasRecentlyCreated) {
+    if (!$this->wasRecentlyCreated && $this->status == 1) {
       $baseUrls[] = $this->url;
     }
     $urls = ['urls' => $baseUrls];
