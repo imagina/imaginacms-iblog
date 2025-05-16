@@ -210,7 +210,7 @@ class Post extends CrudModel implements TaggableInterface
   {
     $baseUrls = [config("app.url"), $this->category->url];
 
-    $categoryUrls = $this->categories()->get()->pluck('url')->toArray();
+    $categoryUrls = $this->categories->pluck('url')->toArray();
     if (!$this->wasRecentlyCreated && $this->status == 2) {
       $baseUrls[] = $this->url;
     }
