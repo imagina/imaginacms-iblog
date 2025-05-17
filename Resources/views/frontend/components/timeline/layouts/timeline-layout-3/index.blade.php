@@ -49,8 +49,7 @@
                   }
                 }
               @endphp
-
-              @if($key > 0)
+            
                 <div class="content-item d-block d-lg-flex align-items-center {{$showTwoItems ? 'col-12 col-lg-6' : 'col-12'}} {{$classItem}}">
                   <div class="icon-list">
                     <i class="{{ $icon }}"></i>
@@ -78,7 +77,6 @@
                     ])
                   </div>
                 </div>
-              @endif
             @endforeach
           </ul>
         </div>
