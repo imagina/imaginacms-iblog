@@ -1,5 +1,5 @@
 # Blog Module 4.0
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/imagina/imaginacms-iblog)
 The Blog module allows authorized users to maintain a blog. Blogs are a series of posts that are time stamped and are typically viewed by date as you would view a journal. Blog entries can be made public or private to the site members, depending on which roles have access to view content.
 
 ## Installation
