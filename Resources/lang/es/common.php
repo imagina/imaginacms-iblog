@@ -63,6 +63,7 @@ return [
   ],
   'crudFieldsLabels' => [
     'urlCoder' => 'Url de la entrada',
+    'UrlExternalVideoPost' => 'URL del video Externo'
   ],
   'crudFieldsHints' => [
     'urlCoder' => 'Escoja con cuidado cómo se armaría la url final del post',

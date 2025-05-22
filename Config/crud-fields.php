@@ -42,6 +42,18 @@ return [
     ],
     //Extra field to crud post
     'posts' => [
+        //  Url  to video post
+        'UrlExternalVideoPost' => [
+          'value' => '',
+          'name' => 'UrlExternalVideoPost',
+          'type' => 'input',
+          'isFakeField' => true,
+          'props' => [
+            'label' => 'iblog::common.crudFieldsLabels.UrlExternalVideoPost',
+            'entity' => "Modules\Iblog\Entities\Post",
+            'entityId' => null,
+          ],
+        ],
         'urlCoder' => [
             'value' => 'categoryAndPostSlug',
             'isFakeField' => true,
