@@ -135,7 +135,7 @@ class Category extends CrudModel
 
     $currentLocale = $locale ?? locale();
     if(!is_null($currentLocale)){
-      $this->slug = $this->getTranslation($currentLocale)->slug;
+      $this->slug = $this->getTranslation($currentLocale)->slug ?? "";
     }
 
     if (empty($this->slug)) return "";

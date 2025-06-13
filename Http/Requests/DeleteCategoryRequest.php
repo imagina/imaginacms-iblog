@@ -10,7 +10,7 @@ class DeleteCategoryRequest extends BaseFormRequest
   public function rules()
   {
     return [
-      'id' => [new DeleteFunctionRule('iblog__post__category', $this->id, 'category_id', trans('iblog::common.messages.deleteValidation'))]
+      'id' => [new DeleteFunctionRule('iblog__post__category', $this->id, 'category_id', trans('iblog::common.messages.deleteValidation'), 'Modules\Iblog\Repositories\PostRepository', 'post_id')]
     ];
   }
 
