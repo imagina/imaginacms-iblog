@@ -68,7 +68,7 @@ class Post extends CrudModel implements TaggableInterface
   ];
 
   protected $with = [
-    'tags','files', 'fields'
+    'tags', 'files', 'fields'
   ];
 
   protected $casts = [
@@ -101,7 +101,7 @@ class Post extends CrudModel implements TaggableInterface
   {
     $response = json_decode($value);
 
-    if(is_string($response)) {
+    if (is_string($response)) {
       $response = json_decode($response);
     }
 
@@ -122,13 +122,13 @@ class Post extends CrudModel implements TaggableInterface
 
     //Get and Set mainimage
     $mainimageFile = null;
-    if($this->relationLoaded('files')) {
+    if ($this->relationLoaded('files')) {
       foreach ($this->files as $file) {
         if ($file->pivot->zone == "mainimage") $mainimageFile = $file;
       }
     }
 
-    if(!is_null($mainimageFile)){
+    if (!is_null($mainimageFile)) {
       $image = [
         'mimeType' => $mainimageFile->mimetype,
         'path' => $mainimageFile->path_string
@@ -146,42 +146,48 @@ class Post extends CrudModel implements TaggableInterface
    */
   public function getUrlAttribute($locale = null)
   {
-
-
     if (empty($this->slug)) {
       $post = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
       $this->slug = $post->slug ?? "";
     }
 
     $currentLocale = $locale ?? locale();
+
+    $category = $this->category;
+    $translatedCategory = null;
+
     if (!is_null($locale)) {
-      $this->slug = $this->getTranslation($currentLocale)->slug;
-      $this->category = $this->category->getTranslation($currentLocale);
+      $this->slug = $this->getTranslation($currentLocale)->slug ?? '';
+      $translatedCategory = $category->getTranslation($currentLocale);
     }
 
     if (empty($this->slug)) return "";
 
-    $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
-      parse_url(config('app.url'), PHP_URL_HOST);
+    $currentDomain = !empty($this->organization_id)
+      ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain
+      : parse_url(config('app.url'), PHP_URL_HOST);
 
     if (config("app.url") != $currentDomain) {
       $savedDomain = config("app.url");
       config(["app.url" => "https://" . $currentDomain]);
     }
 
-    if (isset($this->options->urlCoder) && !empty($this->options->urlCoder) && $this->options->urlCoder == "onlyPost") {
-
+    if (isset($this->options->urlCoder) && $this->options->urlCoder === "onlyPost") {
       $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
-
     } else {
-      if (empty($this->category->slug)) $url = "";
-      else $url = \LaravelLocalization::localizeUrl('/' . $this->category->slug . '/' . $this->slug, $currentLocale);
+      $categorySlug = $translatedCategory?->slug ?? $category?->slug ?? '';
+      if (empty($categorySlug)) {
+        $url = "";
+      } else {
+        $url = \LaravelLocalization::localizeUrl('/' . $categorySlug . '/' . $this->slug, $currentLocale);
+      }
     }
 
-    if (isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
+    if (isset($savedDomain)) {
+      config(["app.url" => $savedDomain]);
+    }
 
     return $url;
-
   }
 
   /**
@@ -208,14 +214,39 @@ class Post extends CrudModel implements TaggableInterface
 
   public function getCacheClearableData()
   {
-    $baseUrls = [config("app.url"), $this->category->url];
+    $baseUrls = [config("app.url")];
 
-    $categoryUrls = $this->categories->pluck('url')->toArray();
-    if (!$this->wasRecentlyCreated && $this->status == 2) {
-      $baseUrls[] = $this->url;
+    if ($this->category) {
+      $categoryModel = $this->category;
+      $baseUrls = array_merge($baseUrls, $categoryModel->getAllLocalizedUrls());
     }
+
+    if (!$this->wasRecentlyCreated && $this->status == 2) {
+      $baseUrls = array_merge($baseUrls, $this->getAllLocalizedUrls());
+    }
+
+    $categoryUrls = [];
+    foreach ($this->categories as $category) {
+      $categoryUrls = array_merge($categoryUrls, $category->getAllLocalizedUrls());
+    }
+
     $urls = ['urls' => array_unique(array_merge($baseUrls, $categoryUrls))];
 
     return $urls;
   }
+
+  public function getAllLocalizedUrls(): array
+  {
+    $urls = [];
+
+    foreach (array_keys(\LaravelLocalization::getSupportedLocales()) as $localeCode) {
+      $url = $this->getUrlAttribute($localeCode);
+      if ($url) {
+        $urls[] = $url;
+      }
+    }
+
+    return $urls;
+  }
+
 }

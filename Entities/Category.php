@@ -61,6 +61,7 @@ class Category extends CrudModel
   protected $with = [
     'fields'
   ];
+
   /*
   |--------------------------------------------------------------------------
   | RELATIONS
@@ -85,7 +86,7 @@ class Category extends CrudModel
   {
     $response = json_decode($value);
 
-    if(is_string($response)) {
+    if (is_string($response)) {
       $response = json_decode($response);
     }
 
@@ -103,14 +104,14 @@ class Category extends CrudModel
     ];
 
     $mainimageFile = null;
-    if($this->relationLoaded('files')){
-      foreach($this->files as $file){
-        if($file->pivot->zone == "mainimage") $mainimageFile = $file;
+    if ($this->relationLoaded('files')) {
+      foreach ($this->files as $file) {
+        if ($file->pivot->zone == "mainimage") $mainimageFile = $file;
       }
     }
 
 
-    if(!is_null($mainimageFile)){
+    if (!is_null($mainimageFile)) {
       $image = [
         'mimeType' => $mainimageFile->mimetype,
         'path' => $mainimageFile->path_string
@@ -124,33 +125,34 @@ class Category extends CrudModel
 
   public function getUrlAttribute($locale = null)
   {
-    $url = "";
-
     if ($this->internal) return "";
-    if (empty($this->slug)) {
-
-      $category = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
-      $this->slug = $category->slug ?? '';
-    }
 
     $currentLocale = $locale ?? locale();
-    if(!is_null($currentLocale)){
-      $this->slug = $this->getTranslation($currentLocale)->slug ?? "";
+
+    $translation = $this->getTranslation($currentLocale);
+    $slug = $translation->slug ?? $this->slug ?? "";
+
+    if (empty($slug)) {
+      $defaultTranslation = $this->getTranslation(\LaravelLocalization::getDefaultLocale());
+      $slug = $defaultTranslation->slug ?? "";
     }
 
-    if (empty($this->slug)) return "";
+    if (empty($slug)) return "";
 
-    $currentDomain = !empty($this->organization_id) ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain :
-      parse_url(config('app.url'),PHP_URL_HOST);
+    $currentDomain = !empty($this->organization_id)
+      ? tenant()->domain ?? tenancy()->find($this->organization_id)->domain
+      : parse_url(config('app.url'), PHP_URL_HOST);
 
-    if(config("app.url") != $currentDomain){
+    if (config("app.url") != $currentDomain) {
       $savedDomain = config("app.url");
-      config(["app.url" => "https://".$currentDomain]);
+      config(["app.url" => "https://" . $currentDomain]);
     }
-    $url = \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
 
-    if(isset($savedDomain) && !empty($savedDomain)) config(["app.url" => $savedDomain]);
+    $url = \LaravelLocalization::localizeUrl('/' . $slug, $currentLocale);
 
+    if (isset($savedDomain)) {
+      config(["app.url" => $savedDomain]);
+    }
 
     return $url;
   }
@@ -209,9 +211,23 @@ class Category extends CrudModel
     $baseUrls = [config("app.url")];
 
     if (!$this->wasRecentlyCreated && $this->status == 1) {
-      $baseUrls[] = $this->url;
+      $baseUrls = array_merge($baseUrls, $this->getAllLocalizedUrls());
     }
     $urls = ['urls' => $baseUrls];
+
+    return $urls;
+  }
+
+  public function getAllLocalizedUrls(): array
+  {
+    $urls = [];
+
+    foreach (array_keys(\LaravelLocalization::getSupportedLocales()) as $localeCode) {
+      $url = $this->getUrlAttribute($localeCode);
+      if ($url) {
+        $urls[] = $url;
+      }
+    }
 
     return $urls;
   }
