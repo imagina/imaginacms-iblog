@@ -1,0 +1,12 @@
+
+{
+    "name": "Iblog",
+    "alias": "iblog",
+    "description": "manage iblog",
+    "keywords": ["iblog"],
+    "priority": 0,
+    "providers": [
+        "Modules\\Iblog\\Providers\\IblogServiceProvider"
+    ],
+    "files": []
+}

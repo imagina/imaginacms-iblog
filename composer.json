@@ -1,0 +1,30 @@
+{
+  "name": "imagina/iblog",
+  "description": "",
+  "type": "laravel-module",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Imagina Colombia",
+      "email": "soporte@imaginacolombia.com"
+    }
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [],
+      "aliases": {}
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\Iblog\\": "app/",
+      "Modules\\Iblog\\Database\\Factories\\": "database/factories/",
+      "Modules\\Iblog\\Database\\Seeders\\": "database/Seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Modules\\Iblog\\Tests\\": "tests/"
+    }
+  }
+}
