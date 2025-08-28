@@ -1,56 +1,18 @@
 <?php
 
 return [
-    'single' => 'Post',
-    'plural' => 'Posts',
-
-    'list' => 'List Posts',
-    'create' => 'Create Posts',
-    'edit' => 'Edit Posts',
-    'destroy' => 'Destroy Posts',
-    'title' => [
-        'post' => 'Post',
-        'posts' => 'Posts',
-        'create post' => 'Create Post',
-        'edit post' => 'Edit Post',
-    ],
     'button' => [
-        'create post' => 'Create a Post',
-    ],
-    'table' => [
-        'id' => 'id',
-        'title' => 'Title',
-        'slug' => 'Slug',
-        'categories' => 'Categories',
-        'principal category' => 'Main Category',
-    ],
-    'form' => [
-        'gallery' => 'Gallery',
-        'drag' => 'Drag and drop here',
-        'click' => ' Click to upload',
-        'title' => 'Title',
-        'slug' => 'Slug',
-        'description' => 'Description',
-        'categories' => 'Categories',
-        'secondary image' => 'Secondary image',
-        'image' => 'Main Image',
-        'Principal Category' => 'Main Category',
-        'Categories' => 'Categories',
-        'metadata' => 'SEO',
-        'meta_title' => 'Meta Title',
-        'meta_description' => 'Meta Description',
-        'meta_keywords' => 'Keywords',
-        'editor' => 'Editor\'s name',
-        'tags' => 'Tags',
-        'summary' => 'Summary',
-
     ],
     'messages' => [
+        'titleIsRequired' => 'Title is required',
+        'titleMin2' => 'The title must contain at least two characters.',
+        'descriptionIsRequired' => 'Description is required',
+        'descriptionMin2' => 'The description must contain at least two characters.',
+        'summaryIsRequired' => 'The required Short Description',
+        'summaryMin2' => 'The Short Description must contain at least two characters',
+        'slugIsRequired' => 'The Slug is required',
+        'slugMin2' => 'The slug must contain at least two characters.',
     ],
     'validation' => [
-    ],
-    'latest posts' => 'Latest Posts',
-    'widget' => [
-        'postcount' => 'Count Post',
     ],
 ];

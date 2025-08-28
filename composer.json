@@ -1,42 +1,28 @@
 {
-    "name": "imagina/iblog-module",
+    "name": "imagina/iblog",
     "description": "",
-    "type": "asgard-module",
-    "license": "MIT",
-    "require": {
-        "php": "^8.1",
-        "imagina/core-module": "v10.x-dev",
-        "imagina/ihelpers-module": "v10.x-dev",
-        "cviebrock/eloquent-sluggable": "^8.0|^9.0|^10.0"
+    "authors": [
+        {
+            "name": "Imagina Colombia",
+            "email": "soporte@imaginacolombia.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
     },
-    "require-dev": {
-        "orchestra/testbench": "^8.5",
-        "phpunit/phpunit": "^10"
+    "autoload": {
+        "psr-4": {
+            "Modules\\Iblog\\": "app/",
+            "Modules\\Iblog\\Database\\Factories\\": "database/factories/",
+            "Modules\\Iblog\\Database\\Seeders\\": "database/Seeders/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Modules\\Iblog\\": ".",
-            "Modules\\": "Modules/"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "authors": [
-        {
-            "name": "Dev Imagina",
-            "email": "dev@imaginacolombia.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Modules\\Iblog\\": ""
-        }
-    },
-
-    "extra": {
-        "branch-alias": {
-            "dev-master": "4.0.x-dev",
-            "dev-v10.x": "10.0.x-dev"
+            "Modules\\Iblog\\Tests\\": "tests/"
         }
     }
 }
