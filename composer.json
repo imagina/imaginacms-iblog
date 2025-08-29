@@ -1,28 +1,28 @@
 {
-    "name": "imagina/iblog",
-    "description": "",
-    "authors": [
-        {
-            "name": "Imagina Colombia",
-            "email": "soporte@imaginacolombia.com"
-        }
-    ],
-    "extra": {
-        "laravel": {
-            "providers": [],
-            "aliases": {}
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Modules\\Iblog\\": "app/",
-            "Modules\\Iblog\\Database\\Factories\\": "database/factories/",
-            "Modules\\Iblog\\Database\\Seeders\\": "database/Seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Modules\\Iblog\\Tests\\": "tests/"
-        }
+  "name": "imagina/iblog-module",
+  "description": "Imagina iblog laravel module",
+  "authors": [
+    {
+      "name": "Imagina Colombia",
+      "email": "soporte@imaginacolombia.com"
     }
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [],
+      "aliases": {}
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\Iblog\\": "app/",
+      "Modules\\Iblog\\Database\\Factories\\": "database/factories/",
+      "Modules\\Iblog\\Database\\Seeders\\": "database/Seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Modules\\Iblog\\Tests\\": "tests/"
+    }
+  }
 }
