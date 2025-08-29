@@ -1,6 +1,7 @@
 {
   "name": "imagina/iblog-module",
   "description": "Imagina iblog laravel module",
+  "type": "laravel-module",
   "authors": [
     {
       "name": "Imagina Colombia",
