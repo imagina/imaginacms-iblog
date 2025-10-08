@@ -69,6 +69,12 @@ class Category extends CoreModel
   ];
 
   /**
+   * Attributes to search
+   * The following attributes are added by default: id,title
+   */
+  public $searchable = ['description'];
+
+  /**
    * Relation Media
    * Make the Many-To-Many Morph
    */
@@ -115,5 +121,4 @@ class Category extends CoreModel
       return \LaravelLocalization::localizeUrl('/' . $this->slug, $currentLocale);
     });
   }
-
 }

@@ -69,6 +69,12 @@ class Post extends CoreModel
   ];
 
   /**
+   * Attributes to search
+   * The following attributes are added by default: id,title
+   */
+  public $searchable = ['description', 'summary'];
+
+  /**
    * Relation Media
    * Make the Many-To-Many Morph
    */
