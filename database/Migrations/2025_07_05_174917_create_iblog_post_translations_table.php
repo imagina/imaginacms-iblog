@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('slug')->index();
             $table->text('description');
             $table->text('summary');
-            $table->integer('status')->default(0)->unsigned();
+            $table->integer('status_id')->default(0)->unsigned();
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();

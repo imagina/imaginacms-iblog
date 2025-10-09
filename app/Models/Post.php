@@ -45,7 +45,7 @@ class Post extends CoreModel
     'meta_description',
     'meta_keywords',
     'translatable_options',
-    'status',
+    'status_id',
   ];
   protected $fillable = [
     'options',
@@ -74,6 +74,10 @@ class Post extends CoreModel
    */
   public $searchable = ['description', 'summary'];
 
+  public $appends = [
+    'status'
+  ];
+
   /**
    * Relation Media
    * Make the Many-To-Many Morph
@@ -89,6 +93,14 @@ class Post extends CoreModel
   public function categories(): BelongsToMany
   {
     return $this->belongsToMany(Category::class, 'iblog__post_category');
+  }
+
+  public function status(): Attribute
+  {
+    return Attribute::get(function () {
+      $status = new Status();
+      return $status->show($this->status_id);
+    });
   }
 
   public function category(): BelongsTo
