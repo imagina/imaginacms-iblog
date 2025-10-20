@@ -68,6 +68,10 @@ class Post extends CoreModel
     'breadcrumbimage' => 'single',
   ];
 
+  public array $modelRelations = [
+    'categories' => 'belongsToMany'
+  ];
+
   /**
    * Attributes to search
    * The following attributes are added by default: id,title
