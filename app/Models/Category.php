@@ -98,7 +98,7 @@ class Category extends CoreModel
 
   public function posts(): BelongsToMany
   {
-    return $this->belongsToMany(Post::class, 'iblog__post_category')->as('posts')->with('category');
+    return $this->belongsToMany(Post::class, 'iblog__post_category');
   }
 
   public function url($locale = null): Attribute
