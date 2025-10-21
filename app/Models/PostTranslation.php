@@ -16,7 +16,7 @@ class PostTranslation extends Model
         'meta_description',
         'meta_keywords',
         'translatable_options',
-        'status',
+        'status_id',
     ];
     protected $table = 'iblog__post_translations';
 
