@@ -13,7 +13,7 @@ class EloquentPostRepository extends EloquentCoreRepository implements PostRepos
    * Filter names to replace
    * @var array
    */
-  protected array $replaceFilters = [];
+  protected array $replaceFilters = ['categoryId'];
 
   /**
    * Relation names to replace
@@ -63,6 +63,20 @@ class EloquentPostRepository extends EloquentCoreRepository implements PostRepos
           $q2->whereHas('translations', function ($qt) use ($slug) {
             $qt->where('slug', $slug);
           });
+        });
+      });
+    }
+
+    if (!empty($filter->categoryId)) {
+      $catId = $filter->categoryId;
+
+      $query->where(function ($q) use ($catId) {
+        // 🔹 1. belongsTo -> category
+        $q->where('category_id', $catId);
+
+        // 🔹 2. belongsToMany -> categories
+        $q->orWhereHas('categories', function ($q2) use ($catId) {
+          $q2->where('iblog__categories.id', $catId);
         });
       });
     }
